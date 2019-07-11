@@ -523,11 +523,20 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
 
     @Override
-    public void onEncrypt(Message message) {
+    public void onEncrypt(Message message, boolean encrypt, boolean sign) {
         this.message = message;
         bind();
 
-        etComposeText.setEnabled(false);
+        if (encrypt) {
+            etComposeText.setEnabled(false);
+            llRecipients.setEnabled(false);
+            llCcRecipients.setEnabled(false);
+        }
+
+        if (sign) {
+            etComposeText.setEnabled(false);
+
+        }
 
         updateBottomMenuTitle();
     }
@@ -548,6 +557,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         this.message = message;
         bind();
 
+        llRecipients.setEnabled(true);
+        llCcRecipients.setEnabled(true);
         etComposeText.setEnabled(true);
         updateBottomMenuTitle();
     }

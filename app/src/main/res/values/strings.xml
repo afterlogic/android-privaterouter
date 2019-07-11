@@ -52,7 +52,8 @@
     <string name="encrypt_dialog_title_decrypt">Open PGP Decrypt</string>
     <string name="encrypt_dialog_sign_encrypt">Sign/encrypt</string>
 
-    <string name="encrypt_error_not_found_key">Can\'t find public key for email: %s </string>
+    <string name="encrypt_error_not_found_private_key">Can\'t find private key for email: %s </string>
+    <string name="encrypt_error_not_found_public_key">Can\'t find public key for email: %s </string>
     <string name="encrypt_error_null_message">Message is null</string>
     <string name="encrypt_error_empty_message">Empty message</string>
     <string name="encrypt_error_empty_receiver">Select recipient before encrypt</string>

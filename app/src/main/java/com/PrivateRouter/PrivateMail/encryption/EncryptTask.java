@@ -49,22 +49,26 @@ import java.security.Security;
 
 import javax.annotation.Nullable;
 
+import static org.pgpainless.PGPainless.createEncryptor;
+
 
 public class EncryptTask extends AsyncTask<Void, Void, Message> {
     private Context context;
     private Message message;
     private String pass;
     private boolean useSign;
+    private boolean useEncrypt;
     private String failMessage;
 
     EncryptCallback callback;
 
-    public EncryptTask(Context context,  String pass, boolean useSign, Message message, EncryptCallback callback) {
+    public EncryptTask(Context context, String pass, boolean useEncrypt, boolean useSign, Message message, EncryptCallback callback) {
         this.context = context;
         this.message = message;
         this.callback = callback;
         this.pass = pass;
         this.useSign = useSign;
+        this.useEncrypt = useEncrypt;
     }
 
     @Override
@@ -83,57 +87,67 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
             try {
                 KeysRepository keysRepository = PrivateMailApplication.getInstance().getKeysRepository();
 
-                String publicKeysArmored = "";
-
-
-                for (Email email : message.getTo().getEmails()) {
-                    PGPKey pgpkey = keysRepository.getKey(email.getEmail(), PGPKey.PUBLIC);
-                    if (pgpkey != null) {
-                        String data = pgpkey.getKeyObject().toString();
-
-                        publicKeysArmored = publicKeysArmored + data + "\n";
-                    } else {
-                        failMessage = String.format(context.getString(R.string.encrypt_error_not_found_key), email.getEmail());
-                        return null;
-                    }
-
-                }
-
-
-                Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
-                String privateKey = "";
-                PGPKey pgpkey = keysRepository.getKey(account.getEmail(), PGPKey.PRIVATE);
-                if (pgpkey != null) {
-                    privateKey = pgpkey.getKeyObject().toString();
-                }
 
                 String sourceText = message.getPlain();
 
                 byte[] secretMessage = sourceText.getBytes(Charset.forName("UTF-8"));
 
 
-                PGPPublicKeyRingCollection publicKeys = PGPainless.readKeyRing().publicKeyRingCollection(publicKeysArmored);
-                PGPSecretKeyRing secretKeys = PGPainless.readKeyRing().secretKeyRing(privateKey);
-
-                KeyRingProtectionSettings settings = new KeyRingProtectionSettings(SymmetricKeyAlgorithm.AES_256, HashAlgorithm.MD5, 0);
-                SecretKeyRingProtector secretKeyDecryptor = new PasswordBasedSecretKeyRingProtector(settings, new SecretKeyPassphraseProvider() {
-                    @Nullable
-                    @Override
-                    public Passphrase getPassphraseFor(Long keyId) {
-                        Passphrase passphrase = new Passphrase(pass.toCharArray());
-                        return passphrase;
-                    }
-                });
-
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-                EncryptionBuilderInterface.SignWith signWith = PGPainless.createEncryptor()
-                        .onOutputStream(outputStream)
-                        .toRecipients(publicKeys)
-                        .usingSecureAlgorithms();
 
+                EncryptionBuilderInterface.ToRecipients toRecipients = PGPainless.createEncryptor().onOutputStream(outputStream);
+                EncryptionBuilderInterface.SignWith signWith;
                 EncryptionBuilderInterface.Armor armor;
+
+                if (useEncrypt) {
+
+                    String publicKeysArmored = "";
+                    for (Email email : message.getTo().getEmails()) {
+                        PGPKey pgpkey = keysRepository.getKey(email.getEmail(), PGPKey.PUBLIC);
+                        if (pgpkey != null) {
+                            String data = pgpkey.getKeyObject().toString();
+
+                            publicKeysArmored = publicKeysArmored + data + "\n";
+                        } else {
+                            failMessage = String.format(context.getString(R.string.encrypt_error_not_found_public_key), email.getEmail());
+                            return null;
+                        }
+
+                    }
+
+                    PGPPublicKeyRingCollection publicKeys = PGPainless.readKeyRing().publicKeyRingCollection(publicKeysArmored);
+
+                    signWith = toRecipients.toRecipients(publicKeys)
+                            .usingSecureAlgorithms();
+                }
+                else
+                    signWith = toRecipients.doNotEncrypt();
+
+
                 if (useSign) {
+                    Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
+                    String privateKey = "";
+                    PGPKey pgpkey = keysRepository.getKey(account.getEmail(), PGPKey.PRIVATE);
+                    if (pgpkey != null) {
+                        privateKey = pgpkey.getKeyObject().toString();
+                    }
+                    else {
+                        failMessage = String.format(context.getString(R.string.encrypt_error_not_found_private_key), account.getEmail() );
+                        return null;
+                    }
+                    PGPSecretKeyRing secretKeys = PGPainless.readKeyRing().secretKeyRing(privateKey);
+
+                    KeyRingProtectionSettings settings = new KeyRingProtectionSettings(SymmetricKeyAlgorithm.AES_256, HashAlgorithm.MD5, 0);
+                    SecretKeyRingProtector secretKeyDecryptor = new PasswordBasedSecretKeyRingProtector(settings, new SecretKeyPassphraseProvider() {
+                        @Nullable
+                        @Override
+                        public Passphrase getPassphraseFor(Long keyId) {
+                            Passphrase passphrase = new Passphrase(pass.toCharArray());
+                            return passphrase;
+                        }
+                    });
+
                     armor = signWith.signWith(secretKeyDecryptor, secretKeys);
                 } else {
                     armor = signWith.doNotSign();
@@ -166,7 +180,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
     protected void onPostExecute( Message result) {
         if (callback!=null) {
             if (result!=null)
-                callback.onEncrypt(result);
+                callback.onEncrypt(result, useEncrypt, useSign);
             else
                 callback.onFail(failMessage);
         }

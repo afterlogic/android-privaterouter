@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
@@ -291,16 +292,17 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
 
 
     @Override
-    public void onEncrypt(Message message) {
+    public void onEncrypt(Message message, boolean encrypt, boolean sign) {
         this.message = message;
         bind();
 
+     
         updateBottomMenu();
     }
 
     @Override
     public void onFail(String description) {
-
+        //Toast.makeText(this, description, Toast.LENGTH_SHORT).show();
     }
 
     @Override
