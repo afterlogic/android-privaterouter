@@ -28,14 +28,18 @@ import com.PrivateRouter.PrivateMail.network.requests.CalSetMessagesSeen;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
 import com.PrivateRouter.PrivateMail.creator.ReplyMessageCreator;
+import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import java.lang.reflect.Method;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.LOGOUT;
 
 public class MailViewActivity extends AppCompatActivity {
 
@@ -204,15 +208,23 @@ public class MailViewActivity extends AppCompatActivity {
             moveMessageToInbox();
         } else if(id == R.id.item_menu_recyclebin){
             deleteMessage();
-        }
-        else if(id == R.id.item_menu_reply){
+        } else if(id == R.id.item_menu_reply){
             reply();
-        }
-        else if(id == R.id.item_menu_reply_all){
+        } else if(id == R.id.item_menu_reply_all){
             replyAll();
-        }
-        else if(id == R.id.item_menu_forward){
+        } else if(id == R.id.item_menu_forward){
             forward();
+        } else if (id == R.id.action_mail) {
+            finish();
+        } else if (id == R.id.action_contacts) {
+            Intent intent = ContactsActivity.makeIntent(this, false);
+            startActivity(intent);
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_logout) {
+            setResult(LOGOUT);
+            finish();
         }
 
         return true;
