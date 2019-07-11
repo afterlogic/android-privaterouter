@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_item_recipient_background"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_all_element_large"
+    android:paddingRight="@dimen/margin_all_element_large">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_large"
+        android:gravity="center|left"
+        android:maxLines="1"
+        android:text="@string/import_dialog_title"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/size_title_text_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/ll_import"
+        android:orientation="vertical">
+
+
+    <EditText
+        android:id="@+id/et_key_data"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_all_element_large"
+        android:layout_marginBottom="@dimen/margin_all_element_large"
+        android:background="@color/color_light_gray"
+        android:gravity="top"
+        android:minLines="20"
+        android:text=""
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/size_text_small"
+        app:layout_constraintBottom_toTopOf="@+id/bt_import_keys"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+
+    <Button
+        android:id="@+id/bt_import_keys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_all_element_large"
+        android:background="@drawable/bt_login_rounded"
+        android:text="@string/import_dialog_check_keys"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/bt_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/ll_check"
+        android:visibility="gone"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left"
+            android:paddingBottom="@dimen/padding_all_element_large"
+            android:text="@string/import_dialog_sub_title"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/size_text_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_import_keys"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/margin_all_element_large"
+            android:layout_weight="1"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/bt_import_keys"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_subtitle" />
+
+
+        <Button
+            android:id="@+id/bt_import_checked_keys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_all_element_large"
+            android:background="@drawable/bt_login_rounded"
+            android:text="@string/import_dialog_import_selected_keys"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/bt_close"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/bt_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_all_element_large"
+        android:background="@drawable/bt_login_rounded"
+        android:text="@string/all_close"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+
+</LinearLayout>

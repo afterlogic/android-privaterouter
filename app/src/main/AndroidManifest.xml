@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.PrivateRouter.PrivateMail">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name="com.PrivateRouter.PrivateMail.PrivateMailApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name=".view.LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.mail_list.MailListActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.mail_view.MailViewActivity"
+            android:parentActivityName=".view.mail_list.MailListActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".view.settings.SettingsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".view.folders_list.FoldersListActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".view.settings.PGPSettingsActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".view.settings.PGPKeysActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".view.settings.CommonSettingsActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".view.settings.SyncSettingsActivity"
+            android:screenOrientation="portrait"></activity>
+
+
+        <activity
+            android:name=".view.settings.PGPKeyActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".view.contacts.ContactsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
+            android:name=".view.ComposeActivity"
+            android:label="@string/all_compose"
+            android:parentActivityName=".view.mail_list.MailListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity android:name=".view.contacts.ContactActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="896845501d8cdcca6a2097a3346cacc8300e74aa" />
+    </application>
+
+</manifest>

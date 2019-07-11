@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_menu_spam"
+        android:icon="@drawable/ic_action_spam"
+        android:title=""
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/item_menu_back_from_spam"
+        android:icon="@drawable/ic_action_unspam"
+        android:title=""
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/item_menu_recyclebin"
+        android:icon="@drawable/ic_action_delete"
+        android:title=""
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/item_menu_reply"
+        android:title="@string/all_reply"
+        android:icon="@drawable/ic_action_reply"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/item_menu_reply_all"
+        android:title="@string/all_reply_all"
+        android:icon="@drawable/ic_action_reply_all"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/item_menu_forward"
+        android:title="@string/all_forward"
+        android:icon="@drawable/ic_action_forward"
+        app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,199 @@
+<resources>
+    <string name="app_name">PrivateMail</string>
+
+    <string name="all_yesterday">Yesterday</string>
+    <string name="all_login">Login</string>
+    <string name="all_email">Email</string>
+    <string name="all_password">Password</string>
+    <string name="all_from">From</string>
+    <string name="all_date">Date</string>
+    <string name="all_reply">Reply</string>
+    <string name="all_reply_all">Reply all</string>
+    <string name="all_forward">Forward</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="all_settings">Settings</string>
+    <string name="all_logout">Logout</string>
+    <string name="all_search">Search</string>
+    <string name="all_mail">Mail</string>
+    <string name="all_encrypt">Encrypt</string>
+    <string name="all_decrypt">Decrypt</string>
+    <string name="all_save">Save</string>
+    <string name="all_generate">Generate</string>
+    <string name="all_public_key">Public key</string>
+    <string name="all_private_key">Private key</string>
+    <string name="all_compose">Compose</string>
+    <string name="all_to">To</string>
+    <string name="all_cc">CC</string>
+    <string name="all_subject">Subject</string>
+    <string name="all_cancel">Cancel</string>
+    <string name="all_ok">Ok</string>
+    <string name="all_sign">Sign</string>
+    <string name="all_contacts">Contacts</string>
+
+    <string name="all_email_is_empty">Email is empty</string>
+    <string name="all_email_is_incorrect">Email is incorrect</string>
+
+    <string name="mail_list_selected">Selected: %d</string>
+
+    <string name="mail_hide_details">Hide details</string>
+    <string name="mail_blocked_picture">Pictures in this message have been blocked for your safety.</string>
+    <string name="mail_show_picture">Show pictures</string>
+    <string name="mail_always_show_picture">Always show pictures</string>
+    <string name="mail_no_subject">No subject</string>
+    <string name="all_me">me</string>
+
+
+    <string name="encrypt_dialog_title">Open PGP Sign/Encrypt</string>
+    <string name="encrypt_dialog_title_decrypt">Open PGP Decrypt</string>
+    <string name="encrypt_dialog_sign_encrypt">Sign/encrypt</string>
+
+    <string name="encrypt_error_not_found_key">Can\'t find public key for email: %s </string>
+    <string name="encrypt_error_null_message">Message is null</string>
+    <string name="encrypt_error_empty_message">Empty message</string>
+    <string name="encrypt_error_empty_receiver">Select recipient before encrypt</string>
+
+    <string name="decrypt_error_common">Can\'t decrypt message</string>
+
+    <string-array name="request_server_error">
+        <item>Server error</item>
+        <item>Failed server connection</item>
+        <item>Request error</item>
+        <item>Server timeout</item>
+        <item>Db error</item>
+        <item>Unknown error</item>
+    </string-array>
+
+
+
+    <string name="request_error_code">Error code</string>
+    <string name="request_connection">Connection</string>
+    <string name="dialog_input_title">Input email</string>
+    <string name="dialog_not_valid_email">Email not valid</string>
+
+
+    <string name="settings_time_format">Time format</string>
+
+    <string name="all_inbox">Inbox</string>
+    <string name="all_starred">Starred</string>
+    <string name="all_sent">Sent</string>
+    <string name="all_send">Send</string>
+    <string name="all_draft">Draft</string>
+    <string name="all_download">Download</string>
+    <string name="all_delete">Delete</string>
+    <string name="all_spam">Spam</string>
+    <string name="all_trash">Trash</string>
+    <string name="all_folder">Folder</string>
+    <string name="all_subfolder">Subfolder</string>
+
+
+    <string name="test_user_name">Vasil Sokolov</string>
+    <string name="test_user_mail">vasil@afterlogic.com</string>
+
+
+    <string name="message_on_wrote">On %s %s wrote</string>
+
+    <string name="attachment_download_loaded">Download attachment successful</string>
+    <string name="attachment_download_failed">Download attachment failed</string>
+    <string name="all_gb">GB</string>
+    <string name="all_mb">MB</string>
+    <string name="all_kb">KB</string>
+    <string name="all_b">B</string>
+
+    <string name="settings_common">Common</string>
+    <string name="settings_sync">Sync</string>
+    <string name="settings_openpgp">OpenPGP</string>
+    <string name="settings_all_public_keys">All public keys</string>
+    <string name="settings_public_key">Public key</string>
+    <string name="settings_private_key">Private key</string>
+    <string name="settings_public_keys">Public keys</string>
+    <string name="settings_private_keys">Private keys</string>
+    <string name="settings_import_keys_text">Import keys from text</string>
+    <string name="settings_import_keys_file">Import keys from file</string>
+    <string name="settings_generate_keys">Generate keys</string>
+    <string name="settings_export_complete">Export complete</string>
+    <string name="settings_export_all_public_keys">Export all public keys</string>
+
+    <string name="settings_select_key_file">Select a key file</string>
+    <string name="settings_key_file_not_valid">Key file not valid</string>
+
+    <string name="import_dialog_title">Import keys</string>
+    <string name="import_dialog_sub_title">Keys which are already in the system are greyed out.</string>
+    <string name="all_close">Close</string>
+    <string name="import_dialog_check_keys">Check keys</string>
+    <string name="import_dialog_strength">(%d-bit, %s)</string>
+    <string name="import_dialog_import_selected_keys">Import selected keys</string>
+    <string name="all_unknown">Unknown</string>
+
+
+    <string name="generate_dialog_title">Generate keys</string>
+    <string name="generate_dialog_have_key">Already have keys for this email</string>
+    <string name="settings_confirm_dialog">Confirm remove key</string>
+
+    <string name="settings_sync_frequency">Sync frequency</string>
+    <string name="settings_sync_period">Sync period</string>
+
+
+    <string name="export_key_send_all">Send all</string>
+    <string name="export_key_download_all">Download all</string>
+
+    <string name="compose_upload_failed">Upload failed</string>
+    <string name="compose_select_recipient">Select recipients</string>
+    <string name="contacts_empty_email">One of contacts have empty email</string>
+
+    <string-array name="settings_sync_frequency_values">
+        <item>never</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>daily</item>
+        <item>monthly</item>
+    </string-array>
+
+
+    <string-array name="settings_sync_period_values">
+        <item>all time</item>
+        <item>1 month</item>
+        <item>3 months</item>
+        <item>6 months</item>
+        <item>1 уear</item>
+    </string-array>
+
+    <string name="all_phone">Phone</string>
+    <string name="all_address">Address</string>
+    <string name="all_skype">Skype</string>
+    <string name="all_facebook">Facebook</string>
+    <string name="all_first_name">First name</string>
+    <string name="all_last_name">Last name</string>
+    <string name="all_nickname">Nickname</string>
+
+    <string name="contacts_home">Home</string>
+    <string name="contacts_display_name">Display name</string>
+    <string name="contacts_hide_additional_fields">Hide additional fields</string>
+    <string name="contacts_show_additional_fields">Show additional fields</string>
+    <string name="contacts_personal_e_mail">Personal E-mail</string>
+    <string name="contacts_street_address">Street address</string>
+    <string name="contacts_city">City</string>
+    <string name="contacts_state_province">State/Province</string>
+    <string name="contacts_zip_code">Zip Code</string>
+    <string name="contacts_country_region">Country/Region</string>
+    <string name="contacts_web_page">Web Page</string>
+    <string name="contacts_fax">Fax</string>
+    <string name="contacts_mobile">Mobile</string>
+    <string name="contacts_business">Business</string>
+    <string name="contacts_business_e_mail">Business E-mail</string>
+    <string name="contacts_company">Company</string>
+    <string name="contacts_department">Department</string>
+    <string name="contacts_job_title">Job Title</string>
+    <string name="contacts_office">Office</string>
+    <string name="contacts_other">Other</string>
+    <string name="contacts_birthday">Birthday</string>
+    <string name="contacts_other_e_mail">Other E-mail</string>
+    <string name="contacts_notes">Notes</string>
+
+</resources>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_encrypt_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_large"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingBottom="@dimen/padding_all_element_large"
+        android:text="@string/encrypt_dialog_title"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/size_title_text_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/cb_encrypt_dialog_sign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:paddingStart="@dimen/padding_dialog_sign_start"
+        android:paddingTop="@dimen/padding_all_element_medium"
+        android:paddingEnd="@dimen/padding_dialog_sign_end"
+        android:paddingBottom="@dimen/padding_all_element_medium"
+        android:text="@string/all_sign"
+        android:theme="@style/AccentColorDialogElements"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_encrypt_dialog_title" />
+
+    <View
+        android:id="@+id/cv_sign_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/padding_dialog_sign_start"
+        android:layout_marginEnd="@dimen/padding_dialog_sign_end"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cb_encrypt_dialog_sign" />
+
+    <CheckBox
+        android:id="@+id/cb_encrypt_dialog_encrypt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AccentColorDialogElements"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:paddingStart="@dimen/padding_dialog_sign_start"
+        android:paddingTop="@dimen/padding_all_element_medium"
+        android:paddingEnd="@dimen/padding_dialog_sign_end"
+        android:paddingBottom="@dimen/padding_all_element_medium"
+        android:text="@string/all_encrypt"
+        android:checked="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_sign_divider" />
+
+    <View
+        android:id="@+id/cv_encrypt_divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/padding_dialog_sign_start"
+        android:layout_marginEnd="@dimen/padding_dialog_sign_end"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cb_encrypt_dialog_encrypt" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AccentColorDialogElements"
+        android:paddingStart="@dimen/padding_dialog_sign_start"
+        android:paddingTop="@dimen/padding_all_element_medium"
+        android:paddingEnd="@dimen/padding_dialog_sign_end"
+        app:layout_constraintBottom_toTopOf="@id/ll_encrypt_dialog_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_encrypt_divider"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorAccent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_encrypt_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"
+            android:textColorHint="@color/colorAccent"
+            android:text=""
+            android:hint="@string/all_password"
+            android:inputType="textPassword" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_encrypt_dialog_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/padding_dialog_sign_start"
+        android:paddingTop="@dimen/padding_dialog_sign_start"
+        android:paddingEnd="@dimen/padding_dialog_sign_end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/bt_decrypt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="@string/all_decrypt"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/bt_encrypt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="@string/encrypt_dialog_sign_encrypt"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/bt_encrypt_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="@string/all_cancel"
+            android:textColor="@color/colorPrimaryDark" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

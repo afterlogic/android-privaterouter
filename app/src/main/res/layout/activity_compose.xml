@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ll_recipients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginEnd="@dimen/margin_all_element_medium"
+                android:clickable="true"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_compose_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="4dp"
+                    android:text="@string/all_to" />
+
+                <org.apmem.tools.layouts.FlowLayout
+                    android:id="@+id/fwl_recipients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_all_element_medium"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_email_to"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="@dimen/size_text_small" />
+                </org.apmem.tools.layouts.FlowLayout>
+
+                <ImageButton
+                    android:id="@+id/ib_add_recipients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_plus_transp" />
+
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/cv_recipients_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_recipients" />
+
+            <LinearLayout
+                android:id="@+id/ll_cc_recipients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginEnd="@dimen/margin_all_element_medium"
+                android:clickable="true"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_recipients_divider">
+
+                <TextView
+                    android:id="@+id/tv_compose_cc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="4dp"
+                    android:text="@string/all_cc" />
+
+                <org.apmem.tools.layouts.FlowLayout
+                    android:id="@+id/fwl_cc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_all_element_medium"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_email_cc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="@dimen/size_text_small" />
+
+                </org.apmem.tools.layouts.FlowLayout>
+
+                <ImageButton
+                    android:id="@+id/ib_add_cc_recipients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_plus_transp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/cv_cc_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_cc_recipients" />
+
+            <TextView
+                android:id="@+id/tv_compose_subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_all_element_medium"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:paddingStart="@dimen/padding_all_element_small"
+                android:text="@string/all_subject"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_cc_divider" />
+
+            <EditText
+                android:id="@+id/et_compose_subject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_all_element_small"
+                android:layout_marginRight="@dimen/margin_all_element_medium"
+                android:background="@null"
+                android:ellipsize="end"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_compose_subject"
+                app:layout_constraintLeft_toRightOf="@+id/tv_compose_subject"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_compose_subject" />
+
+            <View
+                android:id="@+id/cv_message_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginTop="@dimen/margin_all_element_large"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_compose_subject" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_attachments_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginTop="@dimen/margin_all_element_large"
+                android:layout_marginEnd="@dimen/margin_all_element_medium"
+                app:layout_constraintTop_toBottomOf="@id/cv_message_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layoutManager="LinearLayoutManager" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading_attachments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/rv_attachments_list"
+                />
+
+            <View
+                android:id="@+id/cv_attachments_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginTop="@dimen/margin_all_element_medium"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pb_loading_attachments" />
+
+
+
+            <EditText
+                android:id="@+id/et_compose_message_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_all_element_medium"
+                android:background="@null"
+                android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_attachments_divider" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nv_bottom_compose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/nav_menu_mail_list" />
+
+</LinearLayout>

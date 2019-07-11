@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_background"
+    android:layout_width="match_parent"
+    android:layout_height="76dp"
+    android:background="?attr/selectableItemBackground"
+    android:paddingRight="@dimen/padding_all_element_medium"
+    android:paddingTop="@dimen/padding_all_element_medium"
+    android:paddingBottom="@dimen/padding_all_element_medium"
+    >
+
+    <TextView
+        android:id="@+id/tv_mail_messageSender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Sender7238957934759843 589346 58934958 34985 7438975 984375 9834759 345 4"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/size_subtitle_text_medium"
+        android:paddingLeft="@dimen/padding_all_element_medium"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/iv_mail_attachments"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_threads_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingLeft="@dimen/padding_all_element_medium"
+        android:paddingTop="@dimen/padding_all_element_large"
+        android:paddingBottom="@dimen/padding_all_element_large"
+        android:src="@drawable/ic_filter_none_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/tv_mail_messageSender"
+        app:layout_constraintTop_toBottomOf="@id/tv_mail_messageSender" />
+
+    <TextView
+        android:id="@+id/tv_mail_messageSubject"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_medium"
+        android:layout_marginBottom="@dimen/margin_all_element_medium"
+        android:layout_marginLeft="@dimen/margin_all_element_medium"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/iv_threads_icon"
+        app:layout_constraintRight_toLeftOf="@+id/iv_mail_replied"
+        app:layout_constraintTop_toBottomOf="@id/tv_mail_messageSender" />
+
+    <ImageView
+        android:id="@+id/iv_mail_attachments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_all_element_small"
+        android:background="@drawable/ic_clip_horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/tv_mail_messageDate"
+        app:layout_constraintEnd_toStartOf="@id/tv_mail_messageDate"
+        app:layout_constraintTop_toTopOf="@id/tv_mail_messageDate" />
+
+    <TextView
+        android:id="@+id/tv_mail_messageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="yesterday"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@id/cb_selected"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_mail_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_medium"
+        android:layout_marginBottom="@dimen/margin_all_element_medium"
+        android:background="@drawable/ic_star_orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cb_selected"
+        app:layout_constraintTop_toBottomOf="@id/tv_mail_messageDate" />
+
+    <ImageView
+        android:id="@+id/iv_mail_forwarded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_medium"
+        android:layout_marginBottom="@dimen/margin_all_element_medium"
+        android:background="@drawable/ic_action_forward"
+        app:layout_constraintBottom_toBottomOf="@id/iv_mail_star"
+        app:layout_constraintEnd_toStartOf="@id/iv_mail_star"
+        app:layout_constraintTop_toTopOf="@id/iv_mail_star" />
+
+    <ImageView
+        android:id="@+id/iv_mail_replied"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_all_element_medium"
+        android:layout_marginBottom="@dimen/margin_all_element_medium"
+        android:background="@drawable/ic_action_reply"
+        app:layout_constraintBottom_toBottomOf="@id/iv_mail_star"
+        app:layout_constraintEnd_toStartOf="@id/iv_mail_forwarded"
+        app:layout_constraintTop_toTopOf="@id/iv_mail_star" />
+
+    <CheckBox
+        android:id="@+id/cb_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/vw_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/vw_line"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/se_actionBar_search"
+        android:icon="@drawable/ic_zoom_white"
+        android:title="@string/all_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/item_menu_spam"
+        android:icon="@drawable/ic_action_spam"
+        android:title=""
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/item_menu_back_from_spam"
+        android:icon="@drawable/ic_action_unspam"
+        android:title=""
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/item_menu_recyclebin"
+        android:icon="@drawable/ic_action_delete"
+        android:title=""
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_contacts"
+        android:orderInCategory="100"
+        android:title="@string/all_contacts"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/all_settings"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="@string/all_logout"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never" />
+</menu>
