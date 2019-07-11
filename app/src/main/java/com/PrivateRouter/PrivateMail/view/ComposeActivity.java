@@ -23,7 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
+import com.PrivateRouter.PrivateMail.dbase.MessageDao;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
 import com.PrivateRouter.PrivateMail.model.AttachmentCollection;
@@ -31,7 +33,9 @@ import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.Message;
+import com.PrivateRouter.PrivateMail.network.requests.CalSetMessagesSeen;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.network.requests.CallSaveMessage;
 import com.PrivateRouter.PrivateMail.network.requests.CallSendMessage;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallUploadMessage;
@@ -236,7 +240,23 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void saveMessage() {
+        RequestViewUtils.showRequest(this);
+        updateMessage();
+        CallSaveMessage callSaveMessage = new CallSaveMessage(new CallRequestResult() {
+            @Override
+            public void onSuccess(Object result) {
+                RequestViewUtils.hideRequest();
+                finish();
+            }
 
+            @Override
+            public void onFail(ErrorType errorType, int serverCode) {
+                RequestViewUtils.hideRequest();
+                RequestViewUtils.showError(ComposeActivity.this, errorType, serverCode);
+            }
+        });
+        callSaveMessage.setMessage(this, message);
+        callSaveMessage.start();
     }
 
 

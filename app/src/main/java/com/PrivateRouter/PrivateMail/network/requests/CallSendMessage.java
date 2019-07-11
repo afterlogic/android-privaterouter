@@ -32,10 +32,12 @@ import retrofit2.Response;
 
 public class CallSendMessage  extends CallRequest<BaseResponse>  implements Callback<BaseResponse> {
     SendMessageParameter parameters = new SendMessageParameter();
+    protected String method = ApiMethods.SEND_MESSAGE;
 
     public CallSendMessage(CallRequestResult callback){
         super(callback);
     }
+
 
     public void setMessage(Context context, Message message) {
         parameters.fromMessage(context, message);
@@ -54,7 +56,7 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
                 .registerTypeAdapter(AttachmentObj.class, new AttachmentsSerializer()).create();
         String json = gson.toJson(parameters);
 
-        Call<BaseResponse> call= ApiFactory.getService().sendMessage(ApiModules.MAIL, ApiMethods.SEND_MESSAGE, json );
+        Call<BaseResponse> call= ApiFactory.getService().sendMessage(ApiModules.MAIL, method, json );
         call.enqueue(this);
     }
 
