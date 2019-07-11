@@ -29,6 +29,7 @@
     <string name="all_compose">Compose</string>
     <string name="all_to">To</string>
     <string name="all_cc">CC</string>
+    <string name="all_bcc">BCC</string>
     <string name="all_subject">Subject</string>
     <string name="all_cancel">Cancel</string>
     <string name="all_ok">Ok</string>
@@ -196,5 +197,6 @@
     <string name="contacts_birthday">Birthday</string>
     <string name="contacts_other_e_mail">Other E-mail</string>
     <string name="contacts_notes">Notes</string>
+    <string name="all_attach">Attach</string>
 
 </resources>

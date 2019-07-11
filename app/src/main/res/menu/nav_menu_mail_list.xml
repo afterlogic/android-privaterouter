@@ -7,7 +7,7 @@
         />
     <item
         android:id="@+id/nav_menu_attachments"
-        android:title=""
+        android:title="@string/all_attach"
         android:icon="@drawable/ic_clip_vertical"
         />
 </menu>

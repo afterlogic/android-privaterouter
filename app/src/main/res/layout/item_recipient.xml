@@ -23,6 +23,7 @@
         android:paddingBottom="@dimen/padding_all_element_small"
         android:singleLine="true"
         android:text="testUserName"
+        android:textSize="@dimen/size_text_medium"
         android:textColor="@android:color/black" />
 
     <ImageButton

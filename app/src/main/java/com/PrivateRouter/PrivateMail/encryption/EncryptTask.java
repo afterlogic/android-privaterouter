@@ -167,6 +167,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
 

@@ -296,7 +296,7 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
         this.message = message;
         bind();
 
-     
+
         updateBottomMenu();
     }
 

@@ -43,6 +43,7 @@ import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
+import com.PrivateRouter.PrivateMail.view.utils.SoftKeyboard;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
 import org.apmem.tools.layouts.FlowLayout;
@@ -67,17 +68,31 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     @BindView(R.id.fwl_cc)
     FlowLayout fwlCc;
 
+    @BindView(R.id.fwl_bcc)
+    FlowLayout fwlBcc;
+
+    @BindView(R.id.cv_bcc_divider)
+    View cvBccDivider;
+
+
+
     @BindView(R.id.ll_recipients)
     LinearLayout llRecipients;
 
     @BindView(R.id.ll_cc_recipients)
     LinearLayout llCcRecipients;
 
+    @BindView(R.id.ll_bcc_recipients)
+    LinearLayout llBccRecipients;
+
     @BindView(R.id.ib_add_recipients)
     ImageButton ibAddRecipients;
 
     @BindView(R.id.ib_add_cc_recipients)
     ImageButton ibAddCcRecipients;
+
+    @BindView(R.id.ib_add_bcc_recipients)
+    ImageButton ibAddBccRecipients;
 
     @BindView(R.id.nv_bottom_compose)
     BottomNavigationView nvBottomCompose;
@@ -104,6 +119,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     @BindView(R.id.et_email_cc)
     EditText etEmailCc;
 
+    @BindView(R.id.et_email_bcc)
+    EditText etEmailBcc;
+
     private Menu menu;
     private LayoutInflater layoutInflater;
 
@@ -124,13 +142,15 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         setContentView(R.layout.activity_compose);
         ButterKnife.bind(this);
 
-        intiUI();
-
 
         initMessage();
         prepareMessage();
 
         updateBottomMenuTitle();
+
+
+        intiUI();
+
 
         bind();
 
@@ -142,29 +162,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         nvBottomCompose.setOnNavigationItemSelectedListener(this);
         addFieldsFocusReaction();
-
-
-        etEmailTo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int  actionId, KeyEvent keyEvent) {
-                if (true//actionId == EditorInfo.IME_NULL  &&keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                ) {
-                    createEmailFromText(etEmailTo, message.getTo(), ComposeActivity.this::updateToList);
-                }
-                return true;
-            }
-        });
-
-
-        etEmailCc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int  actionId, KeyEvent keyEvent) {
-                if (true ) {
-                    createEmailFromText(etEmailCc, message.getCc(), ComposeActivity.this::updateCcToList);
-                }
-                return true;
-            }
-        });
 
 
     }
@@ -206,6 +203,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         if (message.getCc()==null) {
             message.setCc(new EmailCollection());
         }
+        if (message.getBcc()==null) {
+            message.setBcc(new EmailCollection());
+        }
     }
 
 
@@ -227,11 +227,16 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             finish();
         } else if (id == R.id.item_menu_send) {
             sendMessage();
-        } else if (id == R.id.action_compose_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+        } else if (id == R.id.item_menu_save) {
+            saveMessage();
         }
+
+
         return true;
+    }
+
+    private void saveMessage() {
+
     }
 
 
@@ -262,46 +267,67 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     }
 
+    private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable) {
+        ib.setVisibility(View.INVISIBLE);
+        et.setVisibility(View.INVISIBLE);
+        et.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
+                createEmailFromText(et, emailCollection, updateRunnable);
+            }
+        });
+
+        ll.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                ib.setVisibility(View.VISIBLE);
+                et.setVisibility(View.VISIBLE);
+                et.requestFocus();
+                SoftKeyboard.showKeyboard(this);
+            } else if (!et.hasFocus()) {
+                ib.setVisibility(View.INVISIBLE);
+                et.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        et.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                et.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+        et.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (true) {
+                createEmailFromText(et, emailCollection, updateRunnable);
+            }
+            return true;
+        });
+    }
     private void addFieldsFocusReaction() {
-        ibAddRecipients.setVisibility(View.INVISIBLE);
-        ibAddCcRecipients.setVisibility(View.INVISIBLE);
+        addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList);
+        addFieldsFocusReaction ( llCcRecipients,    ibAddCcRecipients,  etEmailCc,  message.getCc(),    ComposeActivity.this::updateCcToList);
+        addFieldsFocusReaction ( llBccRecipients,   ibAddBccRecipients, etEmailBcc, message.getBcc(),   ComposeActivity.this::updateBccToList);
+    }
+    private  void clearFieldsFocusReaction() {
+
         etEmailTo.setVisibility(View.INVISIBLE);
         etEmailCc.setVisibility(View.INVISIBLE);
+        etEmailBcc.setVisibility(View.INVISIBLE);
+        ibAddRecipients.setVisibility(View.INVISIBLE);
+        ibAddCcRecipients.setVisibility(View.INVISIBLE);
+        ibAddBccRecipients.setVisibility(View.INVISIBLE);
 
-        etEmailTo.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
-                createEmailFromText(etEmailTo, message.getTo(), ComposeActivity.this::updateToList);
-            }
-        });
-
-        etEmailCc.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
-                createEmailFromText(etEmailCc, message.getCc(), ComposeActivity.this::updateCcToList);
-            }
-        });
-
-
-        llRecipients.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                ibAddRecipients.setVisibility(View.VISIBLE);
-                etEmailTo.setVisibility(View.VISIBLE);
-            } else if (!etEmailTo.hasFocus()) {
-                ibAddRecipients.setVisibility(View.INVISIBLE);
-                etEmailTo.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        llCcRecipients.setOnFocusChangeListener((v, hasFocus) -> {
-            if(hasFocus){
-                ibAddCcRecipients.setVisibility(View.VISIBLE);
-                etEmailCc.setVisibility(View.VISIBLE);
-            } else if (!etEmailCc.hasFocus()) {
-                ibAddCcRecipients.setVisibility(View.INVISIBLE);
-                etEmailCc.setVisibility(View.INVISIBLE);
-            }
-        });
-
+        llRecipients.setOnFocusChangeListener(null);
+        llCcRecipients.setOnFocusChangeListener(null);
+        llBccRecipients.setOnFocusChangeListener(null);
     }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.tv_compose_cc)
+    public void onLabelCCClick() {
+        llBccRecipients.setVisibility(View.VISIBLE);
+        cvBccDivider.setVisibility(View.VISIBLE);
+    }
+
 
     @SuppressWarnings("unused")
     @OnClick(R.id.ib_add_recipients)
@@ -329,6 +355,18 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             @Override
             public void run() {
                 updateCcToList();
+            }
+        });
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.ib_add_bcc_recipients)
+    public void btAddBccRecipients() {
+
+        openInputDialog(message.getBcc(), new Runnable() {
+            @Override
+            public void run() {
+                updateBccToList();
             }
         });
     }
@@ -413,6 +451,14 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             updateEmailList(emailCcToCollection.getEmails(), fwlCc, this::updateCcToList);
         }
     }
+
+    private void updateBccToList() {
+        EmailCollection emailCcToCollection = message.getBcc();
+        if (emailCcToCollection!=null) {
+            updateEmailList(emailCcToCollection.getEmails(), fwlBcc, this::updateBccToList);
+        }
+    }
+
 
     private void updateEmailList(ArrayList<Email> emails, ViewGroup layout, Runnable onRemoveRunnable) {
 
@@ -528,9 +574,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         bind();
 
         if (encrypt) {
-            etComposeText.setEnabled(false);
-            llRecipients.setEnabled(false);
-            llCcRecipients.setEnabled(false);
+            setFieldsEnable(false);
+            clearFieldsFocusReaction();
         }
 
         if (sign) {
@@ -541,6 +586,26 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         updateBottomMenuTitle();
     }
 
+    private void setFieldsEnable(boolean enable) {
+        etComposeText.setEnabled(enable);
+        setRecursivelyEnable(llRecipients, enable);
+        setRecursivelyEnable(llCcRecipients, enable);
+        setRecursivelyEnable(llBccRecipients, enable);
+    }
+
+
+
+    private void setRecursivelyEnable(View view, boolean status ) {
+        view.setEnabled(status);
+        if (view instanceof  ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i<viewGroup.getChildCount(); i++) {
+                View childView = viewGroup.getChildAt(i);
+                setRecursivelyEnable(childView, status);
+            }
+
+        }
+    }
     @Override
     public void onFail(String description) {
         new AlertDialog.Builder(this)
@@ -557,9 +622,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         this.message = message;
         bind();
 
-        llRecipients.setEnabled(true);
-        llCcRecipients.setEnabled(true);
-        etComposeText.setEnabled(true);
+        addFieldsFocusReaction();
+        setFieldsEnable(true);
+
         updateBottomMenuTitle();
     }
 
@@ -567,9 +632,11 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         MenuItem menuItem = nvBottomCompose.getMenu().findItem(R.id.nav_menu_encrypt);
         if (MessageUtils.isEncrypted(message)) {
+            menuItem.setIcon(R.drawable.ic_lock_open);
             menuItem.setTitle(R.string.all_decrypt);
         }
         else {
+            menuItem.setIcon(R.drawable.ic_lock_outline);
             menuItem.setTitle(R.string.all_encrypt);
         }
     }
