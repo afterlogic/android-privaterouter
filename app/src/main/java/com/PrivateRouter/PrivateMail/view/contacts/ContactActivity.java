@@ -238,28 +238,29 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             return;
 
 
+        MenuItem attachItem = menu.findItem(R.id.item_menu_attach);
         MenuItem sendItem = menu.findItem(R.id.item_menu_send);
-        MenuItem toRecycleItem = menu.findItem(R.id.item_menu_recyclebin);
-        MenuItem chooseItem = menu.findItem(R.id.item_menu_choose);
+        MenuItem searchItem = menu.findItem(R.id.item_menu_search);
+        MenuItem editItem = menu.findItem(R.id.item_menu_edit);
+        MenuItem saveItem = menu.findItem(R.id.item_menu_save);
+        MenuItem mailItem = menu.findItem(R.id.action_mail);
+        MenuItem contactsItem = menu.findItem(R.id.action_contacts);
+        MenuItem settingsItem = menu.findItem(R.id.action_settings);
+        MenuItem logoutItem = menu.findItem(R.id.action_logout);
 
+        if (modeEnum.equals(Mode.VIEW)) {
+            attachItem.setVisible(true);
+            sendItem.setVisible(true);
+            searchItem.setVisible(true);
+            editItem.setVisible(true);
+            saveItem.setVisible(false);
 
-        sendItem.setVisible(false);
-        toRecycleItem.setVisible(false);
-
-        if (modeEnum.equals(Mode.CREATE)) {
-            chooseItem.setVisible(true);
-        } else {
-            chooseItem.setVisible(false);
-
-//            if (contactsListModeMediator.isSelectionMode()) {
-//                searchItem.setVisible(false);
-//
-//                sendItem.setVisible(true);
-//                toRecycleItem.setVisible(true);
-//
-//            } else {
-//                searchItem.setVisible(true);
-//            }
+        } else if(modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)){
+            attachItem.setVisible(false);
+            sendItem.setVisible(false);
+            searchItem.setVisible(false);
+            editItem.setVisible(false);
+            saveItem.setVisible(true);
         }
     }
 
