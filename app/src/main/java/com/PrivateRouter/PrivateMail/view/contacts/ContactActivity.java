@@ -44,6 +44,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private ContactSettings contactSettings;
     private Menu menu;
     private Enum<Mode> modeEnum;
+    private Contact contact;
     public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
@@ -200,14 +201,15 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        contact = null;
         if (getIntent() != null) {
             Intent intent = getIntent();
             modeEnum = (Enum<Mode>) intent.getExtras().get("mode");
             if (modeEnum.equals(Mode.EDIT) && intent.getExtras().get("contact") != null) {
-                Contact contact = (Contact) intent.getExtras().get("contact");
+                contact = (Contact) intent.getExtras().get("contact");
                 initEditMode(contact);
             } else if (modeEnum.equals(Mode.VIEW) && intent.getExtras().get("contact") != null) {
-                Contact contact = (Contact) intent.getExtras().get("contact");
+                contact = (Contact) intent.getExtras().get("contact");
                 initViewMode(contact);
             } else {
                 initCreateMode();
@@ -282,11 +284,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         } else if (id == R.id.item_menu_search) {
 
         } else if (id == R.id.item_menu_edit) {
-
+            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
+            startActivity(intent);
         } else if (id == R.id.item_menu_save) {
-
+            //saveContact();
         } else if (id == R.id.action_mail) {
-
+//            Intent intent = new Intent(ContactActivity.this, MailListActivity.class);
+//            startActivity(intent);
         } else if (id == R.id.action_contacts) {
             Intent intent = ContactsActivity.makeIntent(this, false);
             startActivityForResult(intent, OPEN_CONTACT);
