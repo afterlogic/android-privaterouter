@@ -24,7 +24,12 @@ import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
+import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
+import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
+import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import java.util.List;
@@ -39,6 +44,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private ContactSettings contactSettings;
     private Menu menu;
     private Enum<Mode> modeEnum;
+    public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
     @BindView(R.id.toolbar)
@@ -213,6 +219,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contact_menu, menu);
 
@@ -220,14 +232,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        toolbar.setNavigationOnClickListener(v -> {
-//            if(chooseMode){
-//                finish();
-//            }
-//            if (contactsListModeMediator.isSelectionMode())
-//                contactsListModeMediator.closeSelectionMode();
-//            //TO do for groups
-//        });
+        toolbar.setNavigationOnClickListener(v -> {
+            if (modeEnum.equals(Mode.VIEW)) {
+                finish();
+            }
+            if (modeEnum.equals(Mode.CREATE) || modeEnum.equals(Mode.EDIT))
+                finish();
+        });
 
         updateMenu();
         return super.onCreateOptionsMenu(menu);
@@ -243,10 +254,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         MenuItem searchItem = menu.findItem(R.id.item_menu_search);
         MenuItem editItem = menu.findItem(R.id.item_menu_edit);
         MenuItem saveItem = menu.findItem(R.id.item_menu_save);
-        MenuItem mailItem = menu.findItem(R.id.action_mail);
-        MenuItem contactsItem = menu.findItem(R.id.action_contacts);
-        MenuItem settingsItem = menu.findItem(R.id.action_settings);
-        MenuItem logoutItem = menu.findItem(R.id.action_logout);
 
         if (modeEnum.equals(Mode.VIEW)) {
             attachItem.setVisible(true);
@@ -255,7 +262,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             editItem.setVisible(true);
             saveItem.setVisible(false);
 
-        } else if(modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)){
+        } else if (modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)) {
             attachItem.setVisible(false);
             sendItem.setVisible(false);
             searchItem.setVisible(false);
@@ -264,9 +271,41 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.item_menu_attach) {
+
+        } else if (id == R.id.item_menu_send) {
+
+        } else if (id == R.id.item_menu_search) {
+
+        } else if (id == R.id.item_menu_edit) {
+
+        } else if (id == R.id.item_menu_save) {
+
+        } else if (id == R.id.action_mail) {
+
+        } else if (id == R.id.action_contacts) {
+            Intent intent = ContactsActivity.makeIntent(this, false);
+            startActivityForResult(intent, OPEN_CONTACT);
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_logout) {
+            logout();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initEditMode(Contact contact) {
         Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
+
     }
 
     private void initViewMode(Contact contact) {
@@ -278,6 +317,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void initCreateMode() {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
     }
 
@@ -350,8 +390,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         spAddress.setAdapter(adapter);
     }
 
-    private void blockFieldsInput(){
-        for(EditText et : etList){
+    private void blockFieldsInput() {
+        for (EditText et : etList) {
             et.setFocusable(false);
             et.setEnabled(false);
             et.setCursorVisible(false);
@@ -360,13 +400,39 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
-    private void blockSpinnersSelect(){
-        for(Spinner sp : spList){
+    private void blockSpinnersSelect() {
+        for (Spinner sp : spList) {
             sp.setEnabled(false); //textcolor is problem
             sp.setClickable(false);
         }
     }
 
+    private void logout() {
+        LoggedUserRepository.getInstance().logout(this);
+
+        RequestViewUtils.showRequest(this);
+        CallLogout callLogout = new CallLogout(new CallRequestResult() {
+            @Override
+            public void onSuccess(Object result) {
+                RequestViewUtils.hideRequest();
+                openLoginScreen();
+                finish();
+            }
+
+            @Override
+            public void onFail(ErrorType errorCode, int serverCode) {
+                RequestViewUtils.hideRequest();
+                RequestViewUtils.showError(ContactActivity.this, errorCode, serverCode);
+            }
+        });
+        callLogout.start();
+
+    }
+
+    private void openLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 
 
     @OnClick(R.id.tv_additional_fields)
