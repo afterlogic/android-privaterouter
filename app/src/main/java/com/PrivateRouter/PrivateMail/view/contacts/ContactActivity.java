@@ -23,15 +23,20 @@ import android.widget.Toast;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
+import com.PrivateRouter.PrivateMail.model.Email;
+import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -289,8 +294,16 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         } else if (id == R.id.item_menu_save) {
             //saveContact();
         } else if (id == R.id.action_mail) {
-//            Intent intent = new Intent(ContactActivity.this, MailListActivity.class);
-//            startActivity(intent);
+            Message message = new Message();
+            Email email = new Email();
+            email.setEmail("1@1.ru"); //TODO Correct here!
+            EmailCollection emailCollection = new EmailCollection();
+            ArrayList<Email> emails = new ArrayList<Email>();
+            emails.add(email);
+            emailCollection.setEmails(emails);
+            message.setTo(emailCollection);
+            Intent intent = ComposeActivity.makeIntent(this, message);
+            startActivity(intent);
         } else if (id == R.id.action_contacts) {
             Intent intent = ContactsActivity.makeIntent(this, false);
             startActivityForResult(intent, OPEN_CONTACT);
