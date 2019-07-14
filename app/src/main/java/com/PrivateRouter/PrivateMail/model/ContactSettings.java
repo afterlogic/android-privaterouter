@@ -22,16 +22,12 @@ public class ContactSettings implements Serializable {
     private
     ArrayList<String> importExportFormats;
 
-    @SerializedName("\\Aurora\\Modules\\Contacts\\Enums\\PrimaryEmail")
     private ArrayList<NamedEnums> primaryEmail;
 
-    @SerializedName("\\Aurora\\Modules\\Contacts\\Enums\\PrimaryPhone")
     private ArrayList<NamedEnums> primaryPhone;
 
-    @SerializedName("\\Aurora\\Modules\\Contacts\\Enums\\PrimaryAddress")
     private ArrayList<NamedEnums> primaryAddress;
 
-    @SerializedName("\\Aurora\\Modules\\Contacts\\Enums\\SortField")
     private ArrayList<NamedEnums> softField;
 
     public int getContactsPerPage() {

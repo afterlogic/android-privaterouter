@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.PrivateRouter.PrivateMail.BuildConfig;
 import com.PrivateRouter.PrivateMail.model.Attachments;
+import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
 import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import com.google.gson.Gson;
@@ -57,6 +58,7 @@ public final class ApiFactory {
         return new GsonBuilder().registerTypeAdapter(MessageBase.class, new MessageBaseDeserializer() ).
                 registerTypeAdapter(GetFoldersMetaResponse.class, new GetFolderMetaDeserializer() ).
                 registerTypeAdapter(Attachments.class, new AttachmentsDeserializer() ).
+                registerTypeAdapter(ContactSettings.class, new ContactSettingsDeserializer() ).
                 create();
     }
 
