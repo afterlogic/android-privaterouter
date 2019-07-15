@@ -22,6 +22,14 @@ public class ContactSettings implements Serializable {
     private
     ArrayList<String> importExportFormats;
 
+    private ArrayList<NamedEnums> primaryEmail;
+
+    private ArrayList<NamedEnums> primaryPhone;
+
+    private ArrayList<NamedEnums> primaryAddress;
+
+    private ArrayList<NamedEnums> softField;
+
     public int getContactsPerPage() {
         return contactsPerPage;
     }
@@ -52,5 +60,37 @@ public class ContactSettings implements Serializable {
 
     public void setImportExportFormats(ArrayList<String> importExportFormats) {
         this.importExportFormats = importExportFormats;
+    }
+
+    public ArrayList<NamedEnums> getPrimaryEmail() {
+        return primaryEmail;
+    }
+
+    public void setPrimaryEmail(ArrayList<NamedEnums> primaryEmail) {
+        this.primaryEmail = primaryEmail;
+    }
+
+    public ArrayList<NamedEnums> getPrimaryPhone() {
+        return primaryPhone;
+    }
+
+    public void setPrimaryPhone(ArrayList<NamedEnums> primaryPhone) {
+        this.primaryPhone = primaryPhone;
+    }
+
+    public ArrayList<NamedEnums> getPrimaryAddress() {
+        return primaryAddress;
+    }
+
+    public void setPrimaryAddress(ArrayList<NamedEnums> primaryAddress) {
+        this.primaryAddress = primaryAddress;
+    }
+
+    public ArrayList<NamedEnums> getSoftField() {
+        return softField;
+    }
+
+    public void setSoftField(ArrayList<NamedEnums> softField) {
+        this.softField = softField;
     }
 }

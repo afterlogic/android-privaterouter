@@ -97,13 +97,13 @@ public class ContactSettingsRepository {
     public void getContactSettings(OnContactLoadCallback callback) {
         ContactSettings contactSettings = loadFromCache();
         if(contactSettings == null){
-            requestContact(callback);
+            requestContactSettings(callback);
         } else {
             callback.onContactsLoad(contactSettings);
         }
     }
 
-    private void requestContact(OnContactLoadCallback callback) {
+    private void requestContactSettings(OnContactLoadCallback callback) {
         CallGetSettings callGetSettings = new CallGetSettings(new CallRequestResult<ContactSettings>() {
             @Override
             public void onSuccess(ContactSettings result) {

@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +23,20 @@ import android.widget.Toast;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
+import com.PrivateRouter.PrivateMail.model.Email;
+import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
+import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
+import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
-import com.PrivateRouter.PrivateMail.view.folders_list.FoldersListActivity;
+import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,6 +49,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private ContactSettings contactSettings;
     private Menu menu;
     private Enum<Mode> modeEnum;
+    private Contact contact;
+    public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
     @BindView(R.id.toolbar)
@@ -197,14 +206,15 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        contact = null;
         if (getIntent() != null) {
             Intent intent = getIntent();
             modeEnum = (Enum<Mode>) intent.getExtras().get("mode");
             if (modeEnum.equals(Mode.EDIT) && intent.getExtras().get("contact") != null) {
-                Contact contact = (Contact) intent.getExtras().get("contact");
+                contact = (Contact) intent.getExtras().get("contact");
                 initEditMode(contact);
             } else if (modeEnum.equals(Mode.VIEW) && intent.getExtras().get("contact") != null) {
-                Contact contact = (Contact) intent.getExtras().get("contact");
+                contact = (Contact) intent.getExtras().get("contact");
                 initViewMode(contact);
             } else {
                 initCreateMode();
@@ -216,6 +226,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contact_menu, menu);
 
@@ -223,14 +239,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        toolbar.setNavigationOnClickListener(v -> {
-//            if(chooseMode){
-//                finish();
-//            }
-//            if (contactsListModeMediator.isSelectionMode())
-//                contactsListModeMediator.closeSelectionMode();
-//            //TO do for groups
-//        });
+        toolbar.setNavigationOnClickListener(v -> {
+            if (modeEnum.equals(Mode.VIEW)) {
+                finish();
+            }
+            if (modeEnum.equals(Mode.CREATE) || modeEnum.equals(Mode.EDIT))
+                finish();
+        });
 
         updateMenu();
         return super.onCreateOptionsMenu(menu);
@@ -241,34 +256,73 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             return;
 
 
+        MenuItem attachItem = menu.findItem(R.id.item_menu_attach);
         MenuItem sendItem = menu.findItem(R.id.item_menu_send);
-        MenuItem toRecycleItem = menu.findItem(R.id.item_menu_recyclebin);
-        MenuItem chooseItem = menu.findItem(R.id.item_menu_choose);
+        MenuItem searchItem = menu.findItem(R.id.item_menu_search);
+        MenuItem editItem = menu.findItem(R.id.item_menu_edit);
+        MenuItem saveItem = menu.findItem(R.id.item_menu_save);
 
+        if (modeEnum.equals(Mode.VIEW)) {
+            attachItem.setVisible(true);
+            sendItem.setVisible(true);
+            searchItem.setVisible(true);
+            editItem.setVisible(true);
+            saveItem.setVisible(false);
 
-        sendItem.setVisible(false);
-        toRecycleItem.setVisible(false);
-
-        if (modeEnum.equals(Mode.CREATE)) {
-            chooseItem.setVisible(true);
-        } else {
-            chooseItem.setVisible(false);
-
-//            if (contactsListModeMediator.isSelectionMode()) {
-//                searchItem.setVisible(false);
-//
-//                sendItem.setVisible(true);
-//                toRecycleItem.setVisible(true);
-//
-//            } else {
-//                searchItem.setVisible(true);
-//            }
+        } else if (modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)) {
+            attachItem.setVisible(false);
+            sendItem.setVisible(false);
+            searchItem.setVisible(false);
+            editItem.setVisible(false);
+            saveItem.setVisible(true);
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.item_menu_attach) {
+
+        } else if (id == R.id.item_menu_send) {
+
+        } else if (id == R.id.item_menu_search) {
+
+        } else if (id == R.id.item_menu_edit) {
+            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
+            startActivity(intent);
+        } else if (id == R.id.item_menu_save) {
+            //saveContact();
+        } else if (id == R.id.action_mail) {
+            Message message = new Message();
+            Email email = new Email();
+            email.setEmail("1@1.ru"); //TODO Correct here!
+            EmailCollection emailCollection = new EmailCollection();
+            ArrayList<Email> emails = new ArrayList<Email>();
+            emails.add(email);
+            emailCollection.setEmails(emails);
+            message.setTo(emailCollection);
+            Intent intent = ComposeActivity.makeIntent(this, message);
+            startActivity(intent);
+        } else if (id == R.id.action_contacts) {
+            Intent intent = ContactsActivity.makeIntent(this, false);
+            startActivityForResult(intent, OPEN_CONTACT);
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_logout) {
+            logout();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initEditMode(Contact contact) {
         Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
+
     }
 
     private void initViewMode(Contact contact) {
@@ -280,6 +334,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void initCreateMode() {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
     }
 
@@ -352,8 +407,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         spAddress.setAdapter(adapter);
     }
 
-    private void blockFieldsInput(){
-        for(EditText et : etList){
+    private void blockFieldsInput() {
+        for (EditText et : etList) {
             et.setFocusable(false);
             et.setEnabled(false);
             et.setCursorVisible(false);
@@ -362,13 +417,39 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
-    private void blockSpinnersSelect(){
-        for(Spinner sp : spList){
+    private void blockSpinnersSelect() {
+        for (Spinner sp : spList) {
             sp.setEnabled(false); //textcolor is problem
             sp.setClickable(false);
         }
     }
 
+    private void logout() {
+        LoggedUserRepository.getInstance().logout(this);
+
+        RequestViewUtils.showRequest(this);
+        CallLogout callLogout = new CallLogout(new CallRequestResult() {
+            @Override
+            public void onSuccess(Object result) {
+                RequestViewUtils.hideRequest();
+                openLoginScreen();
+                finish();
+            }
+
+            @Override
+            public void onFail(ErrorType errorCode, int serverCode) {
+                RequestViewUtils.hideRequest();
+                RequestViewUtils.showError(ContactActivity.this, errorCode, serverCode);
+            }
+        });
+        callLogout.start();
+
+    }
+
+    private void openLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 
 
     @OnClick(R.id.tv_additional_fields)
