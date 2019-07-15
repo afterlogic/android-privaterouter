@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
@@ -197,15 +196,25 @@ public class MailListActivity extends AppCompatActivity
 
     private void initList(String filter) {
 
-        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = "+filter );
+        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
+
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
         DataSource.Factory<Integer, Message> factory;
         if (TextUtils.isEmpty(filter))
             factory = database.messageDao().getAllFactory(currentFolder);
-        else
-            factory = database.messageDao().getAllFilterFactory(currentFolder, "%"+filter+"%");
+        else {
+            final String mailPrefix = "email:";
+            if (filter.startsWith(mailPrefix) && filter.length()>mailPrefix.length()) {
+                String value = filter.substring(mailPrefix.length()+1);
+                factory = database.messageDao().getAllFilterEmailFactory(currentFolder, "%" + value + "%");
+            }
+            else {
+                factory = database.messageDao().getAllFilterFactory(currentFolder, "%" + filter + "%");
+            }
+
+        }
 
 
         int messagePerMessage = 10;
@@ -231,7 +240,7 @@ public class MailListActivity extends AppCompatActivity
             if (!paused) {
 
                 mailListAdapter.submitList(messagePagedList);
-                checkShowMoreBar();
+                updateShowMoreBarVisible();
                 if (firstUpdate) {
                     requestMessages();
                     firstUpdate = false;
@@ -249,7 +258,7 @@ public class MailListActivity extends AppCompatActivity
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (!recyclerView.canScrollVertically(1) ) {
-                    checkShowMoreBar();
+                    updateShowMoreBarVisible();
 
                 }
             }
@@ -257,14 +266,17 @@ public class MailListActivity extends AppCompatActivity
     }
 
     private void hideShowMoreBar() {
-
+        mailListAdapter.setShowMoreBar(false);
+        mailListAdapter.notifyDataSetChanged();
     }
-    
-    private void checkShowMoreBar() {
+
+    private void updateShowMoreBarVisible() {
 
         int loadedCount = mailListAdapter.getItemMessageCount();
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         Folder folder = account.getFolders().getFolder(currentFolder);
+        if (folder==null)
+            return;
         int totalCount = folder.getMeta().getCount();
 
         if (loadedCount < totalCount) {

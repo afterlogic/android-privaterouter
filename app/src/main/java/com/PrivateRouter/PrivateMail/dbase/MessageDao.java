@@ -33,6 +33,13 @@ public interface MessageDao {
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);
 
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(fromemails  LIKE :filter) " +
+            " ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter);
+
+
+
     @Query("SELECT * FROM messages WHERE parentUid = :parentUid and Folder =:folder ORDER BY uid DESC")
     List<Message> getAllThreadsMessages(String folder, int parentUid);
 
