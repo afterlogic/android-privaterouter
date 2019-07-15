@@ -33,7 +33,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-public class MessageViewHolder extends RecyclerView.ViewHolder {
+public class MessageViewHolder extends MailViewHolder {
 
     @BindView(R.id.tv_mail_messageSender)
     TextView tvMailMessageSender;
@@ -68,7 +68,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.vw_line)
     View vwLine;
 
-    WeakReference<SwipeRefreshLayout> swipeRefreshLayout;
 
     boolean selectedMode;
     boolean checked;
@@ -152,8 +151,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         this.position = position;
         this.message = message;
         this.mailListAdapter = mailListAdapter;
-        if (mailListAdapter!=null)
-            swipeRefreshLayout = mailListAdapter.getSwipeRefreshLayout();
 
         this.loadingThread = false;
 

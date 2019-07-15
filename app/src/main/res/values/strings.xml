@@ -198,5 +198,6 @@
     <string name="contacts_other_e_mail">Other E-mail</string>
     <string name="contacts_notes">Notes</string>
     <string name="all_attach">Attach</string>
+    <string name="mail_list_show_more">Show more messages</string>
 
 </resources>

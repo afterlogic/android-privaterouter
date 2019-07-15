@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
@@ -226,26 +227,11 @@ public class MailListActivity extends AppCompatActivity
 
 
         pagedListLiveData.observe(this, (PagedList<Message> messagePagedList) -> {
-  //          Log.d(LoadMessageLogic.TAG, "pagedListLiveData.observe firstUpdate =" +firstUpdate + " count=" + messagePagedList.size() + " currentFolder="+currentFolder);
-/*
-          if (messagePagedList.size()>0)
-  //              Log.d(LoadMessageLogic.TAG, "pagedListLiveData.observe [0].folder="+messagePagedList.get(0).getFolder() );
-
-                for (int i =0; i <messagePagedList.size(); i++ ) {
-                    Message message = messagePagedList.get(i);
-                    if (message != null && message.getThreadList() != null) {
-                        List<Message> threadsMessages = database.messageDao().getAllThreadsMessages(message.getFolder(), message.getUid());
-                        if (threadsMessages == null)
-                            threadsMessages = new ArrayList<>();
-                        message.setThreadList(threadsMessages);
-                    }
-                }
-            }
-*/
 
             if (!paused) {
 
                 mailListAdapter.submitList(messagePagedList);
+                checkShowMoreBar();
                 if (firstUpdate) {
                     requestMessages();
                     firstUpdate = false;
@@ -256,6 +242,39 @@ public class MailListActivity extends AppCompatActivity
 
         mailListAdapter.setOnMessageClick(this);
         rvMailList.setAdapter(mailListAdapter);
+
+        rvMailList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(1) ) {
+                    checkShowMoreBar();
+
+                }
+            }
+        });
+    }
+
+    private void hideShowMoreBar() {
+
+    }
+    
+    private void checkShowMoreBar() {
+
+        int loadedCount = mailListAdapter.getItemMessageCount();
+        Account account = LoggedUserRepository.getInstance().getActiveAccount();
+        Folder folder = account.getFolders().getFolder(currentFolder);
+        int totalCount = folder.getMeta().getCount();
+
+        if (loadedCount < totalCount) {
+            mailListAdapter.setShowMoreBar(true);
+            mailListAdapter.notifyDataSetChanged();
+        }
+        else if (loadedCount == totalCount) {
+            mailListAdapter.setShowMoreBar(false);
+            mailListAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initUI() {
@@ -545,11 +564,14 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
+        hideShowMoreBar();
+
         loadMessageLogic = new LoadMessagePoolLogic(currentFolder,   this);
         loadMessageLogic.setForceCurrent(forceCurrent);
         loadMessageLogic.execute();
 
     }
+
 
     private void initUpdateTimer() {
         PrivateMailApplication.getInstance().getSyncLogic().setRequestMessagesRunnable(this::requestMessages);
@@ -560,7 +582,7 @@ public class MailListActivity extends AppCompatActivity
     public void onMessageClick(Message message, int position) {
         Intent intent;
         if (message!=null) {
-            if (message.getParentUid()==0) {
+            if (!message.isThreadMessage()) {
                 MailViewList mailViewList = new MailViewList() {
                     @Override
                     public Message getMessage(int index) {
@@ -569,7 +591,7 @@ public class MailListActivity extends AppCompatActivity
 
                     @Override
                     public int getItemCount() {
-                        return mailListAdapter.getItemCount();
+                        return mailListAdapter.getItemMessageCount();
                     }
                 };
                 intent = MailViewActivity.makeIntent(this, mailViewList, position, currentFolder);
