@@ -13,6 +13,7 @@ import com.PrivateRouter.PrivateMail.model.FolderHash;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
 import com.PrivateRouter.PrivateMail.model.StorageCTag;
+import com.PrivateRouter.PrivateMail.model.TempMessageIds;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,5 +126,18 @@ public interface MessageDao {
 
     @Query("SELECT * FROM storage_c_tag WHERE storage =:storage")
     StorageCTag getStorageCTag(String storage);
+
+
+    @Query("SELECT ids FROM temp_message_ids ")
+    Long[] getMessageTempIds( );
+
+
+    @Insert(onConflict = REPLACE)
+    Long insertTempMessageId(TempMessageIds tempMessageIds);
+
+
+    @Query("DELETE FROM temp_message_ids")
+    void removeTempMessagesIds();
+
 
 }

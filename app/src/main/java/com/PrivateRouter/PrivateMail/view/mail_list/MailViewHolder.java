@@ -8,4 +8,5 @@ public class MailViewHolder extends RecyclerView.ViewHolder {
     public MailViewHolder(@NonNull View itemView) {
         super(itemView);
     }
+
 }

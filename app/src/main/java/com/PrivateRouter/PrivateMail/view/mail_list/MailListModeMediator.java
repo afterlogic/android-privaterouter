@@ -88,4 +88,10 @@ public class MailListModeMediator {
 
         return null;
     }
+
+    public void onLoadMoreClick() {
+        if (mailListActivity!=null && mailListActivity.get()!=null) {
+            mailListActivity.get().onLoadMoreClick();
+        }
+    }
 }

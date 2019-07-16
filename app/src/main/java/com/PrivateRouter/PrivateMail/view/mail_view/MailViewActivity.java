@@ -79,6 +79,7 @@ public class MailViewActivity extends AppCompatActivity {
             folderName = getIntent().getStringExtra("folder");
         }
 
+        setTitle("");
         initPager(startPage);
 
     }

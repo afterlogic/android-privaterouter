@@ -90,7 +90,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
     private void bindBarItem(MailViewHolder holder, int position) {
-
+        ((MailViewBarHolder)holder).bind(mailListModeMediator);
     }
 
     private void bindMessageItem(MailViewHolder holder, int position) {

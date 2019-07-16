@@ -10,6 +10,7 @@ import com.PrivateRouter.PrivateMail.dbase.MessageDao;
 import com.PrivateRouter.PrivateMail.model.InternalLists;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
+import com.PrivateRouter.PrivateMail.model.TempMessageIds;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.model.errors.OnErrorInterface;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetMessagesBodies;
@@ -40,6 +41,16 @@ public class LoadMessageLogic   implements OnErrorInterface {
     private InternalLists<Integer> uidsForDelete = new InternalLists<Integer>(MaxBodyMessageForDelete);
 
     LoadMessageAnswer loadMessageAnswer = new LoadMessageAnswer();
+    private boolean saveToTempCache = false;
+    private int iteration = 0;
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
+    }
+
+    public void setSaveToTempCache(boolean value) {
+        this.saveToTempCache = value;
+    }
 
     public class LoadMessageAnswer {
         boolean success;
@@ -155,6 +166,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
         CallGetMessagesBase callGetMessages = new CallGetMessagesBase();
         callGetMessages.setFolder(folder);
+        callGetMessages.setIteration(iteration);
         List<MessageBase> list = callGetMessages.syncStart(this);
 
 
@@ -311,6 +323,14 @@ public class LoadMessageLogic   implements OnErrorInterface {
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
         Long [] newIds = database.messageDao().insert(messages);
 
+        if (saveToTempCache) {
+            for (Long id: newIds) {
+                TempMessageIds tempMessageIds = new TempMessageIds();
+                tempMessageIds.setIds(id);
+                database.messageDao().insertTempMessageId(tempMessageIds);
+            }
+
+        }
     }
 
 

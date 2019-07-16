@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessagePoolLogic;
+import com.PrivateRouter.PrivateMail.network.logics.LoadMoreMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.MoveMessageLogic;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
@@ -253,38 +255,43 @@ public class MailListActivity extends AppCompatActivity
         rvMailList.setAdapter(mailListAdapter);
 
         rvMailList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int totalItem = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
 
-                if (!recyclerView.canScrollVertically(1) ) {
-                    updateShowMoreBarVisible();
-
+                if ( lastVisibleItem == totalItem - 1) {
+                    updateShowMoreBarVisible(false);
                 }
             }
         });
     }
 
-    private void hideShowMoreBar() {
-        mailListAdapter.setShowMoreBar(false);
-        mailListAdapter.notifyDataSetChanged();
-    }
 
     private void updateShowMoreBarVisible() {
+        updateShowMoreBarVisible(true);
+    }
+    private void updateShowMoreBarVisible(boolean update) {
 
         int loadedCount = mailListAdapter.getItemMessageCount();
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
+        if (account==null)
+            return;
         Folder folder = account.getFolders().getFolder(currentFolder);
         if (folder==null)
             return;
         int totalCount = folder.getMeta().getCount();
 
-        if (loadedCount < totalCount) {
+        if (loadedCount < totalCount-1 && loadedCount>0) {
             mailListAdapter.setShowMoreBar(true);
-            mailListAdapter.notifyDataSetChanged();
         }
         else if (loadedCount == totalCount) {
             mailListAdapter.setShowMoreBar(false);
+        }
+
+        if (update) {
             mailListAdapter.notifyDataSetChanged();
         }
     }
@@ -576,9 +583,10 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
-        hideShowMoreBar();
+        updateShowMoreBarVisible();
 
-        loadMessageLogic = new LoadMessagePoolLogic(currentFolder,   this);
+        LoadMoreMessageLogic.clearTemp();
+        loadMessageLogic = new LoadMessagePoolLogic(currentFolder, this);
         loadMessageLogic.setForceCurrent(forceCurrent);
         loadMessageLogic.execute();
 
@@ -674,5 +682,23 @@ public class MailListActivity extends AppCompatActivity
 
     public WeakReference<SwipeRefreshLayout> getSwipeRefreshLayout() {
         return new WeakReference<SwipeRefreshLayout>(slMain);
+    }
+
+    public void onLoadMoreClick() {
+        slMain.setRefreshing(true);
+        LoadMoreMessageLogic loadMoreMessageLogic = new LoadMoreMessageLogic(currentFolder, new LoadMoreMessageLogic.LoadMoreCallback() {
+            @Override
+            public void onSuccess() {
+                slMain.setRefreshing(false);
+            }
+
+            @Override
+            public void onFail(ErrorType errorType, int errorCode) {
+                slMain.setRefreshing(false);
+                RequestViewUtils.showError(MailListActivity.this, errorType, errorCode);
+
+            }
+        });
+        loadMoreMessageLogic.execute();
     }
 }
