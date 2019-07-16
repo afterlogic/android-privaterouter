@@ -107,7 +107,7 @@ public class ContactSettingsRepository {
         CallGetSettings callGetSettings = new CallGetSettings(new CallRequestResult<ContactSettings>() {
             @Override
             public void onSuccess(ContactSettings result) {
-                saveToCache(result);
+                //saveToCache(result); TODO Enable this after test
                 callback.onContactsLoad(result);
             }
 

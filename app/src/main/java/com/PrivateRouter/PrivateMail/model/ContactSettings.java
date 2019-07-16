@@ -28,7 +28,7 @@ public class ContactSettings implements Serializable {
 
     private ArrayList<NamedEnums> primaryAddress;
 
-    private ArrayList<NamedEnums> softField;
+    private ArrayList<NamedEnums> sortField;
 
     public int getContactsPerPage() {
         return contactsPerPage;
@@ -86,11 +86,11 @@ public class ContactSettings implements Serializable {
         this.primaryAddress = primaryAddress;
     }
 
-    public ArrayList<NamedEnums> getSoftField() {
-        return softField;
+    public ArrayList<NamedEnums> getSortField() {
+        return sortField;
     }
 
-    public void setSoftField(ArrayList<NamedEnums> softField) {
-        this.softField = softField;
+    public void setSortField(ArrayList<NamedEnums> sortField) {
+        this.sortField = sortField;
     }
 }
