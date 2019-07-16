@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -394,21 +394,57 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerEmail() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryEmail());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spEmail.setAdapter(adapter);
+
+        spEmail.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void fillSpinnerPhone() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryPhone());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPhone.setAdapter(adapter);
+
+        spPhone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void fillSpinnerAddress() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryAddress());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spAddress.setAdapter(adapter);
+
+        spAddress.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void blockFieldsInput() {
