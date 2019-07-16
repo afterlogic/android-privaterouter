@@ -328,6 +328,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initViewMode(Contact contact) {
         Toast.makeText(this, "View mode enabled", Toast.LENGTH_LONG).show();
         fillContactFields(contact);
+
         blockFieldsInput(); //need to unblock module?
         blockSpinnersSelect(); //need to unblock module?
         //hideEmptyFields(); if needed
@@ -376,6 +377,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        if (modeEnum.equals(Mode.VIEW)) {
+            getSupportActionBar().setTitle("");
+        }
     }
 
     private void loadDirectory() {
