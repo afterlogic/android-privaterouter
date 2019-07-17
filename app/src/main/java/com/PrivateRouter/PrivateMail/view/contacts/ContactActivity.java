@@ -21,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.R;
+import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
@@ -33,6 +35,7 @@ import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
@@ -285,7 +288,16 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (id == R.id.item_menu_attach) {
 
         } else if (id == R.id.item_menu_send) {
-
+            Message message = new Message();
+            Email email = new Email();
+            email.setEmail(String.valueOf(contact.getPrimaryEmail())); //TODO Correct here!
+            EmailCollection emailCollection = new EmailCollection();
+            ArrayList<Email> emails = new ArrayList<Email>();
+            emails.add(email);
+            emailCollection.setEmails(emails);
+            message.setTo(emailCollection);
+            Intent intent = ComposeActivity.makeIntent(this, message);
+            startActivity(intent);
         } else if (id == R.id.item_menu_search) {
 
         } else if (id == R.id.item_menu_edit) {
@@ -295,16 +307,11 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             saveContact(collectDataFromFields());
             finish();
         } else if (id == R.id.action_mail) {
-            Message message = new Message();
-            Email email = new Email();
-            email.setEmail("1@1.ru"); //TODO Correct here!
-            EmailCollection emailCollection = new EmailCollection();
-            ArrayList<Email> emails = new ArrayList<Email>();
-            emails.add(email);
-            emailCollection.setEmails(emails);
-            message.setTo(emailCollection);
-            Intent intent = ComposeActivity.makeIntent(this, message);
+            Account account = LoggedUserRepository.getInstance().getActiveAccount();
+            String folder = account.getFolders().getFolderName(FolderType.Inbox);
+            Intent intent = MailListActivity.makeIntent(this, folder);
             startActivity(intent);
+            finish();
         } else if (id == R.id.action_contacts) {
             Intent intent = ContactsActivity.makeIntent(this, false);
             startActivityForResult(intent, OPEN_CONTACT);
