@@ -292,7 +292,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
             startActivity(intent);
         } else if (id == R.id.item_menu_save) {
-            //saveContact();
+            saveContact(collectDataFromFields());
+            finish();
         } else if (id == R.id.action_mail) {
             Message message = new Message();
             Email email = new Email();
@@ -317,11 +318,55 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         return super.onOptionsItemSelected(item);
     }
 
+    private void saveContact(Contact collectDataFromFields) {
+        collectDataFromFields.getFullName();
+    }
+
+    private Contact collectDataFromFields() {
+        Contact contact = new Contact();
+        contact.setFullName(etDisplayName.getText().toString());
+        contact.setSkype(etSkype.getText().toString());
+        contact.setFacebook(etFacebook.getText().toString());
+        contact.setFirstName(etAdditionalFirstName.getText().toString());
+        contact.setLastName(etAdditionalLastName.getText().toString());
+        contact.setNickName(etAdditionalNickname.getText().toString());
+        contact.setPersonalEmail(etHomePersonalEMail.getText().toString());
+        contact.setPersonalAddress(etHomeStreetAddress.getText().toString());
+        contact.setPersonalCity(etHomeCity.getText().toString());
+        contact.setPersonalState(etHomeStateProvince.getText().toString());
+        contact.setPersonalZip(etHomeZipCode.getText().toString());
+        contact.setPersonalCountry(etHomeCountryRegion.getText().toString());
+        contact.setPersonalWeb(etHomeWebPage.getText().toString());
+        contact.setPersonalFax(etHomeFax.getText().toString());
+        contact.setPersonalPhone(etHomePhone.getText().toString());
+        contact.setPersonalMobile(etHomeMobile.getText().toString());
+        contact.setBusinessEmail(etBusinessEMail.getText().toString());
+        contact.setBusinessCompany(etBusinessCompany.getText().toString());
+        contact.setBusinessDepartment(etBusinessDepartment.getText().toString());
+        contact.setBusinessJobTitle(etBusinessJobTitle.getText().toString());
+        contact.setBusinessOffice(etBusinessOffice.getText().toString());
+        contact.setBusinessAddress(etBusinessStreetAddress.getText().toString());
+        contact.setBusinessCity(etBusinessCity.getText().toString());
+        contact.setBusinessState(etBusinessStateProvince.getText().toString());
+        contact.setBusinessZip(etBusinessZipCode.getText().toString());
+        contact.setBusinessCountry(etBusinessCountryRegion.getText().toString());
+        contact.setBusinessWeb(etBusinessWebPage.getText().toString());
+        contact.setBusinessFax(etBusinessFax.getText().toString());
+        contact.setBusinessPhone(etBusinessPhone.getText().toString());
+
+        //etOtherBirthday.setText("Here must be birthday"); //Here must be collect birthday date.
+
+        contact.setOtherEmail(etOtherEMail.getText().toString());
+        contact.setNotes(etOtherNotes.getText().toString());
+        return contact;
+    }
+
 
     private void initEditMode(Contact contact) {
         Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
+        displayAdditionalFields(false);
 
     }
 
@@ -337,6 +382,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
+        for(EditText et : etList){
+            et.setText("");
+        }
+        displayAdditionalFields(false);
     }
 
     private void fillContactFields(Contact contact) {
@@ -489,6 +538,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void openLoginScreen() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void displayAdditionalFields(boolean display){
+        if(!display){
+            tvAdditionalFields.setVisibility(View.GONE);
+            llAdditionalFields.setVisibility(View.GONE);
+        }
     }
 
 
