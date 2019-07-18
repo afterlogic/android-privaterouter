@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ContactSettingsDeserializer  implements JsonDeserializer<ContactSettings> {
+public class ContactSettingsDeserializer implements JsonDeserializer<ContactSettings> {
     @Override
     public ContactSettings deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
@@ -24,23 +24,30 @@ public class ContactSettingsDeserializer  implements JsonDeserializer<ContactSet
         try {
             settings = g.fromJson(json, ContactSettings.class);
 
-            ArrayList<NamedEnums> primaryEmail = new ArrayList<NamedEnums>();
-            JsonObject primaryEmailObject =  obj.getAsJsonObject("PrimaryEmail");
-            for (Map.Entry<String, JsonElement> elementEntry : primaryEmailObject.entrySet()) {
-                String key = elementEntry.getKey();
-                int value = elementEntry.getValue().getAsInt();
-                NamedEnums enums = new NamedEnums();
-                enums.setName(key);
-                enums.setId(value);
-                primaryEmail.add(enums);
-            }
+            ArrayList<NamedEnums> primaryEmail = getNamedEnumsListFromJsonObject(obj.getAsJsonObject("PrimaryEmail"));
             settings.setPrimaryEmail(primaryEmail);
-        }
-        catch (Exception ex) {
+            ArrayList<NamedEnums> primaryPhone = getNamedEnumsListFromJsonObject(obj.getAsJsonObject("PrimaryPhone"));
+            settings.setPrimaryPhone(primaryPhone);
+            ArrayList<NamedEnums> primaryAddress = getNamedEnumsListFromJsonObject(obj.getAsJsonObject("PrimaryAddress"));
+            settings.setPrimaryAddress(primaryAddress);
+            ArrayList<NamedEnums> sortField = getNamedEnumsListFromJsonObject(obj.getAsJsonObject("SortField"));
+            settings.setSortField(sortField);
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
         return settings;
+    }
+
+    private ArrayList<NamedEnums> getNamedEnumsListFromJsonObject(JsonObject primaryEmailObject) {
+        ArrayList<NamedEnums> namedEnums = new ArrayList<NamedEnums>();
+        for (Map.Entry<String, JsonElement> elementEntry : primaryEmailObject.entrySet()) {
+            String key = elementEntry.getKey();
+            int value = elementEntry.getValue().getAsInt();
+            NamedEnums enums = new NamedEnums();
+            enums.setName(key);
+            enums.setId(value);
+            namedEnums.add(enums);
+        }
+        return namedEnums;
     }
 }

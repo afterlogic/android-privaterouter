@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.R;
+import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
@@ -33,6 +35,7 @@ import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
@@ -285,18 +288,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (id == R.id.item_menu_attach) {
 
         } else if (id == R.id.item_menu_send) {
-
-        } else if (id == R.id.item_menu_search) {
-
-        } else if (id == R.id.item_menu_edit) {
-            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
-            startActivity(intent);
-        } else if (id == R.id.item_menu_save) {
-            //saveContact();
-        } else if (id == R.id.action_mail) {
             Message message = new Message();
             Email email = new Email();
-            email.setEmail("1@1.ru"); //TODO Correct here!
+            email.setEmail(String.valueOf(contact.getPrimaryEmail())); //TODO Correct here!
             EmailCollection emailCollection = new EmailCollection();
             ArrayList<Email> emails = new ArrayList<Email>();
             emails.add(email);
@@ -304,6 +298,20 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             message.setTo(emailCollection);
             Intent intent = ComposeActivity.makeIntent(this, message);
             startActivity(intent);
+        } else if (id == R.id.item_menu_search) {
+
+        } else if (id == R.id.item_menu_edit) {
+            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
+            startActivity(intent);
+        } else if (id == R.id.item_menu_save) {
+            saveContact(collectDataFromFields());
+            finish();
+        } else if (id == R.id.action_mail) {
+            Account account = LoggedUserRepository.getInstance().getActiveAccount();
+            String folder = account.getFolders().getFolderName(FolderType.Inbox);
+            Intent intent = MailListActivity.makeIntent(this, folder);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.action_contacts) {
             Intent intent = ContactsActivity.makeIntent(this, false);
             startActivityForResult(intent, OPEN_CONTACT);
@@ -317,17 +325,62 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         return super.onOptionsItemSelected(item);
     }
 
+    private void saveContact(Contact collectDataFromFields) {
+        collectDataFromFields.getFullName();
+    }
+
+    private Contact collectDataFromFields() {
+        Contact contact = new Contact();
+        contact.setFullName(etDisplayName.getText().toString());
+        contact.setSkype(etSkype.getText().toString());
+        contact.setFacebook(etFacebook.getText().toString());
+        contact.setFirstName(etAdditionalFirstName.getText().toString());
+        contact.setLastName(etAdditionalLastName.getText().toString());
+        contact.setNickName(etAdditionalNickname.getText().toString());
+        contact.setPersonalEmail(etHomePersonalEMail.getText().toString());
+        contact.setPersonalAddress(etHomeStreetAddress.getText().toString());
+        contact.setPersonalCity(etHomeCity.getText().toString());
+        contact.setPersonalState(etHomeStateProvince.getText().toString());
+        contact.setPersonalZip(etHomeZipCode.getText().toString());
+        contact.setPersonalCountry(etHomeCountryRegion.getText().toString());
+        contact.setPersonalWeb(etHomeWebPage.getText().toString());
+        contact.setPersonalFax(etHomeFax.getText().toString());
+        contact.setPersonalPhone(etHomePhone.getText().toString());
+        contact.setPersonalMobile(etHomeMobile.getText().toString());
+        contact.setBusinessEmail(etBusinessEMail.getText().toString());
+        contact.setBusinessCompany(etBusinessCompany.getText().toString());
+        contact.setBusinessDepartment(etBusinessDepartment.getText().toString());
+        contact.setBusinessJobTitle(etBusinessJobTitle.getText().toString());
+        contact.setBusinessOffice(etBusinessOffice.getText().toString());
+        contact.setBusinessAddress(etBusinessStreetAddress.getText().toString());
+        contact.setBusinessCity(etBusinessCity.getText().toString());
+        contact.setBusinessState(etBusinessStateProvince.getText().toString());
+        contact.setBusinessZip(etBusinessZipCode.getText().toString());
+        contact.setBusinessCountry(etBusinessCountryRegion.getText().toString());
+        contact.setBusinessWeb(etBusinessWebPage.getText().toString());
+        contact.setBusinessFax(etBusinessFax.getText().toString());
+        contact.setBusinessPhone(etBusinessPhone.getText().toString());
+
+        //etOtherBirthday.setText("Here must be birthday"); //Here must be collect birthday date.
+
+        contact.setOtherEmail(etOtherEMail.getText().toString());
+        contact.setNotes(etOtherNotes.getText().toString());
+        return contact;
+    }
+
 
     private void initEditMode(Contact contact) {
         Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
+        displayAdditionalFields(false);
 
     }
 
     private void initViewMode(Contact contact) {
         Toast.makeText(this, "View mode enabled", Toast.LENGTH_LONG).show();
         fillContactFields(contact);
+
         blockFieldsInput(); //need to unblock module?
         blockSpinnersSelect(); //need to unblock module?
         //hideEmptyFields(); if needed
@@ -336,6 +389,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
+        for(EditText et : etList){
+            et.setText("");
+        }
+        displayAdditionalFields(false);
     }
 
     private void fillContactFields(Contact contact) {
@@ -376,6 +433,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        if (modeEnum.equals(Mode.VIEW)) {
+            getSupportActionBar().setTitle("");
+        }
     }
 
     private void loadDirectory() {
@@ -390,21 +450,57 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerEmail() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryEmail());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spEmail.setAdapter(adapter);
+
+        spEmail.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void fillSpinnerPhone() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryPhone());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPhone.setAdapter(adapter);
+
+        spPhone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void fillSpinnerAddress() {
-        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.settings_sync_period_values, android.R.layout.simple_spinner_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryAddress());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spAddress.setAdapter(adapter);
+
+        spAddress.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void blockFieldsInput() {
@@ -449,6 +545,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void openLoginScreen() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void displayAdditionalFields(boolean display){
+        if(!display){
+            tvAdditionalFields.setVisibility(View.GONE);
+            llAdditionalFields.setVisibility(View.GONE);
+        }
     }
 
 
