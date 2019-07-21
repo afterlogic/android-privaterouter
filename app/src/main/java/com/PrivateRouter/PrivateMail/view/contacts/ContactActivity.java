@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -183,7 +184,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.et_other_birthday,
             R.id.et_other_e_mail,
             R.id.et_other_notes
-
     })
     List<EditText> etList;
 
@@ -192,6 +192,40 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.sp_address
     })
     List<Spinner> spList;
+
+    @BindViews({R.id.til_display_name,
+            R.id.til_skype,
+            R.id.til_facebook,
+            R.id.til_additional_first_name,
+            R.id.til_additional_last_name,
+            R.id.til_additional_nickname,
+            R.id.til_home_personal_e_mail,
+            R.id.til_home_street_address,
+            R.id.til_home_state_province,
+            R.id.til_home_zip_code,
+            R.id.til_home_city,
+            R.id.til_home_country_region,
+            R.id.til_home_web_page,
+            R.id.til_home_fax,
+            R.id.til_home_phone,
+            R.id.til_home_mobile,
+            R.id.til_business_e_mail,
+            R.id.til_business_company,
+            R.id.til_business_department,
+            R.id.til_business_job_title,
+            R.id.til_business_office,
+            R.id.til_business_street_address,
+            R.id.til_business_city,
+            R.id.til_business_state_province,
+            R.id.til_business_zip_code,
+            R.id.til_business_country_region,
+            R.id.til_business_web_page,
+            R.id.til_business_fax,
+            R.id.til_business_phone,
+            R.id.til_other_birthday,
+            R.id.til_other_e_mail,
+            R.id.til_other_notes})
+    List<TextInputLayout> tilList;
     //endregion
 
     @NonNull
@@ -374,7 +408,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         blockFieldsInput(); //need to unblock module?
         blockSpinnersSelect(); //need to unblock module?
-        //hideEmptyFields(); if needed
+        hideEmptyFields();
     }
 
     private void initCreateMode() {
@@ -387,7 +421,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillContactFields(Contact contact) {
-        etDisplayName.setText(contact.getFullName()); //Check name in class. In mock-up it field names Display Name.
+        etDisplayName.setText(contact.getFullName());
         etSkype.setText(contact.getSkype());
         etFacebook.setText(contact.getFacebook());
         etAdditionalFirstName.setText(contact.getFirstName());
@@ -557,6 +591,21 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             message.setTo(emailCollection);
             Intent intent = ComposeActivity.makeIntent(this, message);
             startActivity(intent);
+        }
+    }
+
+    private void hideEmptyFields(){
+        tvAdditionalFields.setVisibility(View.GONE);
+        tvHome.setVisibility(View.GONE);
+        tvBusiness.setVisibility(View.GONE);
+        tvOther.setVisibility(View.GONE);
+        int position = 0;
+        for(EditText et : etList){
+            if(et.getText().toString().isEmpty()){
+                et.setVisibility(View.GONE);
+                tilList.get(position).setVisibility(View.GONE);
+            }
+            position++;
         }
     }
 
