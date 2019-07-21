@@ -288,16 +288,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (id == R.id.item_menu_attach) {
 
         } else if (id == R.id.item_menu_send) {
-            Message message = new Message();
-            Email email = new Email();
-            email.setEmail(String.valueOf(contact.getPrimaryEmail())); //TODO Correct here!
-            EmailCollection emailCollection = new EmailCollection();
-            ArrayList<Email> emails = new ArrayList<Email>();
-            emails.add(email);
-            emailCollection.setEmails(emails);
-            message.setTo(emailCollection);
-            Intent intent = ComposeActivity.makeIntent(this, message);
-            startActivity(intent);
+            sendMessageToContact();
         } else if (id == R.id.item_menu_search) {
 
         } else if (id == R.id.item_menu_edit) {
@@ -551,6 +542,21 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if(!display){
             tvAdditionalFields.setVisibility(View.GONE);
             llAdditionalFields.setVisibility(View.GONE);
+        }
+    }
+
+    private void sendMessageToContact(){
+        if(contact.getViewEmail() != null) {
+            Message message = new Message();
+            Email email = new Email();
+            email.setEmail(contact.getViewEmail());
+            EmailCollection emailCollection = new EmailCollection();
+            ArrayList<Email> emails = new ArrayList<Email>();
+            emails.add(email);
+            emailCollection.setEmails(emails);
+            message.setTo(emailCollection);
+            Intent intent = ComposeActivity.makeIntent(this, message);
+            startActivity(intent);
         }
     }
 
