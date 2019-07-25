@@ -57,6 +57,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private Menu menu;
     private Enum<Mode> modeEnum;
     private Contact contact;
+    int[] birthDate; //[0] - day of month, [1] - month, [2] - year
     public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
@@ -246,6 +247,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        birthDate = new int[3];
         contact = null;
         if (getIntent() != null) {
             Intent intent = getIntent();
@@ -462,7 +464,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         contact.setBusinessFax(etBusinessFax.getText().toString());
         contact.setBusinessPhone(etBusinessPhone.getText().toString());
 
-        //etOtherBirthday.setText("Here must be birthday"); //Here must be collect birthday date.
+        if (!etOtherBirthday.getText().toString().isEmpty()) { //Here must be collect birthday date.
+            getBirthDateFromField();
+            contact.setBirthYear(birthDate[2]);
+            contact.setBirthMonth(birthDate[1]);
+            contact.setBirthDay(birthDate[0]);
+        }
 
         contact.setOtherEmail(etOtherEMail.getText().toString());
         contact.setNotes(etOtherNotes.getText().toString());
@@ -696,7 +703,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             } else {
                 birthDay = String.valueOf(dayOfMonth);
             }
-            if(month < 10){
+            if (month < 10) {
                 birthMonth = "0" + String.valueOf(month);
             } else {
                 birthMonth = String.valueOf(month);
@@ -707,5 +714,14 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         return birthday;
     }
 
+    private void getBirthDateFromField() {
+        String dateString = etOtherBirthday.getText().toString();
+        if (!dateString.isEmpty()) {
+            String[] dates = dateString.split("\\.");
+            for (int i = 0; i < dates.length; i++) {
+                birthDate[i] = Integer.parseInt(dates[i]);
+            }
+        }
+    }
 
 }
