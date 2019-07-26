@@ -2,6 +2,7 @@ package com.PrivateRouter.PrivateMail.network;
 
 
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
+import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
@@ -120,5 +121,8 @@ public interface AfterLogicAPI {
     @FormUrlEncoded
     Call<GetSettingsResponse> getSettings(@Field("Module")  String module, @Field("Method") String method);
 
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<CreateContactResponse> getUuid(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
 
 }

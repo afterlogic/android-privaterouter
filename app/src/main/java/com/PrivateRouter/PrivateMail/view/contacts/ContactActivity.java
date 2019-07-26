@@ -32,6 +32,7 @@ import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
+import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
@@ -57,7 +58,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private Menu menu;
     private Enum<Mode> modeEnum;
     private Contact contact;
-    int[] birthDate; //[0] - day of month, [1] - month, [2] - year
+
     public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
@@ -247,7 +248,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-        birthDate = new int[3];
         contact = null;
         if (getIntent() != null) {
             Intent intent = getIntent();
@@ -307,8 +307,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
             startActivity(intent);
         } else if (id == R.id.item_menu_save) {
+            RequestViewUtils.showRequest(this);
             saveContact(collectDataFromFields());
-            finish();
         } else if (id == R.id.action_mail) {
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
             String folder = account.getFolders().getFolderName(FolderType.Inbox);
@@ -394,7 +394,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                etOtherBirthday.setText(getBirthdayToString(year, month, dayOfMonth));
+                etOtherBirthday.setText(birthdayToString(year, month + 1, dayOfMonth)); //DatePickerDialog starts months from 0
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
                 .show();
@@ -429,7 +429,27 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void saveContact(Contact collectDataFromFields) {
-        collectDataFromFields.getFullName();
+        if (modeEnum.equals(Mode.CREATE)) {
+            CallCreateContact callCreateContact = new CallCreateContact(collectDataFromFields, new CallRequestResult<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(ContactActivity.this, result, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                }
+            });
+
+            callCreateContact.start();
+        } else if (modeEnum.equals(Mode.EDIT)) {
+
+            //do CallUpdateContact callback here.
+        }
+
     }
 
     private Contact collectDataFromFields() {
@@ -463,14 +483,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         contact.setBusinessWeb(etBusinessWebPage.getText().toString());
         contact.setBusinessFax(etBusinessFax.getText().toString());
         contact.setBusinessPhone(etBusinessPhone.getText().toString());
-
-        if (!etOtherBirthday.getText().toString().isEmpty()) { //Here must be collect birthday date.
-            getBirthDateFromField();
-            contact.setBirthYear(birthDate[2]);
-            contact.setBirthMonth(birthDate[1]);
-            contact.setBirthDay(birthDate[0]);
+        if (!etOtherBirthday.getText().toString().isEmpty()) {
+            fillContactBirthDate(contact);
         }
-
         contact.setOtherEmail(etOtherEMail.getText().toString());
         contact.setNotes(etOtherNotes.getText().toString());
         return contact;
@@ -533,7 +548,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         etBusinessWebPage.setText(contact.getBusinessWeb());
         etBusinessFax.setText(contact.getBusinessFax());
         etBusinessPhone.setText(contact.getBusinessPhone());
-        etOtherBirthday.setText(getBirthdayToString(contact.getBirthYear(), contact.getBirthMonth(), contact.getBirthDay()));
+        etOtherBirthday.setText(birthdayToString(contact.getBirthYear(), contact.getBirthMonth(), contact.getBirthDay()));
         etOtherEMail.setText(contact.getOtherEmail());
         etOtherNotes.setText(contact.getNotes());
     }
@@ -630,7 +645,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private void logout() {
         LoggedUserRepository.getInstance().logout(this);
-
         RequestViewUtils.showRequest(this);
         CallLogout callLogout = new CallLogout(new CallRequestResult() {
             @Override
@@ -647,7 +661,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
         });
         callLogout.start();
-
     }
 
     private void openLoginScreen() {
@@ -692,36 +705,26 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
-    private String getBirthdayToString(int year, int month, int dayOfMonth) {
+    private String birthdayToString(int year, int month, int dayOfMonth) {
         String birthday = "";
         if (year != 0 && dayOfMonth != 0) {
-            String birthDay = "";
-            String birthMonth = "";
-            month++;
-            if (dayOfMonth < 10) {
-                birthDay = "0" + String.valueOf(dayOfMonth);
-            } else {
-                birthDay = String.valueOf(dayOfMonth);
-            }
-            if (month < 10) {
-                birthMonth = "0" + String.valueOf(month);
-            } else {
-                birthMonth = String.valueOf(month);
-            }
-
-            birthday = birthDay + "." + birthMonth + "." + year;
+            birthday = String.format("%02d.%02d.%02d", dayOfMonth, month, year);
         }
         return birthday;
     }
 
-    private void getBirthDateFromField() {
+    private void fillContactBirthDate(Contact contact) {
         String dateString = etOtherBirthday.getText().toString();
         if (!dateString.isEmpty()) {
             String[] dates = dateString.split("\\.");
+            int[] birthDate = new int[dates.length];
+
             for (int i = 0; i < dates.length; i++) {
                 birthDate[i] = Integer.parseInt(dates[i]);
             }
+            contact.setBirthYear(birthDate[2]);
+            contact.setBirthMonth(birthDate[1]);
+            contact.setBirthDay(birthDate[0]);
         }
     }
-
 }
