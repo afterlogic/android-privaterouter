@@ -21,5 +21,6 @@ public class ApiMethods {
     public static String GET_C_TAG = "GetCTag";
     public static String GET_SETTINGS = "GetSettings";
     public static String CREATE_CONTACT = "CreateContact";
+    public static String UPDATE_CONTACT = "UpdateContact";
 
 }

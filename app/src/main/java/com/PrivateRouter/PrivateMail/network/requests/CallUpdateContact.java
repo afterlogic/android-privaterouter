@@ -5,17 +5,17 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.ApiMethods;
 import com.PrivateRouter.PrivateMail.network.ApiModules;
-import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
+import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CallCreateContact extends CallRequest<String> implements Callback<CreateContactResponse> {
+public class CallUpdateContact extends CallRequest<Boolean> implements Callback<UpdateContactResponse> {
     private Contact contact;
 
-    public CallCreateContact(Contact contact, CallRequestResult<String> callback) {
+    public CallUpdateContact(Contact contact, CallRequestResult<Boolean> callback) {
         super(callback);
         this.contact = contact;
     }
@@ -24,22 +24,21 @@ public class CallCreateContact extends CallRequest<String> implements Callback<C
     public void start() {
         Gson gson = new Gson();
         String json = gson.toJson(contact);
-        Call<CreateContactResponse> call = ApiFactory.getService().createContact(ApiModules.CONTACTS, ApiMethods.CREATE_CONTACT, json);
+        Call<UpdateContactResponse> call = ApiFactory.getService().updateContact(ApiModules.CONTACTS, ApiMethods.UPDATE_CONTACT, json);
         call.enqueue(this);
     }
 
     @Override
-    public void onResponse(Call<CreateContactResponse> call, Response<CreateContactResponse> response) {
+    public void onResponse(Call<UpdateContactResponse> call, Response<UpdateContactResponse> response) {
         if (response.isSuccessful()) {
-            CreateContactResponse createContactResponse = response.body();
-            if (createContactResponse != null && createContactResponse.isSuccess()) {
+            UpdateContactResponse updateContactResponse = response.body();
+            if (updateContactResponse != null && updateContactResponse.isSuccess()) {
                 if (callback != null) {
-                    callback.onSuccess(createContactResponse.getResult().getUuid());
+                    callback.onSuccess(updateContactResponse.getResult());
                 }
-            } else {
-                if (callback != null) {
-                    callback.onFail(ErrorType.ERROR_REQUEST, createContactResponse.getErrorCode());
-                }
+            } else if (callback != null) {
+                callback.onFail(ErrorType.ERROR_REQUEST, updateContactResponse.getErrorCode());
+
             }
         } else {
             if (callback != null)
@@ -47,8 +46,9 @@ public class CallCreateContact extends CallRequest<String> implements Callback<C
         }
     }
 
+
     @Override
-    public void onFailure(Call<CreateContactResponse> call, Throwable t) {
+    public void onFailure(Call<UpdateContactResponse> call, Throwable t) {
         if (callback != null)
             callback.onFail(ErrorType.FAIL_CONNECT, 0);
     }

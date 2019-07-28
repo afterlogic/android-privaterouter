@@ -35,6 +35,8 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
+import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
@@ -446,8 +448,21 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
             callCreateContact.start();
         } else if (modeEnum.equals(Mode.EDIT)) {
+            CallUpdateContact callUpdateContact = new CallUpdateContact(collectDataFromFields, new CallRequestResult<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(ContactActivity.this, String.valueOf(result), Toast.LENGTH_LONG).show();
+                }
 
-            //do CallUpdateContact callback here.
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                }
+            });
+            callUpdateContact.start();
+
         }
 
     }

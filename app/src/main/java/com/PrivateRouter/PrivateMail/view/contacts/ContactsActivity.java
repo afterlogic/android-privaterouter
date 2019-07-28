@@ -56,7 +56,7 @@ public class ContactsActivity extends AppCompatActivity
         implements CallRequestResult<Boolean>,
         SwipeRefreshLayout.OnRefreshListener, ContactsAdapter.OnContactClick {
 
-
+    private boolean fabOpen;
     private static final String TAG = "ContactsActivity";
     public static final int CONTACT = 10;
     String currentFolder = "Contacts";
@@ -66,6 +66,12 @@ public class ContactsActivity extends AppCompatActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.fab_create_contact)
+    View fabCreateContact;
+
+    @BindView(R.id.fab_create_contacts_group)
+    View fabCreateContactsGroup;
 
     @BindView(R.id.fab)
     View fab;
@@ -212,7 +218,7 @@ public class ContactsActivity extends AppCompatActivity
         rvContacts.setHasFixedSize(true);
         rvContacts.setLayoutManager(new CoolLayoutManager(this));
 
-
+        fabOpen = false;
     }
 
 
@@ -231,7 +237,7 @@ public class ContactsActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(v -> {
-            if(chooseMode){
+            if (chooseMode) {
                 finish();
             }
             if (contactsListModeMediator.isSelectionMode())
@@ -394,10 +400,41 @@ public class ContactsActivity extends AppCompatActivity
 
     @SuppressWarnings("unused")
     @OnClick(R.id.fab)
+    public void btFabClick() {
+        if (!fabOpen) {
+            showFABMenu();
+        } else {
+            closeFABMenu();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.fab_create_contact)
     public void btNewContactClick() {
-        //Toast.makeText(this, "ToDO", Toast.LENGTH_LONG).show();
+        closeFABMenu();
         Intent intent = ContactActivity.makeIntent(ContactsActivity.this, ContactActivity.Mode.CREATE, null);
         startActivityForResult(intent, CONTACT);
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.fab_create_contacts_group)
+    public void btNewContactsGroupClick() {
+        closeFABMenu();
+        Intent intent = new Intent(ContactsActivity.this, CreateContactsGroupActivity.class);
+        startActivity(intent);
+    }
+
+
+    private void showFABMenu() {
+        fabOpen = true;
+        fabCreateContactsGroup.animate().translationY(-getResources().getDimension(R.dimen.fab_55));
+        fabCreateContact.animate().translationY(-getResources().getDimension(R.dimen.fab_105));
+    }
+
+    private void closeFABMenu() {
+        fabOpen = false;
+        fabCreateContactsGroup.animate().translationY(0);
+        fabCreateContact.animate().translationY(0);
     }
 
 
@@ -456,8 +493,6 @@ public class ContactsActivity extends AppCompatActivity
     }
 
 
-
-
     public void onSelectChange(List<Contact> selectedList) {
         if (contactsListModeMediator.isSelectionMode()) {
             updateSelectedTitle(selectedList.size());
@@ -467,7 +502,7 @@ public class ContactsActivity extends AppCompatActivity
     void openSelectMode() {
         fab.setVisibility(View.GONE);
         updateMenu();
-        if(!chooseMode) {
+        if (!chooseMode) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         }
 
@@ -487,5 +522,4 @@ public class ContactsActivity extends AppCompatActivity
 
         setTitle(currentFolder);
     }
-
 }

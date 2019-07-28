@@ -196,4 +196,17 @@
     <string name="contacts_other_e_mail">Other E-mail</string>
     <string name="contacts_notes">Notes</string>
 
+    <string name="all_create_group">Create group</string>
+    <string name="all_group_name">Group name</string>
+    <string name="create_group_this_group_is_a_company">This group is a company</string>
+    <string name="create_group_email">Email</string>
+    <string name="create_group_company">Company</string>
+    <string name="create_group_state">State</string>
+    <string name="create_group_city">City</string>
+    <string name="create_group_street">Street</string>
+    <string name="create_group_zip">Zip</string>
+    <string name="create_group_phone">Phone</string>
+    <string name="create_group_fax">Fax</string>
+    <string name="create_group_web">Web</string>
+
 </resources>
