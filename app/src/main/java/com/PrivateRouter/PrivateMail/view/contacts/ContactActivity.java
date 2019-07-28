@@ -272,7 +272,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
     @Override

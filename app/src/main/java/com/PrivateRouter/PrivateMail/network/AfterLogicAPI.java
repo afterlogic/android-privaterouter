@@ -3,6 +3,7 @@ package com.PrivateRouter.PrivateMail.network;
 
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
+import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
@@ -129,4 +130,9 @@ public interface AfterLogicAPI {
     @POST("?/Api/" )
     @FormUrlEncoded
     Call<UpdateContactResponse> updateContact(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<CreateGroupResponse> createGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
 }

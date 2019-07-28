@@ -10,13 +10,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.FolderType;
+import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
+import com.PrivateRouter.PrivateMail.network.requests.CallCreateGroup;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
@@ -25,12 +29,16 @@ import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class CreateContactsGroupActivity extends AppCompatActivity {
 
+    //region Butterknife binds
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.et_group_name)
@@ -58,10 +66,22 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     @BindView(R.id.ll_group_is_a_company)
     LinearLayout llGroupIsACompany;
 
+    @BindViews({R.id.et_group_name,
+            R.id.et_group_email,
+            R.id.et_group_company,
+            R.id.et_group_state,
+            R.id.et_group_city,
+            R.id.et_group_street,
+            R.id.et_group_zip,
+            R.id.et_group_phone,
+            R.id.et_group_fax,
+            R.id.et_group_web
+    })
+    List<EditText> etList;
+    //endregion
+
     public static final int OPEN_CONTACT = 1012;
-
     private Menu menu;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +96,8 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.create_contacts_group_menu, menu);
-
         this.menu = menu;
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         toolbar.setNavigationOnClickListener(v -> {
             finish();
         });
@@ -94,7 +111,7 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
 
         if (id == R.id.item_menu_save) {
             RequestViewUtils.showRequest(this);
-//            saveGroup(collectDataFromFields());
+            saveGroup(collectDataFromFields());
         } else if (id == R.id.action_mail) {
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
             String folder = account.getFolders().getFolderName(FolderType.Inbox);
@@ -110,7 +127,6 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
         } else if (id == R.id.action_logout) {
             logout();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -118,7 +134,6 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
-
 
     @OnClick(R.id.sw_group_is_a_company)
     public void onSwitchGroupIsACompanyClicked() {
@@ -134,6 +149,9 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         getSupportActionBar().setTitle("");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        for (EditText et : etList) {
+            et.setText("");
+        }
         llGroupIsACompany.setVisibility(View.GONE);
     }
 
@@ -162,9 +180,37 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-//    private ContactsGroup collectDataFromFields(){
-//            }
+    private Group collectDataFromFields(){
+        Group group = new Group();
+        group.setName(etGroupName.getText().toString());
+        group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0);
+        group.setEmail(etGroupEmail.getText().toString());
+        group.setCompany(etGroupCompany.getText().toString());
+        group.setState(etGroupState.getText().toString());
+        group.setCity(etGroupCity.getText().toString());
+        group.setStreet(etGroupStreet.getText().toString());
+        group.setZip(etGroupZip.getText().toString());
+        group.setPhone(etGroupPhone.getText().toString());
+        group.setFax(etGroupFax.getText().toString());
+        group.setWeb(etGroupWeb.getText().toString());
+        return group;
+    }
 
-    private void saveGroup() {
+    private void saveGroup(Group group) {
+        CallCreateGroup callCreateGroup = new CallCreateGroup(group, new CallRequestResult<String>() {
+            @Override
+            public void onSuccess(String result) {
+                RequestViewUtils.hideRequest();
+                Toast.makeText(CreateContactsGroupActivity.this, result, Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            @Override
+            public void onFail(ErrorType errorType, int serverCode) {
+                RequestViewUtils.hideRequest();
+                RequestViewUtils.showError(CreateContactsGroupActivity.this, errorType, serverCode);
+            }
+        });
+        callCreateGroup.start();
     }
 }
