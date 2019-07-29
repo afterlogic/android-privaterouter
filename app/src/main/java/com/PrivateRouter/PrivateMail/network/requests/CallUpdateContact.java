@@ -7,6 +7,7 @@ import com.PrivateRouter.PrivateMail.network.ApiMethods;
 import com.PrivateRouter.PrivateMail.network.ApiModules;
 import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,7 +24,9 @@ public class CallUpdateContact extends CallRequest<Boolean> implements Callback<
     @Override
     public void start() {
         Gson gson = new Gson();
-        String json = gson.toJson(contact);
+        Parameter parameter = new Parameter();
+        parameter.contact = contact;
+        String json = gson.toJson(parameter);
         Call<UpdateContactResponse> call = ApiFactory.getService().updateContact(ApiModules.CONTACTS, ApiMethods.UPDATE_CONTACT, json);
         call.enqueue(this);
     }
@@ -52,4 +55,11 @@ public class CallUpdateContact extends CallRequest<Boolean> implements Callback<
         if (callback != null)
             callback.onFail(ErrorType.FAIL_CONNECT, 0);
     }
+
+    class Parameter {
+        @SerializedName("Contact")
+        Contact contact;
+
+    }
+
 }

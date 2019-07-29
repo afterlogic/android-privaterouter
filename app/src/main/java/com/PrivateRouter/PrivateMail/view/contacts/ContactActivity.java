@@ -435,7 +435,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 @Override
                 public void onSuccess(String result) {
                     RequestViewUtils.hideRequest();
-                    Toast.makeText(ContactActivity.this, result, Toast.LENGTH_LONG).show();
+
+                    finish();
                 }
 
                 @Override
@@ -451,7 +452,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 @Override
                 public void onSuccess(Boolean result) {
                     RequestViewUtils.hideRequest();
-                    Toast.makeText(ContactActivity.this, String.valueOf(result), Toast.LENGTH_LONG).show();
+
+                    finish();
                 }
 
                 @Override
@@ -468,6 +470,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private Contact collectDataFromFields() {
         Contact contact = new Contact();
+        if(modeEnum.equals(Mode.CREATE)){
+            contact.setUUID("");
+            contact.setGroupUUIDs(new ArrayList<String>());
+            contact.setETag("");
+        } else if(modeEnum.equals(Mode.EDIT)){
+            contact.setUUID(this.contact.getUUID());
+        }
         contact.setFullName(etDisplayName.getText().toString());
         contact.setSkype(etSkype.getText().toString());
         contact.setFacebook(etFacebook.getText().toString());
