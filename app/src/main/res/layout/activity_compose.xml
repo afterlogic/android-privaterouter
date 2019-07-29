@@ -195,6 +195,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginBottom="@dimen/margin_all_element_large"
                 android:background="@android:color/darker_gray"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -207,6 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_all_element_medium"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:paddingTop="@dimen/padding_all_element_medium"
                 android:paddingStart="@dimen/padding_all_element_small"
                 android:text="@string/all_subject"
                 android:textSize="@dimen/size_text_medium"
@@ -217,15 +219,13 @@
                 android:id="@+id/et_compose_subject"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_all_element_small"
-                android:layout_marginRight="@dimen/margin_all_element_medium"
+
                 android:background="@null"
-                android:ellipsize="end"
+
+                android:layout_marginLeft="@dimen/margin_all_element_small"
+                android:paddingTop="@dimen/padding_all_element_medium"
+                android:scrollHorizontally="false"
                 android:textSize="@dimen/size_text_medium"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:maxLines="1"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_compose_subject"
                 app:layout_constraintLeft_toRightOf="@+id/tv_compose_subject"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_compose_subject" />
@@ -239,7 +239,7 @@
                 android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_compose_subject" />
+                app:layout_constraintTop_toBottomOf="@id/et_compose_subject" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_attachments_list"

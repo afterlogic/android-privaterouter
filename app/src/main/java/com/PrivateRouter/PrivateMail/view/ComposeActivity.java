@@ -168,6 +168,17 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         addFieldsFocusReaction();
 
 
+        etComposeSubject.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    etComposeText.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     private void createEmailFromText(EditText text, EmailCollection emailCollection, Runnable updateListRunnable) {
@@ -290,11 +301,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable) {
         ib.setVisibility(View.INVISIBLE);
         et.setVisibility(View.INVISIBLE);
-        et.setOnFocusChangeListener((view, hasFocus) -> {
-            if (!hasFocus) {
-                createEmailFromText(et, emailCollection, updateRunnable);
-            }
-        });
+
 
         ll.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -310,7 +317,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         et.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                et.setVisibility(View.INVISIBLE);
+                //et.setVisibility(View.INVISIBLE);
+                createEmailFromText(et, emailCollection, updateRunnable);
             }
         });
 
@@ -621,6 +629,12 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             ViewGroup viewGroup = (ViewGroup) view;
             for (int i = 0; i<viewGroup.getChildCount(); i++) {
                 View childView = viewGroup.getChildAt(i);
+                if (childView instanceof TextView ) {
+                    if (status)
+                        ((TextView)childView).setTextColor(getResources().getColor(R.color.color_black));
+                    else
+                        ((TextView)childView).setTextColor(getResources().getColor(R.color.color_dark_gray));
+                }
                 setRecursivelyEnable(childView, status);
             }
 
