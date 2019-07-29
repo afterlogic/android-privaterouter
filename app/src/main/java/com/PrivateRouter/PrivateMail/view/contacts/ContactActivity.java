@@ -1,11 +1,13 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -29,8 +32,11 @@ import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
+import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
+import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
@@ -40,6 +46,7 @@ import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,6 +60,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private Menu menu;
     private Enum<Mode> modeEnum;
     private Contact contact;
+
     public static final int OPEN_CONTACT = 1011;
 
     //region Butterknife binds
@@ -183,7 +191,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.et_other_birthday,
             R.id.et_other_e_mail,
             R.id.et_other_notes
-
     })
     List<EditText> etList;
 
@@ -192,6 +199,40 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.sp_address
     })
     List<Spinner> spList;
+
+    @BindViews({R.id.til_display_name,
+            R.id.til_skype,
+            R.id.til_facebook,
+            R.id.til_additional_first_name,
+            R.id.til_additional_last_name,
+            R.id.til_additional_nickname,
+            R.id.til_home_personal_e_mail,
+            R.id.til_home_street_address,
+            R.id.til_home_state_province,
+            R.id.til_home_zip_code,
+            R.id.til_home_city,
+            R.id.til_home_country_region,
+            R.id.til_home_web_page,
+            R.id.til_home_fax,
+            R.id.til_home_phone,
+            R.id.til_home_mobile,
+            R.id.til_business_e_mail,
+            R.id.til_business_company,
+            R.id.til_business_department,
+            R.id.til_business_job_title,
+            R.id.til_business_office,
+            R.id.til_business_street_address,
+            R.id.til_business_city,
+            R.id.til_business_state_province,
+            R.id.til_business_zip_code,
+            R.id.til_business_country_region,
+            R.id.til_business_web_page,
+            R.id.til_business_fax,
+            R.id.til_business_phone,
+            R.id.til_other_birthday,
+            R.id.til_other_e_mail,
+            R.id.til_other_notes})
+    List<TextInputLayout> tilList;
     //endregion
 
     @NonNull
@@ -231,7 +272,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
     @Override
@@ -253,6 +293,114 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         updateMenu();
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.item_menu_attach) {
+
+        } else if (id == R.id.item_menu_send) {
+            sendMessageToContact();
+        } else if (id == R.id.item_menu_search) {
+
+        } else if (id == R.id.item_menu_edit) {
+            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
+            startActivity(intent);
+        } else if (id == R.id.item_menu_save) {
+            RequestViewUtils.showRequest(this);
+            saveContact(collectDataFromFields());
+        } else if (id == R.id.action_mail) {
+            Account account = LoggedUserRepository.getInstance().getActiveAccount();
+            String folder = account.getFolders().getFolderName(FolderType.Inbox);
+            Intent intent = MailListActivity.makeIntent(this, folder);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.action_contacts) {
+            Intent intent = ContactsActivity.makeIntent(this, false);
+            startActivityForResult(intent, OPEN_CONTACT);
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_logout) {
+            logout();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.tv_additional_fields)
+    public void onTvAdditionalFieldsClicked() {
+        if (llAdditionalFields.getVisibility() == View.VISIBLE) {
+            llAdditionalFields.setVisibility(View.GONE);
+            tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
+        } else {
+            llAdditionalFields.setVisibility(View.VISIBLE);
+            tvAdditionalFields.setText(R.string.contacts_hide_additional_fields);
+        }
+    }
+
+    @OnClick(R.id.tv_home)
+    public void onTvHomeClicked() {
+        if (llHome.getVisibility() == View.VISIBLE) {
+            llHome.setVisibility(View.GONE);
+        } else {
+            llHome.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.tv_business)
+    public void onTvBusinessClicked() {
+        if (llBusiness.getVisibility() == View.VISIBLE) {
+            llBusiness.setVisibility(View.GONE);
+        } else {
+            llBusiness.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.tv_other)
+    public void onTvOtherClicked() {
+        if (llOther.getVisibility() == View.VISIBLE) {
+            llOther.setVisibility(View.GONE);
+        } else {
+            llOther.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onContactsLoad(ContactSettings contactSettings) {
+        this.contactSettings = contactSettings;
+        RequestViewUtils.hideRequest();
+        bindContact();
+    }
+
+    @Override
+    public void onFail(ErrorType errorType, int serverCode) {
+        RequestViewUtils.hideRequest();
+        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
+        finish();
+    }
+
+    public enum Mode {
+        CREATE, VIEW, EDIT
+    }
+
+    public void onBirthdayFieldClick(View view) {
+        if (modeEnum.equals(Mode.CREATE) || modeEnum.equals(Mode.EDIT))
+            showDatePickerDialog(view);
+    }
+
+    public void showDatePickerDialog(View view) {
+        Calendar calendar = Calendar.getInstance();
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                etOtherBirthday.setText(birthdayToString(year, month + 1, dayOfMonth)); //DatePickerDialog starts months from 0
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                .show();
+    }
+
 
     private void updateMenu() {
         if (menu == null)
@@ -281,52 +429,41 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    private void saveContact(Contact collectDataFromFields) {
+        if (modeEnum.equals(Mode.CREATE)) {
+            CallCreateContact callCreateContact = new CallCreateContact(collectDataFromFields, new CallRequestResult<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(ContactActivity.this, result, Toast.LENGTH_LONG).show();
+                }
 
-        if (id == R.id.item_menu_attach) {
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                }
+            });
 
-        } else if (id == R.id.item_menu_send) {
-            Message message = new Message();
-            Email email = new Email();
-            email.setEmail(String.valueOf(contact.getPrimaryEmail())); //TODO Correct here!
-            EmailCollection emailCollection = new EmailCollection();
-            ArrayList<Email> emails = new ArrayList<Email>();
-            emails.add(email);
-            emailCollection.setEmails(emails);
-            message.setTo(emailCollection);
-            Intent intent = ComposeActivity.makeIntent(this, message);
-            startActivity(intent);
-        } else if (id == R.id.item_menu_search) {
+            callCreateContact.start();
+        } else if (modeEnum.equals(Mode.EDIT)) {
+            CallUpdateContact callUpdateContact = new CallUpdateContact(collectDataFromFields, new CallRequestResult<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(ContactActivity.this, String.valueOf(result), Toast.LENGTH_LONG).show();
+                }
 
-        } else if (id == R.id.item_menu_edit) {
-            Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
-            startActivity(intent);
-        } else if (id == R.id.item_menu_save) {
-            saveContact(collectDataFromFields());
-            finish();
-        } else if (id == R.id.action_mail) {
-            Account account = LoggedUserRepository.getInstance().getActiveAccount();
-            String folder = account.getFolders().getFolderName(FolderType.Inbox);
-            Intent intent = MailListActivity.makeIntent(this, folder);
-            startActivity(intent);
-            finish();
-        } else if (id == R.id.action_contacts) {
-            Intent intent = ContactsActivity.makeIntent(this, false);
-            startActivityForResult(intent, OPEN_CONTACT);
-        } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.action_logout) {
-            logout();
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                }
+            });
+            callUpdateContact.start();
+
         }
 
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void saveContact(Contact collectDataFromFields) {
-        collectDataFromFields.getFullName();
     }
 
     private Contact collectDataFromFields() {
@@ -360,43 +497,43 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         contact.setBusinessWeb(etBusinessWebPage.getText().toString());
         contact.setBusinessFax(etBusinessFax.getText().toString());
         contact.setBusinessPhone(etBusinessPhone.getText().toString());
-
-        //etOtherBirthday.setText("Here must be birthday"); //Here must be collect birthday date.
-
+        if (!etOtherBirthday.getText().toString().isEmpty()) {
+            fillContactBirthDate(contact);
+        }
         contact.setOtherEmail(etOtherEMail.getText().toString());
         contact.setNotes(etOtherNotes.getText().toString());
         return contact;
     }
 
-
     private void initEditMode(Contact contact) {
         Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
-        displayAdditionalFields(false);
+        etOtherBirthday.setFocusable(false);
+        //displayAdditionalFields(false);
 
     }
 
     private void initViewMode(Contact contact) {
         Toast.makeText(this, "View mode enabled", Toast.LENGTH_LONG).show();
         fillContactFields(contact);
-
-        blockFieldsInput(); //need to unblock module?
-        blockSpinnersSelect(); //need to unblock module?
-        //hideEmptyFields(); if needed
+        blockFieldsInput();
+        blockSpinnersSelect();
+        hideEmptyFields();
     }
 
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
-        for(EditText et : etList){
+        for (EditText et : etList) {
             et.setText("");
         }
-        displayAdditionalFields(false);
+        etOtherBirthday.setFocusable(false);
+        //displayAdditionalFields(false);
     }
 
     private void fillContactFields(Contact contact) {
-        etDisplayName.setText(contact.getFullName()); //Check name in class. In mock-up it field names Display Name.
+        etDisplayName.setText(contact.getFullName());
         etSkype.setText(contact.getSkype());
         etFacebook.setText(contact.getFacebook());
         etAdditionalFirstName.setText(contact.getFirstName());
@@ -425,7 +562,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         etBusinessWebPage.setText(contact.getBusinessWeb());
         etBusinessFax.setText(contact.getBusinessFax());
         etBusinessPhone.setText(contact.getBusinessPhone());
-        etOtherBirthday.setText("Here must be birthday");
+        etOtherBirthday.setText(birthdayToString(contact.getBirthYear(), contact.getBirthMonth(), contact.getBirthDay()));
         etOtherEMail.setText(contact.getOtherEmail());
         etOtherNotes.setText(contact.getNotes());
     }
@@ -515,14 +652,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private void blockSpinnersSelect() {
         for (Spinner sp : spList) {
-            sp.setEnabled(false); //textcolor is problem
+            sp.setEnabled(false);
             sp.setClickable(false);
         }
     }
 
     private void logout() {
         LoggedUserRepository.getInstance().logout(this);
-
         RequestViewUtils.showRequest(this);
         CallLogout callLogout = new CallLogout(new CallRequestResult() {
             @Override
@@ -539,7 +675,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
         });
         callLogout.start();
-
     }
 
     private void openLoginScreen() {
@@ -547,67 +682,63 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         startActivity(intent);
     }
 
-    private void displayAdditionalFields(boolean display){
-        if(!display){
+    private void displayAdditionalFields(boolean display) {
+        if (!display) {
             tvAdditionalFields.setVisibility(View.GONE);
             llAdditionalFields.setVisibility(View.GONE);
         }
     }
 
-
-    @OnClick(R.id.tv_additional_fields)
-    public void onTvAdditionalFieldsClicked() {
-        if (llAdditionalFields.getVisibility() == View.VISIBLE) {
-            llAdditionalFields.setVisibility(View.GONE);
-            tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
-        } else {
-            llAdditionalFields.setVisibility(View.VISIBLE);
-            tvAdditionalFields.setText(R.string.contacts_hide_additional_fields);
+    private void sendMessageToContact() {
+        if (contact.getViewEmail() != null) {
+            Message message = new Message();
+            Email email = new Email();
+            email.setEmail(contact.getViewEmail());
+            EmailCollection emailCollection = new EmailCollection();
+            ArrayList<Email> emails = new ArrayList<Email>();
+            emails.add(email);
+            emailCollection.setEmails(emails);
+            message.setTo(emailCollection);
+            Intent intent = ComposeActivity.makeIntent(this, message);
+            startActivity(intent);
         }
     }
 
-    @OnClick(R.id.tv_home)
-    public void onTvHomeClicked() {
-        if (llHome.getVisibility() == View.VISIBLE) {
-            llHome.setVisibility(View.GONE);
-        } else {
-            llHome.setVisibility(View.VISIBLE);
+    private void hideEmptyFields() {
+        tvAdditionalFields.setVisibility(View.GONE);
+        tvHome.setVisibility(View.GONE);
+        tvBusiness.setVisibility(View.GONE);
+        tvOther.setVisibility(View.GONE);
+        int position = 0;
+        for (EditText et : etList) {
+            if (et.getText().toString().isEmpty()) {
+                et.setVisibility(View.GONE);
+                tilList.get(position).setVisibility(View.GONE);
+            }
+            position++;
         }
     }
 
-    @OnClick(R.id.tv_business)
-    public void onTvBusinessClicked() {
-        if (llBusiness.getVisibility() == View.VISIBLE) {
-            llBusiness.setVisibility(View.GONE);
-        } else {
-            llBusiness.setVisibility(View.VISIBLE);
+    private String birthdayToString(int year, int month, int dayOfMonth) {
+        String birthday = "";
+        if (year != 0 && dayOfMonth != 0) {
+            birthday = String.format("%02d.%02d.%02d", dayOfMonth, month, year);
         }
+        return birthday;
     }
 
-    @OnClick(R.id.tv_other)
-    public void onTvOtherClicked() {
-        if (llOther.getVisibility() == View.VISIBLE) {
-            llOther.setVisibility(View.GONE);
-        } else {
-            llOther.setVisibility(View.VISIBLE);
+    private void fillContactBirthDate(Contact contact) {
+        String dateString = etOtherBirthday.getText().toString();
+        if (!dateString.isEmpty()) {
+            String[] dates = dateString.split("\\.");
+            int[] birthDate = new int[dates.length];
+
+            for (int i = 0; i < dates.length; i++) {
+                birthDate[i] = Integer.parseInt(dates[i]);
+            }
+            contact.setBirthYear(birthDate[2]);
+            contact.setBirthMonth(birthDate[1]);
+            contact.setBirthDay(birthDate[0]);
         }
-    }
-
-    @Override
-    public void onContactsLoad(ContactSettings contactSettings) {
-        this.contactSettings = contactSettings;
-        RequestViewUtils.hideRequest();
-        bindContact();
-    }
-
-    @Override
-    public void onFail(ErrorType errorType, int serverCode) {
-        RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
-        finish();
-    }
-
-    public enum Mode {
-        CREATE, VIEW, EDIT
     }
 }

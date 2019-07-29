@@ -2,6 +2,8 @@ package com.PrivateRouter.PrivateMail.network;
 
 
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
+import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
+import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
@@ -14,6 +16,7 @@ import com.PrivateRouter.PrivateMail.network.responses.GetMessagesResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetSettingsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
+import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
 
 import okhttp3.MultipartBody;
@@ -120,5 +123,16 @@ public interface AfterLogicAPI {
     @FormUrlEncoded
     Call<GetSettingsResponse> getSettings(@Field("Module")  String module, @Field("Method") String method);
 
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<CreateContactResponse> createContact(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<UpdateContactResponse> updateContact(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<CreateGroupResponse> createGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
 
 }
