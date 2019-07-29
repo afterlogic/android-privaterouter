@@ -37,4 +37,8 @@
         <item name="android:paddingTop">@dimen/padding_all_element_large</item>
         <item name="android:clickable">true</item>
     </style>
+
+    <style name="InputLayout">
+        <item name="android:textColorHint">@color/color_black</item>
+    </style>
 </resources>

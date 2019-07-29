@@ -7,6 +7,7 @@ import com.PrivateRouter.PrivateMail.network.ApiMethods;
 import com.PrivateRouter.PrivateMail.network.ApiModules;
 import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,7 +24,9 @@ public class CallCreateContact extends CallRequest<String> implements Callback<C
     @Override
     public void start() {
         Gson gson = new Gson();
-        String json = gson.toJson(contact);
+        Parameter parameter = new Parameter();
+        parameter.contact = contact;
+        String json = gson.toJson(parameter);
         Call<CreateContactResponse> call = ApiFactory.getService().createContact(ApiModules.CONTACTS, ApiMethods.CREATE_CONTACT, json);
         call.enqueue(this);
     }
@@ -52,4 +55,11 @@ public class CallCreateContact extends CallRequest<String> implements Callback<C
         if (callback != null)
             callback.onFail(ErrorType.FAIL_CONNECT, 0);
     }
+
+    class Parameter {
+        @SerializedName("Contact")
+        Contact contact;
+
+    }
+
 }
