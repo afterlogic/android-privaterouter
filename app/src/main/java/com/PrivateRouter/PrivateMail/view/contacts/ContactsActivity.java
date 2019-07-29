@@ -427,8 +427,8 @@ public class ContactsActivity extends AppCompatActivity
 
     private void showFABMenu() {
         fabOpen = true;
-        fabCreateContactsGroup.animate().translationY(-getResources().getDimension(R.dimen.fab_55));
-        fabCreateContact.animate().translationY(-getResources().getDimension(R.dimen.fab_105));
+        fabCreateContactsGroup.animate().translationY(-getResources().getDimension(R.dimen.fab_transition_y));
+        fabCreateContact.animate().translationY(-getResources().getDimension(R.dimen.fab_transition_y) * 2);
     }
 
     private void closeFABMenu() {
