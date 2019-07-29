@@ -34,6 +34,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/til_group_name"
+                style="@style/InputLayout"
+                android:layout_marginTop="@dimen/padding_all_element_medium"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -49,7 +51,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:padding="@dimen/padding_all_element_medium"
+                android:paddingTop="@dimen/padding_all_element_medium"
+                android:paddingBottom="@dimen/padding_all_element_medium"
+                android:paddingEnd="@dimen/padding_all_element_medium"
                 android:text="@string/create_group_this_group_is_a_company"
                 android:textSize="@dimen/size_text_large" />
 
@@ -61,6 +65,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_email"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -73,6 +78,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_company"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -85,6 +91,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_state"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -97,6 +104,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_city"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -109,6 +117,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_street"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -121,6 +130,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_zip"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -133,6 +143,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_phone"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -145,6 +156,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_fax"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -157,6 +169,7 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_web"
+                    style="@style/InputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 

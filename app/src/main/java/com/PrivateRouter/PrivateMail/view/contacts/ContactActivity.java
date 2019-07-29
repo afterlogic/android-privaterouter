@@ -506,7 +506,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void initEditMode(Contact contact) {
-        Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_LONG).show();
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
         etOtherBirthday.setFocusable(false);
@@ -515,7 +514,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void initViewMode(Contact contact) {
-        Toast.makeText(this, "View mode enabled", Toast.LENGTH_LONG).show();
         fillContactFields(contact);
         blockFieldsInput();
         blockSpinnersSelect();
@@ -524,7 +522,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
-        Toast.makeText(this, "Create mode enabled", Toast.LENGTH_LONG).show();
         for (EditText et : etList) {
             et.setText("");
         }
