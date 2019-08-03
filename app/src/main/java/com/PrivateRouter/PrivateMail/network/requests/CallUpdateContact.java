@@ -13,10 +13,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CallUpdateContact extends CallRequest<Boolean> implements Callback<UpdateContactResponse> {
+public class CallUpdateContact extends CallRequest<String> implements Callback<UpdateContactResponse> {
     private Contact contact;
 
-    public CallUpdateContact(Contact contact, CallRequestResult<Boolean> callback) {
+    public CallUpdateContact(Contact contact, CallRequestResult<String> callback) {
         super(callback);
         this.contact = contact;
     }
@@ -37,7 +37,7 @@ public class CallUpdateContact extends CallRequest<Boolean> implements Callback<
             UpdateContactResponse updateContactResponse = response.body();
             if (updateContactResponse != null && updateContactResponse.isSuccess()) {
                 if (callback != null) {
-                    callback.onSuccess(updateContactResponse.getResult());
+                    callback.onSuccess(updateContactResponse.getResult().getUuid());
                 }
             } else if (callback != null) {
                 callback.onFail(ErrorType.ERROR_REQUEST, updateContactResponse.getErrorCode());
