@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -23,13 +22,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
-import com.PrivateRouter.PrivateMail.encryption.ImportFileTask;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
@@ -38,7 +35,6 @@ import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.NamedEnums;
-import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
@@ -275,12 +271,11 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
         loadDirectory();
         initUI();
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == UPDATED_CONTACT && resultCode == RESULT_OK) {
+        if (requestCode == UPDATED_CONTACT && resultCode == RESULT_OK) {
             setResult(RESULT_OK);
             finish();
         }
@@ -295,11 +290,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contact_menu, menu);
-
         this.menu = menu;
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         toolbar.setNavigationOnClickListener(v -> {
             if (modeEnum.equals(Mode.VIEW)) {
                 finish();
@@ -307,7 +299,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             if (modeEnum.equals(Mode.CREATE) || modeEnum.equals(Mode.EDIT))
                 finish();
         });
-
         updateMenu();
         return super.onCreateOptionsMenu(menu);
     }
@@ -315,7 +306,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.item_menu_attach) {
 
         } else if (id == R.id.item_menu_send) {
@@ -343,7 +333,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         } else if (id == R.id.action_logout) {
             logout();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -419,11 +408,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 .show();
     }
 
-
     private void updateMenu() {
         if (menu == null)
             return;
-
 
         MenuItem attachItem = menu.findItem(R.id.item_menu_attach);
         MenuItem sendItem = menu.findItem(R.id.item_menu_send);
@@ -437,7 +424,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             searchItem.setVisible(true);
             editItem.setVisible(true);
             saveItem.setVisible(false);
-
         } else if (modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)) {
             attachItem.setVisible(false);
             sendItem.setVisible(false);
@@ -450,11 +436,11 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void saveContact(Contact contact) {
         if (modeEnum.equals(Mode.CREATE)) {
             CallCreateContact callCreateContact = new CallCreateContact(contact, new CallRequestResult<String>() {
+
                 @Override
                 public void onSuccess(String result) {
                     contact.setUUID(result);
                     onContactOnServerUpdated(contact);
-
                 }
 
                 @Override
@@ -465,8 +451,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             });
 
             callCreateContact.start();
+
         } else if (modeEnum.equals(Mode.EDIT)) {
             CallUpdateContact callUpdateContact = new CallUpdateContact(contact, new CallRequestResult<String>() {
+
                 @Override
                 public void onSuccess(String result) {
                     onContactOnServerUpdated(contact);
@@ -480,7 +468,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             });
             callUpdateContact.start();
         }
-
     }
 
 
@@ -499,11 +486,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
         }
         contact.setFullName(etDisplayName.getText().toString());
-
         contact.setPrimaryEmail(this.contact.getPrimaryEmail());
         contact.setPrimaryAddress(this.contact.getPrimaryAddress());
         contact.setPrimaryPhone(this.contact.getPrimaryPhone());
-
         contact.setSkype(etSkype.getText().toString());
         contact.setFacebook(etFacebook.getText().toString());
         contact.setFirstName(etAdditionalFirstName.getText().toString());
@@ -545,8 +530,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
         etOtherBirthday.setFocusable(false);
-        //displayAdditionalFields(false);
-
     }
 
     private void initViewMode(Contact contact) {
@@ -562,7 +545,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             et.setText("");
         }
         etOtherBirthday.setFocusable(false);
-        //displayAdditionalFields(false);
     }
 
     private void fillContactFields(Contact contact) {
@@ -620,8 +602,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerEmail() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryEmail());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryEmail());
         spEmail.setAdapter(adapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
@@ -652,19 +633,18 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
 
     private void fillSpinnerPhone() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryPhone());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryPhone());
         spPhone.setAdapter(adapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
         //spPhone.setSelection(adapter.getPosition(contactSettings.getPrimaryPhone().get(positionInList)));
-        //spEmail.setSelection(positionInList);
+        spEmail.setSelection(positionInList);
 
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                spPhone.setSelection(positionInList);
-            }
-        }, 200);
+//        new Handler().postDelayed(new Runnable() {
+//            public void run() {
+//                spPhone.setSelection(positionInList);
+//            }
+//        }, 200);
 
 
         spPhone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -683,10 +663,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerAddress() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, android.R.layout.simple_spinner_item, contactSettings.getPrimaryAddress());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryAddress());
         spAddress.setAdapter(adapter);
-
 
         int positionInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
         //spAddress.setSelection(adapter.getPosition(contactSettings.getPrimaryAddress().get(positionInList)));
@@ -755,13 +733,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         startActivity(intent);
     }
 
-    private void displayAdditionalFields(boolean display) {
-        if (!display) {
-            tvAdditionalFields.setVisibility(View.GONE);
-            llAdditionalFields.setVisibility(View.GONE);
-        }
-    }
-
     private void sendMessageToContact() {
         if (contact.getViewEmail() != null) {
             Message message = new Message();
@@ -805,7 +776,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (!dateString.isEmpty()) {
             String[] dates = dateString.split("\\.");
             int[] birthDate = new int[dates.length];
-
             for (int i = 0; i < dates.length; i++) {
                 birthDate[i] = Integer.parseInt(dates[i]);
             }
@@ -845,5 +815,4 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         asyncDbaseOperation.execute();
     }
-
 }
