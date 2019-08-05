@@ -19,7 +19,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -656,11 +656,24 @@
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tv_groups"
+                    style="@style/ListDropdownSwitcher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_groups" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_groups"
+                    android:layout_marginTop="@dimen/margin_all_element_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
 
         </LinearLayout>
 
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>

@@ -187,7 +187,7 @@ public class Contact  extends  ContactBase implements Serializable {
     @Embedded(prefix = "groupUUIDs")
     @SerializedName("GroupUUIDs")
     private
-    ArrayList<String> GroupUUIDs;
+    ArrayList<String> groupUUIDs;
 
     public String getParentUUID() {
         return parentUUID;
@@ -534,10 +534,10 @@ public class Contact  extends  ContactBase implements Serializable {
     }
 
     public ArrayList<String> getGroupUUIDs() {
-        return GroupUUIDs;
+        return groupUUIDs;
     }
 
     public void setGroupUUIDs(ArrayList<String> groupUUIDs) {
-        GroupUUIDs = groupUUIDs;
+        this.groupUUIDs = groupUUIDs;
     }
 }

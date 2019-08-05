@@ -196,6 +196,7 @@
     <string name="contacts_other_e_mail">Other E-mail</string>
     <string name="contacts_notes">Notes</string>
 
+    <string name="all_groups">Groups</string>
     <string name="all_create_group">Create group</string>
     <string name="all_group_name">Group name</string>
     <string name="create_group_this_group_is_a_company">This group is a company</string>

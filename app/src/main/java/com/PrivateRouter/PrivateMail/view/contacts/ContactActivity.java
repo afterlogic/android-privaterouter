@@ -11,6 +11,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,10 +35,12 @@ import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.FolderType;
+import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.NamedEnums;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
+import com.PrivateRouter.PrivateMail.network.requests.CallGetGroups;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
@@ -46,6 +50,7 @@ import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
+import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import java.util.ArrayList;
@@ -57,12 +62,13 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback {
+public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback, OnGroupsLoadCallback {
 
     private ContactSettings contactSettings;
     private Menu menu;
     private Enum<Mode> modeEnum;
     private Contact contact;
+    private GroupsListMediator groupsListMediator;
 
     public static final int OPEN_CONTACT = 111;
     public static final int UPDATED_CONTACT = 112;
@@ -162,6 +168,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     LinearLayout llOther;
     @BindView(R.id.ll_additional_fields)
     LinearLayout llAdditionalFields;
+    @BindView(R.id.tv_groups)
+    TextView tvGroups;
+    @BindView(R.id.rv_groups)
+    RecyclerView rvGroups;
 
     @BindViews({R.id.et_display_name,
             R.id.et_skype,
@@ -270,7 +280,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             intent.getExtras().get("contact");
         }
         loadDirectory();
+        initGroupsListMediator();
         initUI();
+
     }
 
     @Override
@@ -382,10 +394,25 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     @Override
+    public void onGroupsLoad(ArrayList<Group> groups) {
+        fillGroupsList(groups);
+    }
+
+    @Override
+    public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+        RequestViewUtils.hideRequest();
+        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
+    }
+
+    @Override
     public void onFail(ErrorType errorType, int serverCode) {
         RequestViewUtils.hideRequest();
         RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
         finish();
+    }
+
+    public void onSelectGroupChange(List<Group> selected) {
+
     }
 
     public enum Mode {
@@ -522,6 +549,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
         contact.setOtherEmail(etOtherEMail.getText().toString());
         contact.setNotes(etOtherNotes.getText().toString());
+        contact.setGroupUUIDs(groupsListMediator.getSelectionUUIDList());
         return contact;
     }
 
@@ -588,11 +616,29 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (modeEnum.equals(Mode.VIEW)) {
             getSupportActionBar().setTitle("");
         }
+        getGroups(this);
     }
 
     private void loadDirectory() {
         RequestViewUtils.showRequest(this);
         ContactSettingsRepository.getInstance().getContactSettings(this);
+
+
+    }
+
+    private void getGroups(OnGroupsLoadCallback callback) {
+        CallGetGroups callGetGroups = new CallGetGroups(new CallRequestResult() {
+            @Override
+            public void onSuccess(Object result) {
+                callback.onGroupsLoad((ArrayList<Group>) result);
+            }
+
+            @Override
+            public void onFail(ErrorType errorType, int serverCode) {
+                callback.onGroupsLoadFail(errorType, serverCode);
+            }
+        });
+        callGetGroups.start();
     }
 
     private void bindContact() {
@@ -606,14 +652,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         spEmail.setAdapter(adapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
-        //spEmail.setSelection(adapter.getPosition(contactSettings.getPrimaryEmail().get(positionInList)));
-        spEmail.setSelection(positionInList, false);
 
-//            new Handler().postDelayed(new Runnable() {
-//                public void run() {
-//                    spEmail.setSelection(positionInList);
-//                }
-//            }, 100);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                spEmail.setSelection(positionInList);
+            }
+        }, 100);
 
         spEmail.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -621,7 +665,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 int selectedEmailNumberInList = getIndexInList(contactSettings.getPrimaryEmail(), position);
                 NamedEnums namedEnum = adapter.getItem(selectedEmailNumberInList);
                 contact.setPrimaryEmail(namedEnum.getId());
-
             }
 
             @Override
@@ -637,15 +680,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         spPhone.setAdapter(adapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
-        //spPhone.setSelection(adapter.getPosition(contactSettings.getPrimaryPhone().get(positionInList)));
-        spEmail.setSelection(positionInList);
 
-//        new Handler().postDelayed(new Runnable() {
-//            public void run() {
-//                spPhone.setSelection(positionInList);
-//            }
-//        }, 200);
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                spPhone.setSelection(positionInList);
+            }
+        }, 200);
 
         spPhone.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -667,8 +707,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         spAddress.setAdapter(adapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
-        //spAddress.setSelection(adapter.getPosition(contactSettings.getPrimaryAddress().get(positionInList)));
-        //spEmail.setSelection(positionInList);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -814,5 +852,17 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         });
 
         asyncDbaseOperation.execute();
+    }
+
+    private void initGroupsListMediator() {
+        groupsListMediator = new GroupsListMediator(this);
+    }
+
+    private void fillGroupsList(ArrayList<Group> groups) {
+        GroupsAdapter groupsAdapter = new GroupsAdapter(groups, groupsListMediator);
+        CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
+        rvGroups.setLayoutManager(customLayoutManager);
+        rvGroups.setAdapter(groupsAdapter);
     }
 }

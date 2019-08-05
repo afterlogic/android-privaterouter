@@ -183,7 +183,7 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     private Group collectDataFromFields(){
         Group group = new Group();
         group.setName(etGroupName.getText().toString());
-        group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0);
+        //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0); TODO Enable here after checking adding groups to user
         group.setEmail(etGroupEmail.getText().toString());
         group.setCompany(etGroupCompany.getText().toString());
         group.setState(etGroupState.getText().toString());

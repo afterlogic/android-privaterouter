@@ -9,6 +9,7 @@ import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFolderResponse;
+import com.PrivateRouter.PrivateMail.network.responses.GetGroupsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessageBaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessageResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessagesBodiesResponse;
@@ -135,4 +136,7 @@ public interface AfterLogicAPI {
     @FormUrlEncoded
     Call<CreateGroupResponse> createGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
 
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<GetGroupsResponse> getGroups(@Field("Module")  String module, @Field("Method") String method);
 }
