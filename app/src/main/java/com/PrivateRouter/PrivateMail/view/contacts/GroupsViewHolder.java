@@ -75,6 +75,7 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         this.groupsAdapter = groupsAdapter;
         if (group != null) {
             ctvItem.setText("# " + group.getName());
+            ctvItem.setCheckMarkDrawable(null);
         }
     }
 }
