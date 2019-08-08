@@ -859,7 +859,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillGroupsList(ArrayList<Group> groups) {
-        GroupsAdapter groupsAdapter = new GroupsAdapter(groups, groupsListMediator);
+        GroupsAdapter groupsAdapter = new GroupsAdapter(GroupsListActivity.GroupWorkMode.MULTI_MODE, groups, groupsListMediator);
         CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         rvGroups.setLayoutManager(customLayoutManager);

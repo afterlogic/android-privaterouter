@@ -13,10 +13,11 @@ import butterknife.ButterKnife;
 
 public class GroupsViewHolder extends RecyclerView.ViewHolder {
 
-    boolean checked;
+    private boolean checked;
     private int position;
     private Group group;
-    GroupsAdapter groupsAdapter;
+    private GroupsAdapter groupsAdapter;
+    private GroupsListActivity.GroupWorkMode groupMode;
 
     @BindView(R.id.item_group)
     CheckedTextView ctvItem;
@@ -31,20 +32,30 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         this.onGroupClick = onGroupClick;
     }
 
-    public GroupsViewHolder(@NonNull View itemView) {
+    public GroupsViewHolder(@NonNull View itemView, GroupsListActivity.GroupWorkMode groupMode) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ctvItem.isChecked()) {
-                    ctvItem.setChecked(false);
-                } else {
-                    ctvItem.setChecked(true);
+        this.groupMode = groupMode;
+        if(groupMode.equals(GroupsListActivity.GroupWorkMode.MULTI_MODE)) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ctvItem.isChecked()) {
+                        ctvItem.setChecked(false);
+                    } else {
+                        ctvItem.setChecked(true);
+                    }
+                    groupsAdapter.onSelectChange(ctvItem.isChecked(), group);
                 }
-                groupsAdapter.onSelectChange(ctvItem.isChecked(), group);
-            }
-        });
+            });
+        } else if(groupMode.equals(GroupsListActivity.GroupWorkMode.SINGLE_MODE)){
+            ctvItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onGroupClick.onGroupClick(group, position);
+                }
+            });
+        }
     }
 
     public void bind(Group group, int position, GroupsAdapter groupsAdapter, boolean checked) {
@@ -55,6 +66,15 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         if (group != null) {
             ctvItem.setText("# " + group.getName());
             ctvItem.setChecked(checked);
+        }
+    }
+
+    public void bind(Group group, int position, GroupsAdapter groupsAdapter) {
+        this.group = group;
+        this.position = position;
+        this.groupsAdapter = groupsAdapter;
+        if (group != null) {
+            ctvItem.setText("# " + group.getName());
         }
     }
 }

@@ -87,9 +87,13 @@
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <activity android:name=".view.contacts.CreateContactsGroupActivity"
+        <activity android:name=".view.contacts.GroupActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity android:name=".view.contacts.GroupsListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
 

@@ -247,10 +247,14 @@ public class ContactsActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(v -> {
             if (chooseMode) {
                 finish();
+
+
             }
             if (contactsListModeMediator.isSelectionMode())
                 contactsListModeMediator.closeSelectionMode();
             //TO do for groups
+            Intent intent = new Intent(this, GroupsListActivity.class);
+            startActivity(intent);
         });
 
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
@@ -428,7 +432,7 @@ public class ContactsActivity extends AppCompatActivity
     @OnClick(R.id.fab_create_contacts_group)
     public void btNewContactsGroupClick() {
         closeFABMenu();
-        Intent intent = new Intent(ContactsActivity.this, CreateContactsGroupActivity.class);
+        Intent intent = new Intent(ContactsActivity.this, GroupActivity.class);
         startActivity(intent);
     }
 
