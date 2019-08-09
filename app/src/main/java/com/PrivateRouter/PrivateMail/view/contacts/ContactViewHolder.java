@@ -24,7 +24,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-public class ContactViewHolder  extends RecyclerView.ViewHolder {
+public class ContactViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.tv_name)
     TextView tvName;
@@ -46,15 +46,13 @@ public class ContactViewHolder  extends RecyclerView.ViewHolder {
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
     public void bgImageClick() {
-        cbSelected.setChecked( !cbSelected.isChecked() );
+        cbSelected.setChecked(!cbSelected.isChecked());
     }
 
 
-
-    public void  onCheckedChange(CompoundButton button, boolean value) {
+    public void onCheckedChange(CompoundButton button, boolean value) {
         contactsAdapter.onSelectChange(value, contact);
     }
-
 
 
     public ContactViewHolder(@NonNull View itemView) {
@@ -80,7 +78,7 @@ public class ContactViewHolder  extends RecyclerView.ViewHolder {
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
     public void bgClick() {
-        if(onContactClick != null) {
+        if (onContactClick != null) {
             onContactClick.onContactClick(contact, position);
         }
     }
@@ -92,9 +90,9 @@ public class ContactViewHolder  extends RecyclerView.ViewHolder {
         this.contact = contact;
         this.contactsAdapter = contactsAdapter;
 
-        if (contact!=null) {
+        if (contact != null) {
 
-            if(selectionMode) {
+            if (selectionMode) {
 
                 cbSelected.setVisibility(View.VISIBLE);
                 cbSelected.setChecked(checked);
@@ -103,10 +101,9 @@ public class ContactViewHolder  extends RecyclerView.ViewHolder {
                 cbSelected.setVisibility(View.INVISIBLE);
             }
             tvEmail.setText(contact.getViewEmail());
-            tvName.setText(contact.getFullName() );
+            tvName.setText(contact.getFullName());
 
-        }
-        else {
+        } else {
             tvEmail.setText("");
             tvName.setText("");
             cbSelected.setVisibility(View.INVISIBLE);
@@ -120,8 +117,6 @@ public class ContactViewHolder  extends RecyclerView.ViewHolder {
     public void setOnContactClick(ContactsAdapter.OnContactClick onContactClick) {
         this.onContactClick = onContactClick;
     }
-
-
 
 
 }

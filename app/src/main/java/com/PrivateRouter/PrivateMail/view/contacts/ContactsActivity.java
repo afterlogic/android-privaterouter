@@ -128,6 +128,14 @@ public class ContactsActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CONTACT && resultCode == RESULT_OK) {
+            requestContacts();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void initModeMediator() {
         contactsListModeMediator = new ContactsListModeMediator(this);
     }
@@ -156,7 +164,7 @@ public class ContactsActivity extends AppCompatActivity
         super.onResume();
         if (requestOnResume) {
             requestOnResume = false;
-            requestMessages();
+            requestContacts();
         }
         if (contactsAdapter != null)
             contactsAdapter.notifyDataSetChanged();
@@ -199,7 +207,7 @@ public class ContactsActivity extends AppCompatActivity
 
             contactsAdapter.submitList(contactPagedList);
             if (firstUpdate) {
-                requestMessages();
+                requestContacts();
                 firstUpdate = false;
             }
         });
@@ -239,10 +247,14 @@ public class ContactsActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(v -> {
             if (chooseMode) {
                 finish();
+
+
             }
             if (contactsListModeMediator.isSelectionMode())
                 contactsListModeMediator.closeSelectionMode();
             //TO do for groups
+            Intent intent = new Intent(this, GroupsListActivity.class);
+            startActivity(intent);
         });
 
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
@@ -420,7 +432,7 @@ public class ContactsActivity extends AppCompatActivity
     @OnClick(R.id.fab_create_contacts_group)
     public void btNewContactsGroupClick() {
         closeFABMenu();
-        Intent intent = new Intent(ContactsActivity.this, CreateContactsGroupActivity.class);
+        Intent intent = new Intent(ContactsActivity.this, GroupActivity.class);
         startActivity(intent);
     }
 
@@ -476,10 +488,10 @@ public class ContactsActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        requestMessages();
+        requestContacts();
     }
 
-    private void requestMessages() {
+    private void requestContacts() {
 
         if (loadContactLogic != null) {
             return;

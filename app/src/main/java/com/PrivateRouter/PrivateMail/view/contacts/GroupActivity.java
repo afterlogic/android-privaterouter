@@ -36,7 +36,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CreateContactsGroupActivity extends AppCompatActivity {
+public class GroupActivity extends AppCompatActivity {
 
     //region Butterknife binds
     @BindView(R.id.toolbar)
@@ -86,7 +86,7 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_contacts_group);
+        setContentView(R.layout.activity_group);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
@@ -144,6 +144,10 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
         }
     }
 
+    public enum Mode {
+        CREATE, VIEW, EDIT
+    }
+
     private void initUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
@@ -169,7 +173,7 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
             @Override
             public void onFail(ErrorType errorCode, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(CreateContactsGroupActivity.this, errorCode, serverCode);
+                RequestViewUtils.showError(GroupActivity.this, errorCode, serverCode);
             }
         });
         callLogout.start();
@@ -183,7 +187,7 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
     private Group collectDataFromFields(){
         Group group = new Group();
         group.setName(etGroupName.getText().toString());
-        group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0);
+        //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0); TODO Enable here after checking adding groups to user
         group.setEmail(etGroupEmail.getText().toString());
         group.setCompany(etGroupCompany.getText().toString());
         group.setState(etGroupState.getText().toString());
@@ -201,14 +205,14 @@ public class CreateContactsGroupActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String result) {
                 RequestViewUtils.hideRequest();
-                Toast.makeText(CreateContactsGroupActivity.this, result, Toast.LENGTH_LONG).show();
+                Toast.makeText(GroupActivity.this, result, Toast.LENGTH_LONG).show();
                 finish();
             }
 
             @Override
             public void onFail(ErrorType errorType, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(CreateContactsGroupActivity.this, errorType, serverCode);
+                RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
             }
         });
         callCreateGroup.start();

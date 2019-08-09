@@ -200,6 +200,7 @@
     <string name="all_attach">Attach</string>
     <string name="mail_list_show_more">Show more messages</string>
 
+    <string name="all_groups">Groups</string>
     <string name="all_create_group">Create group</string>
     <string name="all_group_name">Group name</string>
     <string name="create_group_this_group_is_a_company">This group is a company</string>

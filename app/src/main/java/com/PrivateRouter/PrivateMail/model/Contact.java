@@ -2,32 +2,19 @@ package com.PrivateRouter.PrivateMail.model;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 @Entity(tableName = "contacts", primaryKeys = {"UUID"}  )
 public class Contact  extends  ContactBase implements Serializable {
-//    @SerializedName("EntityId")
-//    private
-//    int entityId;
 
 
     @SerializedName("ParentUUID")
     private
     String parentUUID;
-
-//    @SerializedName("IdUser")
-//    private
-//    int idUser;
-//
-//    @SerializedName("IdTenant")
-//    private
-//    int idTenant;
 
     @SerializedName("Storage")
     private
@@ -37,10 +24,6 @@ public class Contact  extends  ContactBase implements Serializable {
     private
     String fullName;
 
-//    @SerializedName("UseFriendlyName")
-//    private
-//    boolean useFriendlyName;
-
     @SerializedName("PrimaryEmail")
     private
     int primaryEmail;
@@ -49,16 +32,13 @@ public class Contact  extends  ContactBase implements Serializable {
     private
     int primaryPhone;
 
-
     @SerializedName("PrimaryAddress")
     private
     int primaryAddress;
 
-
     @SerializedName("ViewEmail")
     private
     String viewEmail;
-
 
     @SerializedName("Title")
     private
@@ -92,11 +72,9 @@ public class Contact  extends  ContactBase implements Serializable {
     private
     String personalAddress;
 
-
     @SerializedName("PersonalCity")
     private
     String personalCity;
-
 
     @SerializedName("PersonalState")
     private
@@ -198,15 +176,6 @@ public class Contact  extends  ContactBase implements Serializable {
     private
     int birthYear;
 
-
-//    @SerializedName("Auto")
-//    private
-//    boolean auto;
-
-//    @SerializedName("Frequency")
-//    private
-//    int frequency;
-
     @SerializedName("DateModified")
     private
     String dateModified;
@@ -218,16 +187,7 @@ public class Contact  extends  ContactBase implements Serializable {
     @Embedded(prefix = "groupUUIDs")
     @SerializedName("GroupUUIDs")
     private
-    ArrayList<String> GroupUUIDs;
-
-//    public int getEntityId() {
-//        return entityId;
-//    }
-//
-//    public void setEntityId(int entityId) {
-//        this.entityId = entityId;
-//    }
-
+    ArrayList<String> groupUUIDs;
 
     public String getParentUUID() {
         return parentUUID;
@@ -236,22 +196,6 @@ public class Contact  extends  ContactBase implements Serializable {
     public void setParentUUID(String parentUUID) {
         this.parentUUID = parentUUID;
     }
-
-//    public int getIdUser() {
-//        return idUser;
-//    }
-//
-//    public void setIdUser(int idUser) {
-//        this.idUser = idUser;
-//    }
-//
-//    public int getIdTenant() {
-//        return idTenant;
-//    }
-//
-//    public void setIdTenant(int idTenant) {
-//        this.idTenant = idTenant;
-//    }
 
     public String getStorage() {
         return storage;
@@ -268,14 +212,6 @@ public class Contact  extends  ContactBase implements Serializable {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-
-//    public boolean isUseFriendlyName() {
-//        return useFriendlyName;
-//    }
-//
-//    public void setUseFriendlyName(boolean useFriendlyName) {
-//        this.useFriendlyName = useFriendlyName;
-//    }
 
     public int getPrimaryEmail() {
         return primaryEmail;
@@ -581,23 +517,6 @@ public class Contact  extends  ContactBase implements Serializable {
         this.birthYear = birthYear;
     }
 
-
-//    public boolean isAuto() {
-//        return auto;
-//    }
-//
-//    public void setAuto(boolean auto) {
-//        this.auto = auto;
-//    }
-//
-//    public int getFrequency() {
-//        return frequency;
-//    }
-//
-//    public void setFrequency(int frequency) {
-//        this.frequency = frequency;
-//    }
-
     public String getDateModified() {
         return dateModified;
     }
@@ -615,10 +534,10 @@ public class Contact  extends  ContactBase implements Serializable {
     }
 
     public ArrayList<String> getGroupUUIDs() {
-        return GroupUUIDs;
+        return groupUUIDs;
     }
 
     public void setGroupUUIDs(ArrayList<String> groupUUIDs) {
-        GroupUUIDs = groupUUIDs;
+        this.groupUUIDs = groupUUIDs;
     }
 }

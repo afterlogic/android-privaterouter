@@ -7,6 +7,7 @@ import com.PrivateRouter.PrivateMail.network.ApiMethods;
 import com.PrivateRouter.PrivateMail.network.ApiModules;
 import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,7 +24,9 @@ public class CallCreateGroup extends CallRequest<String> implements Callback<Cre
     @Override
     public void start() {
         Gson gson = new Gson();
-        String json = gson.toJson(group);
+        Parameter parameter = new Parameter();
+        parameter.group = group;
+        String json = gson.toJson(parameter);
         Call<CreateGroupResponse> call = ApiFactory.getService().createGroup(ApiModules.CONTACTS, ApiMethods.CREATE_GROUP, json);
         call.enqueue(this);
     }
@@ -51,5 +54,11 @@ public class CallCreateGroup extends CallRequest<String> implements Callback<Cre
     public void onFailure(Call<CreateGroupResponse> call, Throwable t) {
         if (callback != null)
             callback.onFail(ErrorType.FAIL_CONNECT, 0);
+    }
+
+    class Parameter {
+        @SerializedName("Group")
+        Group group;
+
     }
 }

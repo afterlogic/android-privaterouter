@@ -14,9 +14,9 @@ public class Group implements Serializable {
     private
     String name;
 
-    @SerializedName("IsOrganization")
-    private
-    int isOrganization;
+//    @SerializedName("IsOrganization")
+//    private
+//    int isOrganization;
 
     @SerializedName("Email")
     private
@@ -58,10 +58,6 @@ public class Group implements Serializable {
     private
     String zip;
 
-    @SerializedName("Contacts")
-    private
-    ArrayList<Contact> contacts;
-
     public String getUUID() {
         return UUID;
     }
@@ -78,13 +74,13 @@ public class Group implements Serializable {
         this.name = name;
     }
 
-    public int isOrganization() {
-        return isOrganization;
-    }
-
-    public void setIsOrganization(int organization) {
-        isOrganization = organization;
-    }
+//    public int isOrganization() {
+//        return isOrganization;
+//    }
+//
+//    public void setIsOrganization(int organization) {
+//        isOrganization = organization;
+//    }
 
     public String getEmail() {
         return email;
@@ -166,11 +162,4 @@ public class Group implements Serializable {
         this.zip = zip;
     }
 
-    public ArrayList<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(ArrayList<Contact> contacts) {
-        this.contacts = contacts;
-    }
 }
