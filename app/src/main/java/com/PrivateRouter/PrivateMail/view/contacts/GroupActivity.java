@@ -1,7 +1,10 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +40,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupActivity extends AppCompatActivity {
+    public static final int OPEN_CONTACT = 113;
+    public static final int UPDATED_GROUP = 114;
+    private Menu menu;
+    private Group group;
+    private Enum<Mode> modeEnum;
 
     //region Butterknife binds
     @BindView(R.id.toolbar)
@@ -80,8 +88,14 @@ public class GroupActivity extends AppCompatActivity {
     List<EditText> etList;
     //endregion
 
-    public static final int OPEN_CONTACT = 1012;
-    private Menu menu;
+    @NonNull
+    public static Intent makeIntent(@NonNull Activity activity, Enum<GroupActivity.Mode> modeEnum, Group group) {
+        Intent intent = new Intent(activity, ContactActivity.class);
+        intent.putExtra("mode", modeEnum);
+        intent.putExtra("group", group);
+        return intent;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,28 +104,65 @@ public class GroupActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        group = new Group();
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            modeEnum = (Enum<Mode>) intent.getExtras().get("mode");
+            if (modeEnum.equals(Mode.EDIT) && intent.getExtras().get("group") != null) {
+                group = (Group) intent.getExtras().get("group");
+                initEditMode(group);
+            } else if (modeEnum.equals(Mode.VIEW) && intent.getExtras().get("group") != null) {
+                group = (Group) intent.getExtras().get("group");
+                initViewMode(group);
+            } else {
+                initCreateMode();
+            }
+            intent.getExtras().get("group");
+        }
+
         initUI();
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == UPDATED_GROUP && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
+            finish();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_contacts_group_menu, menu);
+        getMenuInflater().inflate(R.menu.group_menu, menu);
         this.menu = menu;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(v -> {
             finish();
         });
-
+        updateMenu();
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.item_menu_save) {
             RequestViewUtils.showRequest(this);
             saveGroup(collectDataFromFields());
+        } else if (id == R.id.item_menu_send) {
+            sendMessageToGroup();
+        } else if (id == R.id.item_menu_delete) {
+            deleteGroup();
+        } else if (id == R.id.item_menu_edit) {
+            Intent intent = GroupActivity.makeIntent(this, Mode.EDIT, group);
+            startActivityForResult(intent, UPDATED_GROUP);
         } else if (id == R.id.action_mail) {
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
             String folder = account.getFolders().getFolderName(FolderType.Inbox);
@@ -130,11 +181,6 @@ public class GroupActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
     @OnClick(R.id.sw_group_is_a_company)
     public void onSwitchGroupIsACompanyClicked() {
         if (swGroupIsACompany.isChecked()) {
@@ -151,12 +197,11 @@ public class GroupActivity extends AppCompatActivity {
     private void initUI() {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
-        for (EditText et : etList) {
-            et.setText("");
+        if (modeEnum.equals(Mode.VIEW)) {
+            getSupportActionBar().setTitle("");
         }
-        llGroupIsACompany.setVisibility(View.GONE);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+
     }
 
     private void logout() {
@@ -184,7 +229,7 @@ public class GroupActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private Group collectDataFromFields(){
+    private Group collectDataFromFields() {
         Group group = new Group();
         group.setName(etGroupName.getText().toString());
         //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0); TODO Enable here after checking adding groups to user
@@ -201,20 +246,108 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void saveGroup(Group group) {
-        CallCreateGroup callCreateGroup = new CallCreateGroup(group, new CallRequestResult<String>() {
-            @Override
-            public void onSuccess(String result) {
-                RequestViewUtils.hideRequest();
-                Toast.makeText(GroupActivity.this, result, Toast.LENGTH_LONG).show();
-                finish();
-            }
+        if(modeEnum.equals(Mode.CREATE)){
+            CallCreateGroup callCreateGroup = new CallCreateGroup(group, new CallRequestResult<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(GroupActivity.this, result, Toast.LENGTH_LONG).show();
+                    finish();
+                }
 
-            @Override
-            public void onFail(ErrorType errorType, int serverCode) {
-                RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
-            }
-        });
-        callCreateGroup.start();
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+                }
+            });
+            callCreateGroup.start();
+        }
+     else if(modeEnum.equals(Mode.EDIT)){
+
+        }
+    }
+
+    private void updateMenu() {
+        if (menu == null)
+            return;
+
+        MenuItem sendItem = menu.findItem(R.id.item_menu_send);
+        MenuItem deleteItem = menu.findItem(R.id.item_menu_delete);
+        MenuItem editItem = menu.findItem(R.id.item_menu_edit);
+        MenuItem saveItem = menu.findItem(R.id.item_menu_save);
+
+        if (modeEnum.equals(Mode.VIEW)) {
+            saveItem.setVisible(false);
+            sendItem.setVisible(true);
+            deleteItem.setVisible(true);
+            editItem.setVisible(true);
+        } else if (modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)) {
+            saveItem.setVisible(true);
+            sendItem.setVisible(false);
+            deleteItem.setVisible(false);
+            editItem.setVisible(false);
+        }
+    }
+
+    private void initCreateMode() {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        for (EditText et : etList) {
+            et.setText("");
+        }
+    }
+
+    private void initViewMode(Group group) {
+        fillGroupFields(group);
+        blockFieldsInput();
+        blockSwitchState();
+    }
+
+    private void initEditMode(Group group) {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        fillGroupFields(group);
+    }
+
+    private void sendMessageToGroup() {
+
+    }
+
+    private void deleteGroup() {
+
+    }
+
+    private void fillGroupFields(Group group){
+        if(group != null){
+            etGroupName.setText(group.getName());
+            //swGroupIsACompany.setChecked(group.getIsOrganization());
+            //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0);
+            etGroupEmail.setText(group.getEmail());
+            etGroupCompany.setText(group.getCompany());
+            etGroupState.setText(group.getState());
+            etGroupCity.setText(group.getCity());
+            etGroupStreet.setText(group.getStreet());
+            etGroupZip.setText(group.getZip());
+            etGroupPhone.setText(group.getPhone());
+            etGroupFax.setText(group.getFax());
+            etGroupWeb.setText(group.getWeb());
+        }
+    }
+
+    private void blockFieldsInput() {
+        for (EditText et : etList) {
+            et.setFocusable(false);
+            et.setEnabled(false);
+            et.setCursorVisible(false);
+            et.setKeyListener(null);
+            et.setTextColor(Color.BLACK);
+        }
+    }
+
+    private void blockSwitchState(){
+        swGroupIsACompany.setEnabled(false);
+    }
+
+    private void onGroupOnServerUpdated(Group group){
+
     }
 }

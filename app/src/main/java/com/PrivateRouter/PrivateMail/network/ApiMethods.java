@@ -24,4 +24,7 @@ public class ApiMethods {
     public static String UPDATE_CONTACT = "UpdateContact";
     public static String CREATE_GROUP = "CreateGroup";
     public static String GET_GROUPS = "GetGroups";
+    public static String UPDATE_GROUP = "UpdateGroup";
+    public static String DELETE_GROUP = "DeleteGroup";
+    public static String GET_GROUP = "GetGroup";
 }

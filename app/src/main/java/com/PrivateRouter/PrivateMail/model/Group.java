@@ -74,7 +74,7 @@ public class Group implements Serializable {
         this.name = name;
     }
 
-//    public int isOrganization() {
+//    public int getIsOrganization() {
 //        return isOrganization;
 //    }
 //

@@ -1,10 +1,10 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Group;
@@ -20,6 +20,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoadCallback, GroupsAdapter.OnGroupClick {
+    public static final int GROUP = 11;
+
     @BindView(R.id.rv_groups_list)
     RecyclerView rvGroupsList;
 
@@ -75,7 +77,8 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
     @Override
     public void onGroupClick(Group group, int position) {
         if (group != null) {
-
+            Intent intent = GroupActivity.makeIntent(this, GroupActivity.Mode.VIEW, group);
+            startActivityForResult(intent, GROUP);
         }
     }
 

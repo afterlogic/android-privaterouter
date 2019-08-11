@@ -622,8 +622,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void loadDirectory() {
         RequestViewUtils.showRequest(this);
         ContactSettingsRepository.getInstance().getContactSettings(this);
-
-
     }
 
     private void getGroups(OnGroupsLoadCallback callback) {
