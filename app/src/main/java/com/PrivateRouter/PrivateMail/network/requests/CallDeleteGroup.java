@@ -16,7 +16,7 @@ import retrofit2.Response;
 public class CallDeleteGroup extends CallRequest<Boolean> implements Callback<DeleteGroupResponse> {
     private String groupUuid;
 
-    CallDeleteGroup(String groupUuid, CallRequestResult<Boolean> callback) {
+    public CallDeleteGroup(String groupUuid, CallRequestResult<Boolean> callback) {
         super(callback);
         this.groupUuid = groupUuid;
     }

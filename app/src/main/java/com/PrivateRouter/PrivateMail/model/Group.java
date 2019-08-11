@@ -14,9 +14,9 @@ public class Group implements Serializable {
     private
     String name;
 
-//    @SerializedName("IsOrganization")
-//    private
-//    int isOrganization;
+    @SerializedName("IsOrganization")
+    private
+    boolean isOrganization;
 
     @SerializedName("Email")
     private
@@ -74,13 +74,13 @@ public class Group implements Serializable {
         this.name = name;
     }
 
-//    public int getIsOrganization() {
-//        return isOrganization;
-//    }
-//
-//    public void setIsOrganization(int organization) {
-//        isOrganization = organization;
-//    }
+    public boolean getIsOrganization() {
+        return isOrganization;
+    }
+
+    public void setIsOrganization(boolean organization) {
+        isOrganization = organization;
+    }
 
     public String getEmail() {
         return email;

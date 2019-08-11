@@ -59,6 +59,7 @@ public class ContactsActivity extends AppCompatActivity
     private boolean fabOpen;
     private static final String TAG = "ContactsActivity";
     public static final int CONTACT = 10;
+    public static final int GROUP = 11;
     String currentFolder = "Contacts";
 
     @BindView(R.id.rv_contacts)
@@ -130,7 +131,7 @@ public class ContactsActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CONTACT && resultCode == RESULT_OK) {
+        if (requestCode == CONTACT && resultCode == RESULT_OK) {
             requestContacts();
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -432,8 +433,8 @@ public class ContactsActivity extends AppCompatActivity
     @OnClick(R.id.fab_create_contacts_group)
     public void btNewContactsGroupClick() {
         closeFABMenu();
-        Intent intent = new Intent(ContactsActivity.this, GroupActivity.class);
-        startActivity(intent);
+        Intent intent = GroupActivity.makeIntent(ContactsActivity.this, GroupActivity.Mode.CREATE, null);
+        startActivityForResult(intent, GROUP);
     }
 
 

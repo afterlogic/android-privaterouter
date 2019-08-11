@@ -16,7 +16,7 @@ import retrofit2.Response;
 public class CallUpdateGroup extends CallRequest<Boolean> implements Callback<UpdateGroupResponse> {
     private Group group;
 
-    CallUpdateGroup(Group group, CallRequestResult<Boolean> callback) {
+    public CallUpdateGroup(Group group, CallRequestResult<Boolean> callback) {
         super(callback);
         this.group = group;
     }

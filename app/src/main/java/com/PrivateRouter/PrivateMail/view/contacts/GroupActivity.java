@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +25,10 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateGroup;
+import com.PrivateRouter.PrivateMail.network.requests.CallDeleteGroup;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.network.requests.CallUpdateGroup;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
@@ -86,11 +89,35 @@ public class GroupActivity extends AppCompatActivity {
             R.id.et_group_web
     })
     List<EditText> etList;
+
+    @BindViews({R.id.et_group_email,
+            R.id.et_group_company,
+            R.id.et_group_state,
+            R.id.et_group_city,
+            R.id.et_group_street,
+            R.id.et_group_zip,
+            R.id.et_group_phone,
+            R.id.et_group_fax,
+            R.id.et_group_web
+    })
+    List<EditText> etOrganizationFieldsList;
+
+    @BindViews({R.id.til_group_email,
+            R.id.til_group_company,
+            R.id.til_group_state,
+            R.id.til_group_city,
+            R.id.til_group_street,
+            R.id.til_group_zip,
+            R.id.til_group_phone,
+            R.id.til_group_fax,
+            R.id.til_group_web
+    })
+    List<TextInputLayout> tilList;
     //endregion
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, Enum<GroupActivity.Mode> modeEnum, Group group) {
-        Intent intent = new Intent(activity, ContactActivity.class);
+        Intent intent = new Intent(activity, GroupActivity.class);
         intent.putExtra("mode", modeEnum);
         intent.putExtra("group", group);
         return intent;
@@ -114,7 +141,7 @@ public class GroupActivity extends AppCompatActivity {
             } else if (modeEnum.equals(Mode.VIEW) && intent.getExtras().get("group") != null) {
                 group = (Group) intent.getExtras().get("group");
                 initViewMode(group);
-            } else {
+            } else if (modeEnum.equals(Mode.CREATE)) {
                 initCreateMode();
             }
             intent.getExtras().get("group");
@@ -232,7 +259,7 @@ public class GroupActivity extends AppCompatActivity {
     private Group collectDataFromFields() {
         Group group = new Group();
         group.setName(etGroupName.getText().toString());
-        //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0); TODO Enable here after checking adding groups to user
+        group.setIsOrganization(swGroupIsACompany.isChecked());
         group.setEmail(etGroupEmail.getText().toString());
         group.setCompany(etGroupCompany.getText().toString());
         group.setState(etGroupState.getText().toString());
@@ -246,7 +273,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void saveGroup(Group group) {
-        if(modeEnum.equals(Mode.CREATE)){
+        if (modeEnum.equals(Mode.CREATE)) {
             CallCreateGroup callCreateGroup = new CallCreateGroup(group, new CallRequestResult<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -262,9 +289,23 @@ public class GroupActivity extends AppCompatActivity {
                 }
             });
             callCreateGroup.start();
-        }
-     else if(modeEnum.equals(Mode.EDIT)){
+        } else if (modeEnum.equals(Mode.EDIT)) {
+            group.setUUID(this.group.getUUID());
+            CallUpdateGroup callUpdateGroup = new CallUpdateGroup(group, new CallRequestResult<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    RequestViewUtils.hideRequest();
+                    Toast.makeText(GroupActivity.this, "Updated", Toast.LENGTH_LONG).show();
+                    finish();
+                }
 
+                @Override
+                public void onFail(ErrorType errorType, int serverCode) {
+                    RequestViewUtils.hideRequest();
+                    RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+                }
+            });
+            callUpdateGroup.start();
         }
     }
 
@@ -292,6 +333,8 @@ public class GroupActivity extends AppCompatActivity {
 
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        group = new Group();
+        displayOrganizationFields(false);
         for (EditText et : etList) {
             et.setText("");
         }
@@ -301,10 +344,13 @@ public class GroupActivity extends AppCompatActivity {
         fillGroupFields(group);
         blockFieldsInput();
         blockSwitchState();
+        displayOrganizationFields(group.getIsOrganization());
+        hideEmptyFields();
     }
 
     private void initEditMode(Group group) {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        displayOrganizationFields(group.getIsOrganization());
         fillGroupFields(group);
     }
 
@@ -313,14 +359,27 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void deleteGroup() {
+        CallDeleteGroup callDeleteGroup = new CallDeleteGroup(group.getUUID(), new CallRequestResult<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                RequestViewUtils.hideRequest();
+                Toast.makeText(GroupActivity.this, "Deleted", Toast.LENGTH_LONG).show();
+                finish();
+            }
 
+            @Override
+            public void onFail(ErrorType errorType, int serverCode) {
+                RequestViewUtils.hideRequest();
+                RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+            }
+        });
+        callDeleteGroup.start();
     }
 
-    private void fillGroupFields(Group group){
-        if(group != null){
+    private void fillGroupFields(Group group) {
+        if (group != null) {
             etGroupName.setText(group.getName());
-            //swGroupIsACompany.setChecked(group.getIsOrganization());
-            //group.setIsOrganization(swGroupIsACompany.isChecked() ? 1 : 0);
+            swGroupIsACompany.setChecked(group.getIsOrganization());
             etGroupEmail.setText(group.getEmail());
             etGroupCompany.setText(group.getCompany());
             etGroupState.setText(group.getState());
@@ -343,11 +402,28 @@ public class GroupActivity extends AppCompatActivity {
         }
     }
 
-    private void blockSwitchState(){
+    private void blockSwitchState() {
         swGroupIsACompany.setEnabled(false);
     }
 
-    private void onGroupOnServerUpdated(Group group){
+    private void displayOrganizationFields(boolean isOrganization) {
+        if (!isOrganization) {
+            llGroupIsACompany.setVisibility(View.GONE);
+        }
+    }
 
+    private void hideEmptyFields() {
+        int position = 0;
+        for (EditText et : etOrganizationFieldsList) {
+            if (et.getText().toString().isEmpty()) {
+                et.setVisibility(View.GONE);
+                tilList.get(position).setVisibility(View.GONE);
+            }
+            position++;
+        }
+    }
+
+    private void onGroupOnServerUpdated(Group group) {
+        //TO do like in ContactActivity
     }
 }
