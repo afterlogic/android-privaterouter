@@ -248,14 +248,14 @@ public class ContactsActivity extends AppCompatActivity
         toolbar.setNavigationOnClickListener(v -> {
             if (chooseMode) {
                 finish();
-
-
             }
-            if (contactsListModeMediator.isSelectionMode())
-                contactsListModeMediator.closeSelectionMode();
-            //TO do for groups
-            Intent intent = new Intent(this, GroupsListActivity.class);
-            startActivity(intent);
+            else {
+                if (contactsListModeMediator.isSelectionMode())
+                    contactsListModeMediator.closeSelectionMode();
+
+                Intent intent = new Intent(this, GroupsListActivity.class);
+                startActivity(intent);
+            }
         });
 
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
@@ -514,6 +514,8 @@ public class ContactsActivity extends AppCompatActivity
 
     void openSelectMode() {
         fab.setVisibility(View.GONE);
+        fabCreateContactsGroup.setVisibility(View.GONE);
+        fabCreateContact.setVisibility(View.GONE);
         updateMenu();
         if (!chooseMode) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);

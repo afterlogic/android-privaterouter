@@ -92,7 +92,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
 
         if (contact != null) {
 
-            if (selectionMode) {
+            if (selectionMode && !TextUtils.isEmpty(contact.getViewEmail())) {
 
                 cbSelected.setVisibility(View.VISIBLE);
                 cbSelected.setChecked(checked);
