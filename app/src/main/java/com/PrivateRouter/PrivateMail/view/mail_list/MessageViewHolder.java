@@ -78,6 +78,7 @@ public class MessageViewHolder extends MailViewHolder {
     private int position;
     private MailListAdapter mailListAdapter;
     boolean loadingThread = false;
+    private boolean flatMode;
 
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
@@ -224,14 +225,15 @@ public class MessageViewHolder extends MailViewHolder {
                 tvMailMessageDate.setTypeface(null, Typeface.BOLD);
             }
 
-            if (message.getThreadUidsList()!=null && !message.getThreadUidsList().isEmpty()) {
+            if (message.getThreadUidsList()!=null && !message.getThreadUidsList().isEmpty() && !flatMode) {
                 ivThreadsIcon.setVisibility(View.VISIBLE);
             }
             else {
                 ivThreadsIcon.setVisibility(View.GONE);
             }
 
-            updateThreads();
+            if (!flatMode)
+                updateThreads();
 
         }
         else {
@@ -323,5 +325,9 @@ public class MessageViewHolder extends MailViewHolder {
         else
             cbSelected.setVisibility(View.GONE);
 
+    }
+
+    public void setFlatMode(boolean flatMode) {
+        this.flatMode = flatMode;
     }
 }

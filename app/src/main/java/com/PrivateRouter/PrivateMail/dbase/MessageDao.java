@@ -29,7 +29,7 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFactory(String folder);
 
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+    @Query("SELECT * FROM messages WHERE Folder =:folder and " +
             "(Subject LIKE :filter or plain LIKE :filter or attachmentsattachments LIKE :filter) " +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);

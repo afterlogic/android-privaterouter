@@ -32,6 +32,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     private List<Message> selectedMessages = new LinkedList<>();
     private HashMap<Integer, Boolean> expandedMessageUids = new HashMap<>();
     private HashMap<Integer, Boolean> selectedMessageUids = new HashMap<>();
+    private boolean flatMode;
 
     protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator) {
         super(diffUtilCallback);
@@ -99,6 +100,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         Message message = getItem(position);
         boolean selected = isMessageSelected(message);
         boolean expand = isMessageExpanded(message);
+        messageViewHolder.setFlatMode(flatMode);
         messageViewHolder.bind(message , position, selected, expand, this);
         messageViewHolder.setSelectedMode( selectedMode );
 
@@ -192,6 +194,10 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     public void clearSelections() {
         selectedMessages.clear();
         selectedMessageUids.clear();
+    }
+
+    public void useFlatMode() {
+        flatMode = true;
     }
 
 

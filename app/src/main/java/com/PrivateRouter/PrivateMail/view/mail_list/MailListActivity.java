@@ -204,10 +204,12 @@ public class MailListActivity extends AppCompatActivity
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
         DataSource.Factory<Integer, Message> factory;
+        boolean needFlatMode = false;
         if (TextUtils.isEmpty(filter))
             factory = database.messageDao().getAllFactory(currentFolder);
         else {
             final String mailPrefix = "email:";
+            needFlatMode = true;
             if (filter.startsWith(mailPrefix) && filter.length()>mailPrefix.length()) {
                 String value = filter.substring(mailPrefix.length()+1);
                 factory = database.messageDao().getAllFilterEmailFactory(currentFolder, "%" + value + "%");
@@ -235,6 +237,8 @@ public class MailListActivity extends AppCompatActivity
 
 
         mailListAdapter = new MailListAdapter( new MessageDiffUtilCallback(), mailListModeMediator);
+        if (needFlatMode)
+            mailListAdapter.useFlatMode();
 
 
         pagedListLiveData.observe(this, (PagedList<Message> messagePagedList) -> {
