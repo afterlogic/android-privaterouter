@@ -88,8 +88,10 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
 
                 DecryptionStream decryptor = PGPainless.createDecryptor()
                         .onInputStream(sourceInputStream) // insert encrypted data here
+                        //.doNotDecrypt()
                         .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
                         .doNotVerify()
+
                         //.ignoreMissingPublicKeys()
                         .build();
 

@@ -23,9 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.dbase.MessageDao;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
 import com.PrivateRouter.PrivateMail.model.AttachmentCollection;
@@ -33,7 +31,6 @@ import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
 import com.PrivateRouter.PrivateMail.model.Message;
-import com.PrivateRouter.PrivateMail.network.requests.CalSetMessagesSeen;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallSaveMessage;
 import com.PrivateRouter.PrivateMail.network.requests.CallSendMessage;
@@ -44,7 +41,6 @@ import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
 import com.PrivateRouter.PrivateMail.view.common.ActivityWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
-import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.utils.SoftKeyboard;
@@ -131,6 +127,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     Message message;
     AttachmentsAdapter attachmentsAdapter;
+
+    String preEncryptedText;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, Message message) {
@@ -574,11 +572,20 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void openEncryptPopup() {
         updateMessage();
-        EncryptDialogFragment encryptDialogFragment = new EncryptDialogFragment();
-        encryptDialogFragment.setMessage(message);
-        encryptDialogFragment.setEncryptCallback(this);
-        encryptDialogFragment.setDecryptCallback(this);
-        encryptDialogFragment.show(getSupportFragmentManager(), "encryptDialogFragment");
+
+        if (MessageUtils.isEncrypted(message) && preEncryptedText !=null ) {
+            message.setPlain(preEncryptedText);
+            onDecrypt(message);
+        }
+        else {
+            this.preEncryptedText = message.getPlain();
+
+            EncryptDialogFragment encryptDialogFragment = new EncryptDialogFragment();
+            encryptDialogFragment.setMessage(message);
+            encryptDialogFragment.setEncryptCallback(this);
+            encryptDialogFragment.setDecryptCallback(this);
+            encryptDialogFragment.show(getSupportFragmentManager(), "encryptDialogFragment");
+        }
 
     }
 

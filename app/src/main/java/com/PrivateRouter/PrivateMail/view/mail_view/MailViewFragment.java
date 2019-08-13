@@ -80,6 +80,8 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
     BottomNavigationView nvBottomMailView;
 
     Message message;
+
+
     private boolean showExternalPicture = false;
 
     static MailViewFragment newInstance(Message message) {
