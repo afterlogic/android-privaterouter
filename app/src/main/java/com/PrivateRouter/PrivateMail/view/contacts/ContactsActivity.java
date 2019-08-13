@@ -131,9 +131,15 @@ public class ContactsActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CONTACT && resultCode == RESULT_OK) {
-            requestContacts();
+        if (requestCode == CONTACT ) {
+            if (  resultCode == RESULT_OK) {
+                requestContacts();
+            }
+            else {
+
+            }
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -321,9 +322,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (id == R.id.item_menu_attach) {
 
         } else if (id == R.id.item_menu_send) {
-            sendMessageToContact();
+            openComposeScreenWithContact();
         } else if (id == R.id.item_menu_search) {
-
+            searchMailsWithContacts();
         } else if (id == R.id.item_menu_edit) {
             Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
             startActivityForResult(intent, UPDATED_CONTACT);
@@ -346,6 +347,20 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             logout();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void searchMailsWithContacts() {
+        Account account = LoggedUserRepository.getInstance().getActiveAccount();
+        String folder = account.getFolders().getFolderName(FolderType.Inbox);
+
+        Intent broadcastIntent = new Intent(MailListActivity.SEARCH_WORD);
+        broadcastIntent.putExtra(MailListActivity.SEARCH_WORD, contact.getViewEmail());
+        sendBroadcast(broadcastIntent);
+
+        Intent intent = MailListActivity.makeIntent(this, folder, MailListActivity.EMAIL_SEARCH_PREFIX + contact.getViewEmail());
+        startActivity(intent);
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     @OnClick(R.id.tv_additional_fields)
@@ -769,14 +784,33 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         startActivity(intent);
     }
 
-    private void sendMessageToContact() {
+    private void openComposeScreenWithContact() {
         if (contact.getViewEmail() != null) {
             Message message = new Message();
-            Email email = new Email();
-            email.setEmail(contact.getViewEmail());
             EmailCollection emailCollection = new EmailCollection();
             ArrayList<Email> emails = new ArrayList<Email>();
-            emails.add(email);
+
+
+            if (!TextUtils.isEmpty(contact.getBusinessEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getBusinessEmail());
+                emails.add(email);
+            }
+
+
+            if (!TextUtils.isEmpty(contact.getOtherEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getOtherEmail());
+                emails.add(email);
+            }
+
+
+            if (!TextUtils.isEmpty(contact.getPersonalEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getPersonalEmail());
+                emails.add(email);
+            }
+
             emailCollection.setEmails(emails);
             message.setTo(emailCollection);
             Intent intent = ComposeActivity.makeIntent(this, message);

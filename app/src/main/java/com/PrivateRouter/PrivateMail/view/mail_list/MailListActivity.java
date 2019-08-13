@@ -68,6 +68,8 @@ public class MailListActivity extends AppCompatActivity
     public static final int OPEN_CONTACT = 1001;
     public static final int SELECT_FOLDER = 1000;
     public static final String FOLDER_PARAM = "Folder";
+    public static final String SEARCH_WORD = "SearchWord";
+    public static final String EMAIL_SEARCH_PREFIX = "email:";
     @BindView(R.id.rv_mail_list)
     RecyclerView rvMailList;
 
@@ -100,13 +102,23 @@ public class MailListActivity extends AppCompatActivity
     private MailListModeMediator mailListModeMediator;
     private Menu menu;
     private boolean paused = false;
+    private String startSearchWord;
 
     @NonNull
-    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder) {
+    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
+        return makeIntent(activity, defaultFolder, "");
+    }
+
+    @NonNull
+    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder, String searchText) {
         Intent intent = new Intent(activity, MailListActivity.class);
         intent.putExtra(MailListActivity.FOLDER_PARAM, defaultFolder);
+        intent.putExtra(MailListActivity.SEARCH_WORD, searchText);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,14 +128,17 @@ public class MailListActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
+            startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
         initModeSubject();
         openNormalMode();
         initUI();
-        initList();
+
+        initList(startSearchWord );
 
         initUpdateTimer();
 
@@ -208,10 +223,9 @@ public class MailListActivity extends AppCompatActivity
         if (TextUtils.isEmpty(filter))
             factory = database.messageDao().getAllFactory(currentFolder);
         else {
-            final String mailPrefix = "email:";
             needFlatMode = true;
-            if (filter.startsWith(mailPrefix) && filter.length()>mailPrefix.length()) {
-                String value = filter.substring(mailPrefix.length()+1);
+            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length()> EMAIL_SEARCH_PREFIX.length()) {
+                String value = filter.substring(EMAIL_SEARCH_PREFIX.length()+1);
                 factory = database.messageDao().getAllFilterEmailFactory(currentFolder, "%" + value + "%");
             }
             else {
@@ -350,6 +364,7 @@ public class MailListActivity extends AppCompatActivity
 
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
         initSearch(searchView);
 
         updateMenu();
@@ -416,6 +431,10 @@ public class MailListActivity extends AppCompatActivity
                 return true;
             }
         });
+        if (!TextUtils.isEmpty(startSearchWord)) {
+            searchView.setQuery(startSearchWord, false);
+            searchView.setIconified(false);
+        }
     }
 
     @Override
