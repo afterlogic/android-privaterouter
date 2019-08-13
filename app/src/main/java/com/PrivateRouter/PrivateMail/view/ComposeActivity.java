@@ -315,7 +315,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         et.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                //et.setVisibility(View.INVISIBLE);
+                ib.setVisibility(View.INVISIBLE);
                 createEmailFromText(et, emailCollection, updateRunnable);
             }
         });
