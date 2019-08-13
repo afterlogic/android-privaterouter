@@ -4,11 +4,13 @@ package com.PrivateRouter.PrivateMail.network;
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
+import com.PrivateRouter.PrivateMail.network.responses.DeleteGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFolderResponse;
+import com.PrivateRouter.PrivateMail.network.responses.GetGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetGroupsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessageBaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessageResponse;
@@ -18,6 +20,7 @@ import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetSettingsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
+import com.PrivateRouter.PrivateMail.network.responses.UpdateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
 
 import okhttp3.MultipartBody;
@@ -139,4 +142,16 @@ public interface AfterLogicAPI {
     @POST("?/Api/" )
     @FormUrlEncoded
     Call<GetGroupsResponse> getGroups(@Field("Module")  String module, @Field("Method") String method);
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<UpdateGroupResponse> updateGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<DeleteGroupResponse> deleteGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+
+    @POST("?/Api/" )
+    @FormUrlEncoded
+    Call<GetGroupResponse> getGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
 }
