@@ -29,14 +29,12 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
 
     public CallGetMessagesBase(){
         super(null);
-
         getMessageParameters.Search = "";
     }
 
     public void setFolder(String folder) {
         getMessageParameters.Folder = folder;
     }
-
 
     Call<GetMessageBaseResponse> call;
 
@@ -45,8 +43,8 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
         if (LoggedUserRepository.getInstance().getActiveAccount()!=null) {
             initParameters();
 
-
             getMessageParameters.UseThreading = true;
+            getMessageParameters.SortBy = "date";
             Gson gson = new Gson();
             String json = gson.toJson(getMessageParameters);
 
@@ -57,7 +55,6 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
 
     private void initParameters() {
         getMessageParameters.AccountID = LoggedUserRepository.getInstance().getActiveAccount().getAccountID();
-
 
         int period = SettingsRepository.getInstance().getSyncPeriod(PrivateMailApplication.getContext());
         SyncPeriod syncPeriod = SyncPeriod.values()[period];
@@ -73,8 +70,6 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
             search = "date:"+ simpleDateFormat.format( calendar.getTime() )+"/";
             //"Search":"date:2019.02.05/"
         }
-
-
         getMessageParameters.Search = search;
     }
 
@@ -85,6 +80,7 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
                 initParameters();
 
                 getMessageParameters.UseThreading = true;
+                getMessageParameters.SortBy = "date";
 
                 Gson gson = new Gson();
                 String json = gson.toJson(getMessageParameters);
@@ -149,6 +145,7 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
         String Folder;
         String Search;
         Boolean UseThreading;
+        String SortBy;
     }
 
 }
