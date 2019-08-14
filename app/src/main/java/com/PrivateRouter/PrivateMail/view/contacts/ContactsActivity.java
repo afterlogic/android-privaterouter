@@ -183,6 +183,11 @@ public class ContactsActivity extends AppCompatActivity
                     switchStorage( data.getStringExtra("SelectedStorage") );
             }
         }
+        else if (requestCode == VIEW_GROUP && resultCode == RESULT_OK) {
+            Group updatedGroup = (Group) data.getSerializableExtra("group");
+            currentGroup = updatedGroup;
+            updateTitle();
+        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }

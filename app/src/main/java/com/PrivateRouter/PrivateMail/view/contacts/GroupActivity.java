@@ -29,6 +29,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallDeleteGroup;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateGroup;
+import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
@@ -153,7 +154,7 @@ public class GroupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == UPDATED_GROUP && resultCode == RESULT_OK) {
-            setResult(RESULT_OK);
+            setResult(RESULT_OK, data);
             finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -277,8 +278,10 @@ public class GroupActivity extends AppCompatActivity {
             CallCreateGroup callCreateGroup = new CallCreateGroup(group, new CallRequestResult<String>() {
                 @Override
                 public void onSuccess(String result) {
+                    GroupsRepository.getInstance().load(null, true);
                     RequestViewUtils.hideRequest();
-                    Toast.makeText(GroupActivity.this, result, Toast.LENGTH_LONG).show();
+
+                    setResult(RESULT_OK);
                     finish();
                 }
 
@@ -294,8 +297,11 @@ public class GroupActivity extends AppCompatActivity {
             CallUpdateGroup callUpdateGroup = new CallUpdateGroup(group, new CallRequestResult<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
+                    Intent intent = new Intent();
+                    intent.putExtra("group", group);
+                    GroupsRepository.getInstance().load(null, true);
                     RequestViewUtils.hideRequest();
-                    Toast.makeText(GroupActivity.this, "Updated", Toast.LENGTH_LONG).show();
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
 

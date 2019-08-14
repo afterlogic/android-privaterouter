@@ -189,10 +189,6 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private boolean insertNewContacts() {
 
         for (Contact contact: loadedContacts )  {
-            //TODO remove after server fix
-            ArrayList<String> group = new ArrayList<>();
-            group.add("d65bd0e4-4859-4701-8ea0-5370f1f196ff");
-            contact.setGroupUUIDs(group);
 
             if (  isCancelled() ) return false;
             insertContact(contact);

@@ -47,12 +47,14 @@ public class GroupsRepository {
             @Override
             public void onSuccess(Object result) {
                 groups = (ArrayList<Group>) result;
-                onLoadGroups.onGroupsLoad(groups);
+                if (onLoadGroups!=null)
+                    onLoadGroups.onGroupsLoad(groups);
             }
 
             @Override
             public void onFail(ErrorType errorType, int serverCode) {
-                onLoadGroups.onGroupsLoadFail(errorType, serverCode);
+                if (onLoadGroups!=null)
+                    onLoadGroups.onGroupsLoadFail(errorType, serverCode);
             }
         });
         callGetGroups.start();
