@@ -93,6 +93,20 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_group_country"
+                    style="@style/InputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_group_country"
+                        style="@style/EditTextSingleLine"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/create_group_country" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:id="@+id/til_group_state"
                     style="@style/InputLayout"
                     android:layout_width="match_parent"

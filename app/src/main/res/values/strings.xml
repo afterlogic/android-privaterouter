@@ -202,6 +202,7 @@
     <string name="create_group_this_group_is_a_company">This group is a company</string>
     <string name="create_group_email">Email</string>
     <string name="create_group_company">Company</string>
+    <string name="create_group_country">Country</string>
     <string name="create_group_state">State</string>
     <string name="create_group_city">City</string>
     <string name="create_group_street">Street</string>
