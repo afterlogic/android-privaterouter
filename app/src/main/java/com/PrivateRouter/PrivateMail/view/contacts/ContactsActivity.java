@@ -241,9 +241,9 @@ public class ContactsActivity extends AppCompatActivity
         }
         else {
             if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllContactsInGroup(currentGroup.getUUID());
+                factory = database.messageDao().getAllContactsInGroup("%"+currentGroup.getUUID()+"%");
             else
-                factory = database.messageDao().getAllFiltredContactsInGroup(currentGroup.getUUID(), "%" + filter + "%");
+                factory = database.messageDao().getAllFiltredContactsInGroup("%"+currentGroup.getUUID()+"%", "%" + filter + "%");
         }
 
 

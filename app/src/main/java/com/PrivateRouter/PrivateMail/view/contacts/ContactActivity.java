@@ -900,21 +900,19 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             public void onGroupsLoad(ArrayList<Group> allGroups) {
                 GroupsAdapter.GroupWorkMode mode;
                 ArrayList<Group> groups;
+                ArrayList<Group> selectGroups = getSelectedGroups(allGroups);
                 if (modeEnum == Mode.VIEW) {
                     mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
-                    groups = new ArrayList<>(  );
-                    if (contact.getGroupUUIDs()!=null) {
-                        for (Group group : allGroups) {
-                            if (contact.getGroupUUIDs().contains(group.getUUID())) {
-                                groups.add(group);
-                            }
-                        }
-                    }
+                    groups = selectGroups;
                 }
                 else {
                     groups = allGroups;
                     mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
+
+
+                    groupsListMediator.setSelectedGroups(selectGroups );
                 }
+
 
                 GroupsAdapter groupsAdapter = new GroupsAdapter(mode, groups, groupsListMediator);
                 CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(ContactActivity.this,
@@ -929,5 +927,17 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
         }, false);
 
+    }
+
+    private ArrayList<Group> getSelectedGroups(ArrayList<Group>  allGroups) {
+        ArrayList<Group> groups = new ArrayList<>(  );
+        if (contact.getGroupUUIDs()!=null) {
+            for (Group group : allGroups) {
+                if (contact.getGroupUUIDs().contains(group.getUUID())) {
+                    groups.add(group);
+                }
+            }
+        }
+        return groups ;
     }
 }

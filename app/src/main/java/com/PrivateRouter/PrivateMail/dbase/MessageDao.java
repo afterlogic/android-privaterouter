@@ -107,6 +107,9 @@ public interface MessageDao {
     DataSource.Factory<Integer, Contact> getAllFiltredContactsInStorage(String storage, String filter );
 
 
+
+
+
     @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID)")
     DataSource.Factory<Integer, Contact> getAllContactsInGroup(String groupID);
 

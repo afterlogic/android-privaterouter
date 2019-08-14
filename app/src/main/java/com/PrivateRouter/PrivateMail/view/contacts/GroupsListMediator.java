@@ -58,4 +58,15 @@ public class GroupsListMediator {
         list.addAll(selectedUUIDs.keySet());
         return list;
     }
+
+    public void setSelectedGroups(ArrayList<Group> selectGroups ) {
+        selectedUUIDs.clear();
+        selected.clear();
+        selected.addAll(selectGroups);
+
+        for (Group group : selectGroups) {
+            selectedUUIDs.put(group.getUUID(), true);
+        }
+
+    }
 }

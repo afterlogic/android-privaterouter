@@ -27,6 +27,7 @@ import android.view.Window;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
+import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
 import com.PrivateRouter.PrivateMail.model.FolderType;
@@ -143,6 +144,7 @@ public class MailListActivity extends AppCompatActivity
         initUpdateTimer();
 
         SoftKeyboard.hideKeyboard(this);
+
 
     }
 
