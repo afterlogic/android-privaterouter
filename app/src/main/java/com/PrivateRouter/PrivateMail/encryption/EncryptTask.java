@@ -15,6 +15,7 @@ import com.PrivateRouter.PrivateMail.repository.KeysRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 
 
+import org.bouncycastle.asn1.ocsp.Signature;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -126,6 +127,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
 
 
                 if (useSign) {
+
                     Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
                     String privateKey = "";
                     PGPKey pgpkey = keysRepository.getKey(account.getEmail(), PGPKey.PRIVATE);
@@ -166,6 +168,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                 message.setHtml("");
 
             } catch (Exception e) {
+                failMessage = PrivateMailApplication.getContext().getString(R.string.encrypt_error_failed_key_password);
                 e.printStackTrace();
                 return null;
             }

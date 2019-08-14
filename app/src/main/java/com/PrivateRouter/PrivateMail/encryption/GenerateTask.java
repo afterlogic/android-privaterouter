@@ -105,8 +105,6 @@ public class GenerateTask extends AsyncTask<Void, Void, Void>  {
             e.printStackTrace();
         } catch (PGPException e) {
             e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         } catch (IOException e) {

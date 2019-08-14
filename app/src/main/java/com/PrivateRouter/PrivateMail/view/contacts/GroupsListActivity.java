@@ -20,6 +20,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoadCallback, GroupsAdapter.OnGroupClick {
+
+    public enum GroupWorkMode {
+        SINGLE_MODE,
+        MULTI_MODE
+    }
+
     public static final int GROUP = 11;
 
     @BindView(R.id.rv_groups_list)
@@ -30,6 +36,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups_list);
         ButterKnife.bind(this);
+        overridePendingTransition(R.anim.left_to_right, R.anim.hold);
 
         getGroups(this);
         RequestViewUtils.showRequest(this);
@@ -82,9 +89,10 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
         }
     }
 
-    public enum GroupWorkMode {
-        SINGLE_MODE,
-        MULTI_MODE
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.hold, R.anim.right_to_left);
     }
 
 }

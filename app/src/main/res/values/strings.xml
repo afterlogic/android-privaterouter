@@ -58,6 +58,7 @@
     <string name="encrypt_error_null_message">Message is null</string>
     <string name="encrypt_error_empty_message">Empty message</string>
     <string name="encrypt_error_empty_receiver">Select recipient before encrypt</string>
+    <string name="encrypt_error_failed_key_password">Password for private key is incorrect</string>
 
     <string name="decrypt_error_common">Can\'t decrypt message</string>
 

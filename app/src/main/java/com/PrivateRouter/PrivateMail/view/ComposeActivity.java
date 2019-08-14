@@ -132,8 +132,15 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, Message message) {
+        return makeIntent(activity, message, "", "");
+    }
+
+    @NonNull
+    public static Intent makeIntent(@NonNull Activity activity, Message message, String uploadFileName, String uploadData) {
         Intent intent = new Intent(activity, ComposeActivity.class);
         intent.putExtra("message", message);
+        intent.putExtra("uploadFileName", uploadFileName);
+        intent.putExtra("uploadData", uploadData);
         return intent;
     }
 
@@ -156,7 +163,21 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         bind();
 
+        uploadStartAttachment();
 
+    }
+
+    private void uploadStartAttachment() {
+        if (getIntent()!=null && getIntent().getSerializableExtra("uploadFileName")!=null) {
+            String uploadFileName  = getIntent().getStringExtra("uploadFileName");
+            String uploadData  = getIntent().getStringExtra("uploadData");
+
+            CallUploadMessage callUploadMessage = new CallUploadMessage(uploadResult);
+            callUploadMessage.setFileData(uploadData);
+            callUploadMessage.setFileName(uploadFileName);
+            callUploadMessage.start();
+            pbLoadingAttachments.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -691,7 +712,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             }
             else if (requestCode == CHOOSE_FILE_CODE) {
                 Uri selectedFile = data.getData();
-                String str = selectedFile.getPath();
                 CallUploadMessage callUploadMessage = new CallUploadMessage(uploadResult);
                 callUploadMessage.setFile(selectedFile);
                 callUploadMessage.start();

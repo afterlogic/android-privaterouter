@@ -31,6 +31,8 @@ import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
+import com.PrivateRouter.PrivateMail.model.AttachmentCollection;
+import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.Email;
@@ -53,6 +55,7 @@ import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
+import com.PrivateRouter.PrivateMail.view.utils.VCardHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -320,7 +323,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.item_menu_attach) {
-
+            openComposeScreenWithVCFCard();
         } else if (id == R.id.item_menu_send) {
             openComposeScreenWithContact();
         } else if (id == R.id.item_menu_search) {
@@ -347,6 +350,23 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             logout();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openComposeScreenWithVCFCard() {
+        Message message = new Message();
+        EmailCollection emailCollection = new EmailCollection();
+        ArrayList<Email> emails = new ArrayList<Email>();
+        emailCollection.setEmails(emails);
+        message.setTo(emailCollection);
+
+
+        String vCardData = VCardHelper.getVCardData(contact);
+
+        String fileName = contact.getViewEmail()+".vcf";
+
+        Intent intent = ComposeActivity.makeIntent(this, message,  fileName, vCardData );
+        startActivity(intent);
+
     }
 
     private void searchMailsWithContacts() {
