@@ -31,8 +31,6 @@ import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
-import com.PrivateRouter.PrivateMail.model.AttachmentCollection;
-import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.Email;
@@ -43,7 +41,6 @@ import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.NamedEnums;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
-import com.PrivateRouter.PrivateMail.network.requests.CallGetGroups;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
@@ -70,7 +67,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private ContactSettings contactSettings;
     private Menu menu;
-    private Enum<Mode> modeEnum;
+    private Enum<Mode> modeEnum = Mode.VIEW;
     private Contact contact;
     private GroupsListMediator groupsListMediator;
 
@@ -283,7 +280,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
             intent.getExtras().get("contact");
         }
-        loadDirectory();
+        loadContactSettings();
         initGroupsListMediator();
         initUI();
 
@@ -451,7 +448,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     public enum Mode {
-        CREATE, VIEW, EDIT
+        CREATE,
+        VIEW,
+        EDIT
     }
 
     public void onBirthdayFieldClick(View view) {
@@ -651,28 +650,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (modeEnum.equals(Mode.VIEW)) {
             getSupportActionBar().setTitle("");
         }
-        getGroups(this);
     }
 
-    private void loadDirectory() {
+    private void loadContactSettings() {
         RequestViewUtils.showRequest(this);
         ContactSettingsRepository.getInstance().getContactSettings(this);
     }
 
-    private void getGroups(OnGroupsLoadCallback callback) {
-        CallGetGroups callGetGroups = new CallGetGroups(new CallRequestResult() {
-            @Override
-            public void onSuccess(Object result) {
-                callback.onGroupsLoad((ArrayList<Group>) result);
-            }
-
-            @Override
-            public void onFail(ErrorType errorType, int serverCode) {
-                callback.onGroupsLoadFail(errorType, serverCode);
-            }
-        });
-        callGetGroups.start();
-    }
 
     private void bindContact() {
         fillSpinnerEmail();
@@ -910,8 +894,26 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         groupsListMediator = new GroupsListMediator(this);
     }
 
-    private void fillGroupsList(ArrayList<Group> groups) {
-        GroupsAdapter groupsAdapter = new GroupsAdapter(GroupsListActivity.GroupWorkMode.MULTI_MODE, groups, groupsListMediator);
+    private void fillGroupsList(ArrayList<Group> allGroups) {
+        GroupsAdapter.GroupWorkMode mode;
+        ArrayList<Group> groups;
+        if (modeEnum == Mode.VIEW) {
+            mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
+            groups = new ArrayList<>(  );
+            if (contact.getGroupUUIDs()!=null) {
+                for (Group group : allGroups) {
+                    if (contact.getGroupUUIDs().contains(group.getUUID())) {
+                        groups.add(group);
+                    }
+                }
+            }
+        }
+        else {
+            groups = allGroups;
+            mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
+        }
+
+        GroupsAdapter groupsAdapter = new GroupsAdapter(mode, groups, groupsListMediator);
         CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         rvGroups.setLayoutManager(customLayoutManager);

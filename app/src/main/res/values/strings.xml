@@ -214,5 +214,6 @@
     <string name="create_group_phone">Phone</string>
     <string name="create_group_fax">Fax</string>
     <string name="create_group_web">Web</string>
+    <string name="groups_personal">Personal</string>
 
 </resources>

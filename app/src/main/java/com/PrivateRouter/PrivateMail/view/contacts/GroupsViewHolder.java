@@ -17,7 +17,7 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
     private int position;
     private Group group;
     private GroupsAdapter groupsAdapter;
-    private GroupsListActivity.GroupWorkMode groupMode;
+    private GroupsAdapter.GroupWorkMode groupMode;
 
     @BindView(R.id.item_group)
     CheckedTextView ctvItem;
@@ -32,11 +32,17 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         this.onGroupClick = onGroupClick;
     }
 
-    public GroupsViewHolder(@NonNull View itemView, GroupsListActivity.GroupWorkMode groupMode) {
+    public GroupsViewHolder(@NonNull View itemView, GroupsAdapter.GroupWorkMode groupMode) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.groupMode = groupMode;
-        if(groupMode.equals(GroupsListActivity.GroupWorkMode.MULTI_MODE)) {
+
+        if (groupMode == GroupsAdapter.GroupWorkMode.SINGLE_MODE) {
+            ctvItem.setCheckMarkDrawable(null);
+        }
+
+
+        if(groupMode.equals(GroupsAdapter.GroupWorkMode.CHECK_MODE)) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -48,7 +54,7 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
                     groupsAdapter.onSelectChange(ctvItem.isChecked(), group);
                 }
             });
-        } else if(groupMode.equals(GroupsListActivity.GroupWorkMode.SINGLE_MODE)){
+        } else if(groupMode.equals(GroupsAdapter.GroupWorkMode.SINGLE_MODE)){
             ctvItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -69,13 +75,5 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bind(Group group, int position, GroupsAdapter groupsAdapter) {
-        this.group = group;
-        this.position = position;
-        this.groupsAdapter = groupsAdapter;
-        if (group != null) {
-            ctvItem.setText("# " + group.getName());
-            ctvItem.setCheckMarkDrawable(null);
-        }
-    }
+
 }

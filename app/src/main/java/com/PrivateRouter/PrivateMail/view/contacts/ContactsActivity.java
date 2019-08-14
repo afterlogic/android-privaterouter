@@ -31,10 +31,13 @@ import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.model.Contact;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.Message;
+import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.logics.LoadContactPoolLogic;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
@@ -45,6 +48,7 @@ import com.PrivateRouter.PrivateMail.view.utils.SoftKeyboard;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,7 +64,15 @@ public class ContactsActivity extends AppCompatActivity
     private static final String TAG = "ContactsActivity";
     public static final int CONTACT = 10;
     public static final int GROUP = 11;
-    String currentFolder = "Contacts";
+
+
+    enum VIEW_MODE {
+        GROUP,
+        STORADGE
+    }
+
+    VIEW_MODE viewMode = VIEW_MODE.STORADGE;
+
 
     @BindView(R.id.rv_contacts)
     RecyclerView rvContacts;
@@ -84,7 +96,8 @@ public class ContactsActivity extends AppCompatActivity
 
     public static final String CHOOSE_PARAM = "ChoseMode";
 
-    String currentStorage = "personal";
+    String currentGroup;
+    String currentStorage = Storages.PERSONAL.getId();
     ContactsAdapter contactsAdapter;
 
     LoadContactPoolLogic loadContactLogic;
@@ -99,6 +112,7 @@ public class ContactsActivity extends AppCompatActivity
     private ContactsListModeMediator contactsListModeMediator;
     private Menu menu;
     boolean chooseMode;
+    public  static  final int SELECT_GROUP = 100;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, boolean chooseMode) {
@@ -121,12 +135,29 @@ public class ContactsActivity extends AppCompatActivity
 
         initModeMediator();
         initUI();
-        initList();
 
+        initGroups();
         contactsListModeMediator.setSelectionMode(chooseMode);
 
         SoftKeyboard.hideKeyboard(this);
+    }
 
+    private void initGroups() {
+        RequestViewUtils.showRequest(this);
+        GroupsRepository.getInstance().load(new OnGroupsLoadCallback() {
+            @Override
+            public void onGroupsLoad(ArrayList<Group> groups) {
+                RequestViewUtils.hideRequest();
+                initList();
+            }
+
+            @Override
+            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+                RequestViewUtils.showError(getApplicationContext(), errorType, serverCode);
+                finish();
+            }
+
+        }, false);
     }
 
     @Override
@@ -137,6 +168,16 @@ public class ContactsActivity extends AppCompatActivity
             }
             else {
 
+            }
+        }
+        else if (requestCode == SELECT_GROUP ) {
+            if (  resultCode == RESULT_OK) {
+                boolean viewGroupMode = data.getBooleanExtra("viewGroupMode", false);
+
+                if (viewGroupMode)
+                    switchGroup(   data.getStringExtra("selectedGroup")  );
+                else
+                    switchStorage( data.getStringExtra("SelectedStorage") );
             }
         }
 
@@ -188,10 +229,20 @@ public class ContactsActivity extends AppCompatActivity
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
         DataSource.Factory<Integer, Contact> factory;
-        if (TextUtils.isEmpty(filter))
-            factory = database.messageDao().getAllContactsFactory(currentStorage);
-        else
-            factory = database.messageDao().getAllFilteredContactsFactory(currentStorage, "%" + filter + "%");
+
+        if (viewMode==VIEW_MODE.STORADGE) {
+            if (TextUtils.isEmpty(filter))
+                factory = database.messageDao().getAllContactsInStorage(currentStorage);
+            else
+                factory = database.messageDao().getAllFiltredContactsInStorage(currentStorage, "%" + filter + "%");
+        }
+        else {
+            if (TextUtils.isEmpty(filter))
+                factory = database.messageDao().getAllContactsInGroup(currentGroup);
+            else
+                factory = database.messageDao().getAllFiltredContactsInGroup(currentGroup, "%" + filter + "%");
+        }
+
 
         int contactPerMessage = 10;
         PagedList.Config config = new PagedList.Config.Builder()
@@ -260,7 +311,7 @@ public class ContactsActivity extends AppCompatActivity
                     contactsListModeMediator.closeSelectionMode();
 
                 Intent intent = new Intent(this, GroupsListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, SELECT_GROUP);
             }
         });
 
@@ -495,7 +546,21 @@ public class ContactsActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        requestContacts();
+        slMain.setRefreshing(true);
+        GroupsRepository.getInstance().load(new OnGroupsLoadCallback() {
+            @Override
+            public void onGroupsLoad(ArrayList<Group> groups) {
+                requestContacts();
+            }
+
+            @Override
+            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+                slMain.setRefreshing(false);
+                RequestViewUtils.showError(getApplicationContext(), errorType, serverCode);
+            }
+
+        }, true);
+
     }
 
     private void requestContacts() {
@@ -506,7 +571,7 @@ public class ContactsActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
-        loadContactLogic = new LoadContactPoolLogic(currentStorage, this);
+        loadContactLogic = new LoadContactPoolLogic(Storages.ALL.getId(), this);
         loadContactLogic.execute();
 
     }
@@ -541,6 +606,34 @@ public class ContactsActivity extends AppCompatActivity
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_drawer);
 
-        setTitle(currentFolder);
+        updateTitle();
+    }
+
+    private void updateTitle() {
+        setTitle("Contacts");
+
+        String subTitle;
+        if (viewMode == VIEW_MODE.GROUP)
+            subTitle = currentGroup;
+        else
+            subTitle = currentStorage;
+
+        Objects.requireNonNull(getSupportActionBar()).setSubtitle(subTitle);
+    }
+
+    private void switchGroup(String group) {
+        viewMode = VIEW_MODE.GROUP;
+        currentGroup = group;
+
+        updateTitle();
+        initList();
+    }
+
+    private void switchStorage(String storage) {
+        viewMode = VIEW_MODE.STORADGE;
+        currentStorage = storage;
+
+        updateTitle();
+        initList();
     }
 }

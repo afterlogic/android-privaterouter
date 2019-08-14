@@ -99,12 +99,21 @@ public interface MessageDao {
     void deletedFolderHashes( );
 
 
-    @Query("SELECT * FROM contacts WHERE Storage =:storage ")
-    DataSource.Factory<Integer, Contact> getAllContactsFactory(String storage);
+    @Query("SELECT * FROM contacts WHERE (Storage =:storage)")
+    DataSource.Factory<Integer, Contact> getAllContactsInStorage(String storage);
 
     @Query("SELECT * FROM contacts WHERE Storage =:storage and " +
             "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
-    DataSource.Factory<Integer, Contact> getAllFilteredContactsFactory(String storage, String filter );
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInStorage(String storage, String filter );
+
+
+    @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID)")
+    DataSource.Factory<Integer, Contact> getAllContactsInGroup(String groupID);
+
+    @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID) and " +
+            "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInGroup(String groupID, String filter );
+
 
 
     @Query("SELECT * FROM contacts WHERE   UUID = :uuid")

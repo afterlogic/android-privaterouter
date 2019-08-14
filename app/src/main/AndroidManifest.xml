@@ -93,7 +93,9 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <activity android:name=".view.contacts.GroupsListActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
 
 
         <meta-data
