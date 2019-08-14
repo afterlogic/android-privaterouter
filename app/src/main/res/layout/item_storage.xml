@@ -1,5 +1,5 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/item_storage"
+    android:id="@+id/tv_storage"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
@@ -7,5 +7,6 @@
     android:ellipsize="end"
     android:gravity="center_vertical"
     android:textSize="@dimen/size_subtitle_text_medium"
+    android:capitalize="words"
     android:textColor="@color/color_black"
     android:orientation="vertical"></TextView>

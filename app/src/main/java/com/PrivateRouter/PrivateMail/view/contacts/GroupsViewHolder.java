@@ -58,7 +58,8 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
             ctvItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onGroupClick.onGroupClick(group, position);
+                    if (onGroupClick!=null)
+                        onGroupClick.onGroupClick(group, position);
                 }
             });
         }

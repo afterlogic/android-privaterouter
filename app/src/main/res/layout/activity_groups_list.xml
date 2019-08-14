@@ -20,38 +20,53 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_storage_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/padding_all_element_large"
-        android:paddingEnd="@dimen/padding_all_element_large"
-        android:paddingBottom="@dimen/padding_all_element_large" />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_black">
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/size_subtitle_text_medium"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/margin_all_element_large"
-        android:layout_marginBottom="@dimen/margin_all_element_medium"
-        android:textColor="@color/color_dark_gray"
-        android:textAllCaps="true"
-        android:text="@string/all_groups"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_groups_list"
+    <android.support.v4.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="@dimen/padding_all_element_large"
-        android:paddingEnd="@dimen/padding_all_element_large"
-        android:paddingBottom="@dimen/padding_all_element_large" />
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_storage_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_all_element_large"
+                android:paddingEnd="@dimen/padding_all_element_large"
+                android:paddingBottom="@dimen/padding_all_element_large" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_black">
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/size_subtitle_text_medium"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/margin_all_element_large"
+                android:layout_marginBottom="@dimen/margin_all_element_medium"
+                android:textColor="@color/color_dark_gray"
+                android:textAllCaps="true"
+                android:text="@string/all_groups"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_groups_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/padding_all_element_large"
+                android:paddingEnd="@dimen/padding_all_element_large"
+                android:paddingBottom="@dimen/padding_all_element_large" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

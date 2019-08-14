@@ -45,6 +45,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
+import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
@@ -63,7 +64,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback, OnGroupsLoadCallback {
+public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback   {
 
     private ContactSettings contactSettings;
     private Menu menu;
@@ -265,6 +266,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+
+        initGroupsListMediator();
+
         contact = new Contact();
         if (getIntent() != null) {
             Intent intent = getIntent();
@@ -281,8 +285,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             intent.getExtras().get("contact");
         }
         loadContactSettings();
-        initGroupsListMediator();
+
         initUI();
+
 
     }
 
@@ -425,16 +430,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         RequestViewUtils.hideRequest();
     }
 
-    @Override
-    public void onGroupsLoad(ArrayList<Group> groups) {
-        fillGroupsList(groups);
-    }
 
-    @Override
-    public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
-        RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
-    }
 
     @Override
     public void onFail(ErrorType errorType, int serverCode) {
@@ -478,6 +474,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         MenuItem searchItem = menu.findItem(R.id.item_menu_search);
         MenuItem editItem = menu.findItem(R.id.item_menu_edit);
         MenuItem saveItem = menu.findItem(R.id.item_menu_save);
+
+
+
 
         if (modeEnum.equals(Mode.VIEW)) {
             attachItem.setVisible(true);
@@ -662,6 +661,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         fillSpinnerEmail();
         fillSpinnerPhone();
         fillSpinnerAddress();
+        fillGroupsList();
     }
 
     private void fillSpinnerEmail() {
@@ -894,29 +894,40 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         groupsListMediator = new GroupsListMediator(this);
     }
 
-    private void fillGroupsList(ArrayList<Group> allGroups) {
-        GroupsAdapter.GroupWorkMode mode;
-        ArrayList<Group> groups;
-        if (modeEnum == Mode.VIEW) {
-            mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
-            groups = new ArrayList<>(  );
-            if (contact.getGroupUUIDs()!=null) {
-                for (Group group : allGroups) {
-                    if (contact.getGroupUUIDs().contains(group.getUUID())) {
-                        groups.add(group);
+    private void fillGroupsList() {
+        GroupsRepository.getInstance().load(new OnGroupsLoadCallback() {
+            @Override
+            public void onGroupsLoad(ArrayList<Group> allGroups) {
+                GroupsAdapter.GroupWorkMode mode;
+                ArrayList<Group> groups;
+                if (modeEnum == Mode.VIEW) {
+                    mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
+                    groups = new ArrayList<>(  );
+                    if (contact.getGroupUUIDs()!=null) {
+                        for (Group group : allGroups) {
+                            if (contact.getGroupUUIDs().contains(group.getUUID())) {
+                                groups.add(group);
+                            }
+                        }
                     }
                 }
-            }
-        }
-        else {
-            groups = allGroups;
-            mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
-        }
+                else {
+                    groups = allGroups;
+                    mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
+                }
 
-        GroupsAdapter groupsAdapter = new GroupsAdapter(mode, groups, groupsListMediator);
-        CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false);
-        rvGroups.setLayoutManager(customLayoutManager);
-        rvGroups.setAdapter(groupsAdapter);
+                GroupsAdapter groupsAdapter = new GroupsAdapter(mode, groups, groupsListMediator);
+                CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(ContactActivity.this,
+                        LinearLayoutManager.VERTICAL, false);
+                rvGroups.setLayoutManager(customLayoutManager);
+                rvGroups.setAdapter(groupsAdapter);
+            }
+
+            @Override
+            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+
+            }
+        }, false);
+
     }
 }

@@ -15,6 +15,9 @@ import butterknife.OnClick;
 public class StorageViewHolder  extends RecyclerView.ViewHolder {
 
 
+    @BindView(R.id.tv_storage)
+    TextView tvStorage;
+
     private int position;
     private Storages storages;
 
@@ -29,7 +32,7 @@ public class StorageViewHolder  extends RecyclerView.ViewHolder {
     }
 
     @SuppressWarnings("unused")
-    @OnClick(R.id.item_storage)
+    @OnClick(R.id.tv_storage)
     public void onClick() {
         onStorageClick.onStorageClick(storages.getId());
     }
@@ -38,6 +41,8 @@ public class StorageViewHolder  extends RecyclerView.ViewHolder {
     public void bind(Storages storages, int position) {
         this.storages = storages;
         this.position = position;
+
+        tvStorage.setText(storages.getId());
     }
 
 

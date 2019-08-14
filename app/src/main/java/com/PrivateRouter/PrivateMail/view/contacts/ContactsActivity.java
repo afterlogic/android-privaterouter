@@ -60,11 +60,12 @@ public class ContactsActivity extends AppCompatActivity
         implements CallRequestResult<Boolean>,
         SwipeRefreshLayout.OnRefreshListener, ContactsAdapter.OnContactClick {
 
+
     private boolean fabOpen;
     private static final String TAG = "ContactsActivity";
     public static final int CONTACT = 10;
-    public static final int GROUP = 11;
-
+    public static final int CREATE_GROUP = 11;
+    private static final int VIEW_GROUP = 12;
 
     enum VIEW_MODE {
         GROUP,
@@ -96,7 +97,7 @@ public class ContactsActivity extends AppCompatActivity
 
     public static final String CHOOSE_PARAM = "ChoseMode";
 
-    String currentGroup;
+    Group currentGroup;
     String currentStorage = Storages.PERSONAL.getId();
     ContactsAdapter contactsAdapter;
 
@@ -174,8 +175,10 @@ public class ContactsActivity extends AppCompatActivity
             if (  resultCode == RESULT_OK) {
                 boolean viewGroupMode = data.getBooleanExtra("viewGroupMode", false);
 
-                if (viewGroupMode)
-                    switchGroup(   data.getStringExtra("selectedGroup")  );
+                if (viewGroupMode) {
+                    Group group = (Group) data.getSerializableExtra("SelectedGroup");
+                    switchGroup( group );
+                }
                 else
                     switchStorage( data.getStringExtra("SelectedStorage") );
             }
@@ -238,9 +241,9 @@ public class ContactsActivity extends AppCompatActivity
         }
         else {
             if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllContactsInGroup(currentGroup);
+                factory = database.messageDao().getAllContactsInGroup(currentGroup.getUUID());
             else
-                factory = database.messageDao().getAllFiltredContactsInGroup(currentGroup, "%" + filter + "%");
+                factory = database.messageDao().getAllFiltredContactsInGroup(currentGroup.getUUID(), "%" + filter + "%");
         }
 
 
@@ -315,6 +318,7 @@ public class ContactsActivity extends AppCompatActivity
             }
         });
 
+
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         initSearch(searchView);
@@ -331,6 +335,10 @@ public class ContactsActivity extends AppCompatActivity
         MenuItem sendItem = menu.findItem(R.id.item_menu_send);
         MenuItem toRecycleItem = menu.findItem(R.id.item_menu_recyclebin);
         MenuItem chooseItem = menu.findItem(R.id.item_menu_choose);
+        MenuItem viewGroupItem = menu.findItem(R.id.item_menu_view_group);
+
+
+        viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
 
 
         sendItem.setVisible(false);
@@ -396,9 +404,16 @@ public class ContactsActivity extends AppCompatActivity
         } else if (id == R.id.action_logout) {
             setResult(LOGOUT);
             finish();
+        } else if (id == R.id.item_menu_view_group) {
+            openGroupScreen();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openGroupScreen() {
+        Intent intent = GroupActivity.makeIntent(this, GroupActivity.Mode.VIEW, currentGroup);
+        startActivityForResult(intent, VIEW_GROUP );
     }
 
     private void showEmptyEmailAlert() {
@@ -491,7 +506,7 @@ public class ContactsActivity extends AppCompatActivity
     public void btNewContactsGroupClick() {
         closeFABMenu();
         Intent intent = GroupActivity.makeIntent(ContactsActivity.this, GroupActivity.Mode.CREATE, null);
-        startActivityForResult(intent, GROUP);
+        startActivityForResult(intent, CREATE_GROUP);
     }
 
 
@@ -571,7 +586,8 @@ public class ContactsActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
-        loadContactLogic = new LoadContactPoolLogic(Storages.ALL.getId(), this);
+        currentStorage = "personal";//todo remove after backend update
+        loadContactLogic = new LoadContactPoolLogic(currentStorage, this);
         loadContactLogic.execute();
 
     }
@@ -614,19 +630,21 @@ public class ContactsActivity extends AppCompatActivity
 
         String subTitle;
         if (viewMode == VIEW_MODE.GROUP)
-            subTitle = currentGroup;
+            subTitle = currentGroup.getName();
         else
             subTitle = currentStorage;
 
         Objects.requireNonNull(getSupportActionBar()).setSubtitle(subTitle);
     }
 
-    private void switchGroup(String group) {
+    private void switchGroup(Group group) {
         viewMode = VIEW_MODE.GROUP;
         currentGroup = group;
 
         updateTitle();
         initList();
+
+        updateMenu();
     }
 
     private void switchStorage(String storage) {
@@ -635,5 +653,7 @@ public class ContactsActivity extends AppCompatActivity
 
         updateTitle();
         initList();
+
+        updateMenu();
     }
 }

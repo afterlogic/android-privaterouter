@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class GroupsRepository {
     public static volatile GroupsRepository instance = null;
-    private ArrayList<Group> groups = new ArrayList<>();
+    private ArrayList<Group> groups = null;
 
 
 
