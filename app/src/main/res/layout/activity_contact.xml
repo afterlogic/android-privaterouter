@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -85,6 +86,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_email"></View>
 
+                <TextView
+                    android:id="@+id/tvPrimaryEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_all_element_small"
+                    android:text="TextView"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/size_subtitle_text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_email"
+                    app:layout_constraintEnd_toStartOf="@+id/sp_email"
+                    app:layout_constraintTop_toTopOf="@+id/tv_email" />
+
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
@@ -124,6 +137,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_phone"></View>
 
+                <TextView
+                    android:id="@+id/tvPrimaryPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_all_element_small"
+                    android:text="TextView"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/size_subtitle_text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_phone"
+                    app:layout_constraintEnd_toStartOf="@+id/sp_phone"
+                    app:layout_constraintTop_toTopOf="@+id/tv_phone" />
+
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
@@ -162,6 +187,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_address"></View>
+
+                <TextView
+                    android:id="@+id/tvPrimaryAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_all_element_small"
+                    android:text="TextView"
+                    android:textColor="@color/color_black"
+                    android:textSize="@dimen/size_subtitle_text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_address"
+                    app:layout_constraintEnd_toStartOf="@+id/sp_address"
+                    app:layout_constraintTop_toTopOf="@+id/tv_address" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -370,7 +407,8 @@
                             style="@style/EditTextSingleLine"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/contacts_fax" />
+                            android:hint="@string/contacts_fax"
+                            android:inputType="phone" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -384,7 +422,8 @@
                             style="@style/EditTextSingleLine"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/all_phone" />
+                            android:hint="@string/all_phone"
+                            android:inputType="phone" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -398,7 +437,8 @@
                             style="@style/EditTextSingleLine"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/contacts_mobile" />
+                            android:hint="@string/contacts_mobile"
+                            android:inputType="phone" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 
@@ -580,7 +620,8 @@
                             style="@style/EditTextSingleLine"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/contacts_fax" />
+                            android:hint="@string/contacts_fax"
+                            android:inputType="phone" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -594,7 +635,8 @@
                             style="@style/EditTextSingleLine"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/all_phone" />
+                            android:hint="@string/all_phone"
+                            android:inputType="phone" />
                     </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>
