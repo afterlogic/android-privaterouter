@@ -77,13 +77,14 @@ dependencies {
     //debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
 
 
-    implementation 'org.pgpainless:pgpainless-core:0.0.1-alpha3'
+    implementation 'org.pgpainless:pgpainless-core:0.0.1-alpha7'
     //implementation 'com.github.kibotu:android-pgp:-SNAPSHOT'
     //implementation 'org.bouncycastle:bcprov-jdk15on:1.56'
     //implementation 'org.bouncycastle:bcpg-jdk15on:1.56'
 
     //implementation 'name.neuhalfen.projects.crypto.bouncycastle.openpgp:bouncy-gpg:2.+'
 
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.10.5'
 
     implementation 'org.apmem.tools:layouts:1.10@aar'
 

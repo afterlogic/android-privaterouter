@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +41,6 @@ import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.NamedEnums;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallCreateContact;
-import com.PrivateRouter.PrivateMail.network.requests.CallGetGroups;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
@@ -52,6 +52,7 @@ import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
+import com.PrivateRouter.PrivateMail.view.utils.VCardHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,7 +67,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     private ContactSettings contactSettings;
     private Menu menu;
-    private Enum<Mode> modeEnum;
+    private Enum<Mode> modeEnum = Mode.VIEW;
     private Contact contact;
     private GroupsListMediator groupsListMediator;
 
@@ -279,7 +280,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             }
             intent.getExtras().get("contact");
         }
-        loadDirectory();
+        loadContactSettings();
         initGroupsListMediator();
         initUI();
 
@@ -319,11 +320,11 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.item_menu_attach) {
-
+            openComposeScreenWithVCFCard();
         } else if (id == R.id.item_menu_send) {
-            sendMessageToContact();
+            openComposeScreenWithContact();
         } else if (id == R.id.item_menu_search) {
-
+            searchMailsWithContacts();
         } else if (id == R.id.item_menu_edit) {
             Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
             startActivityForResult(intent, UPDATED_CONTACT);
@@ -346,6 +347,37 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             logout();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openComposeScreenWithVCFCard() {
+        Message message = new Message();
+        EmailCollection emailCollection = new EmailCollection();
+        ArrayList<Email> emails = new ArrayList<Email>();
+        emailCollection.setEmails(emails);
+        message.setTo(emailCollection);
+
+
+        String vCardData = VCardHelper.getVCardData(contact);
+
+        String fileName = contact.getViewEmail()+".vcf";
+
+        Intent intent = ComposeActivity.makeIntent(this, message,  fileName, vCardData );
+        startActivity(intent);
+
+    }
+
+    private void searchMailsWithContacts() {
+        Account account = LoggedUserRepository.getInstance().getActiveAccount();
+        String folder = account.getFolders().getFolderName(FolderType.Inbox);
+
+        Intent broadcastIntent = new Intent(MailListActivity.SEARCH_WORD);
+        broadcastIntent.putExtra(MailListActivity.SEARCH_WORD, contact.getViewEmail());
+        sendBroadcast(broadcastIntent);
+
+        Intent intent = MailListActivity.makeIntent(this, folder, MailListActivity.EMAIL_SEARCH_PREFIX + contact.getViewEmail());
+        startActivity(intent);
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     @OnClick(R.id.tv_additional_fields)
@@ -416,7 +448,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     public enum Mode {
-        CREATE, VIEW, EDIT
+        CREATE,
+        VIEW,
+        EDIT
     }
 
     public void onBirthdayFieldClick(View view) {
@@ -616,28 +650,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (modeEnum.equals(Mode.VIEW)) {
             getSupportActionBar().setTitle("");
         }
-        getGroups(this);
     }
 
-    private void loadDirectory() {
+    private void loadContactSettings() {
         RequestViewUtils.showRequest(this);
         ContactSettingsRepository.getInstance().getContactSettings(this);
     }
 
-    private void getGroups(OnGroupsLoadCallback callback) {
-        CallGetGroups callGetGroups = new CallGetGroups(new CallRequestResult() {
-            @Override
-            public void onSuccess(Object result) {
-                callback.onGroupsLoad((ArrayList<Group>) result);
-            }
-
-            @Override
-            public void onFail(ErrorType errorType, int serverCode) {
-                callback.onGroupsLoadFail(errorType, serverCode);
-            }
-        });
-        callGetGroups.start();
-    }
 
     private void bindContact() {
         fillSpinnerEmail();
@@ -769,14 +788,33 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         startActivity(intent);
     }
 
-    private void sendMessageToContact() {
+    private void openComposeScreenWithContact() {
         if (contact.getViewEmail() != null) {
             Message message = new Message();
-            Email email = new Email();
-            email.setEmail(contact.getViewEmail());
             EmailCollection emailCollection = new EmailCollection();
             ArrayList<Email> emails = new ArrayList<Email>();
-            emails.add(email);
+
+
+            if (!TextUtils.isEmpty(contact.getBusinessEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getBusinessEmail());
+                emails.add(email);
+            }
+
+
+            if (!TextUtils.isEmpty(contact.getOtherEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getOtherEmail());
+                emails.add(email);
+            }
+
+
+            if (!TextUtils.isEmpty(contact.getPersonalEmail())) {
+                Email email = new Email();
+                email.setEmail(contact.getPersonalEmail());
+                emails.add(email);
+            }
+
             emailCollection.setEmails(emails);
             message.setTo(emailCollection);
             Intent intent = ComposeActivity.makeIntent(this, message);
@@ -856,8 +894,26 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         groupsListMediator = new GroupsListMediator(this);
     }
 
-    private void fillGroupsList(ArrayList<Group> groups) {
-        GroupsAdapter groupsAdapter = new GroupsAdapter(GroupsListActivity.GroupWorkMode.MULTI_MODE, groups, groupsListMediator);
+    private void fillGroupsList(ArrayList<Group> allGroups) {
+        GroupsAdapter.GroupWorkMode mode;
+        ArrayList<Group> groups;
+        if (modeEnum == Mode.VIEW) {
+            mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
+            groups = new ArrayList<>(  );
+            if (contact.getGroupUUIDs()!=null) {
+                for (Group group : allGroups) {
+                    if (contact.getGroupUUIDs().contains(group.getUUID())) {
+                        groups.add(group);
+                    }
+                }
+            }
+        }
+        else {
+            groups = allGroups;
+            mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
+        }
+
+        GroupsAdapter groupsAdapter = new GroupsAdapter(mode, groups, groupsListMediator);
         CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         rvGroups.setLayoutManager(customLayoutManager);

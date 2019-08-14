@@ -159,13 +159,13 @@ public class EncryptDialogFragment extends DialogFragment implements View.OnClic
 
 
         RequestViewUtils.showRequest(getActivity());
-        EncryptTask encryptTask = new EncryptTask(getActivity(), pass, cbSign.isChecked(), message,
+        EncryptTask encryptTask = new EncryptTask(getActivity(), pass, cbEncrypt.isChecked(), cbSign.isChecked(), message,
                 new EncryptCallback() {
                     @Override
-                    public void onEncrypt(Message message) {
+                    public void onEncrypt(Message message, boolean encrypt, boolean sign) {
                         RequestViewUtils.hideRequest();
                         if (encryptCallback != null)
-                            encryptCallback.onEncrypt(message);
+                            encryptCallback.onEncrypt(message,  encrypt,  sign);
                         dismiss();
                     }
 

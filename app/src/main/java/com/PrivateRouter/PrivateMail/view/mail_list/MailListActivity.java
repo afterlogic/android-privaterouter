@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessagePoolLogic;
+import com.PrivateRouter.PrivateMail.network.logics.LoadMoreMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.MoveMessageLogic;
 import com.PrivateRouter.PrivateMail.network.requests.CallLogout;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
@@ -66,6 +68,8 @@ public class MailListActivity extends AppCompatActivity
     public static final int OPEN_CONTACT = 1001;
     public static final int SELECT_FOLDER = 1000;
     public static final String FOLDER_PARAM = "Folder";
+    public static final String SEARCH_WORD = "SearchWord";
+    public static final String EMAIL_SEARCH_PREFIX = "email:";
     @BindView(R.id.rv_mail_list)
     RecyclerView rvMailList;
 
@@ -98,13 +102,23 @@ public class MailListActivity extends AppCompatActivity
     private MailListModeMediator mailListModeMediator;
     private Menu menu;
     private boolean paused = false;
+    private String startSearchWord;
 
     @NonNull
-    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder) {
+    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
+        return makeIntent(activity, defaultFolder, "");
+    }
+
+    @NonNull
+    public static Intent makeIntent(@NonNull Activity activity, String defaultFolder, String searchText) {
         Intent intent = new Intent(activity, MailListActivity.class);
         intent.putExtra(MailListActivity.FOLDER_PARAM, defaultFolder);
+        intent.putExtra(MailListActivity.SEARCH_WORD, searchText);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,14 +128,17 @@ public class MailListActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
+
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
+            startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
         initModeSubject();
         openNormalMode();
         initUI();
-        initList();
+
+        initList(startSearchWord );
 
         initUpdateTimer();
 
@@ -196,15 +213,26 @@ public class MailListActivity extends AppCompatActivity
 
     private void initList(String filter) {
 
-        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = "+filter );
+        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
+
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
         DataSource.Factory<Integer, Message> factory;
+        boolean needFlatMode = false;
         if (TextUtils.isEmpty(filter))
             factory = database.messageDao().getAllFactory(currentFolder);
-        else
-            factory = database.messageDao().getAllFilterFactory(currentFolder, "%"+filter+"%");
+        else {
+            needFlatMode = true;
+            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length()> EMAIL_SEARCH_PREFIX.length()) {
+                String value = filter.substring(EMAIL_SEARCH_PREFIX.length()+1);
+                factory = database.messageDao().getAllFilterEmailFactory(currentFolder, "%" + value + "%");
+            }
+            else {
+                factory = database.messageDao().getAllFilterFactory(currentFolder, "%" + filter + "%");
+            }
+
+        }
 
 
         int messagePerMessage = 10;
@@ -223,29 +251,16 @@ public class MailListActivity extends AppCompatActivity
 
 
         mailListAdapter = new MailListAdapter( new MessageDiffUtilCallback(), mailListModeMediator);
+        if (needFlatMode)
+            mailListAdapter.useFlatMode();
 
 
         pagedListLiveData.observe(this, (PagedList<Message> messagePagedList) -> {
-  //          Log.d(LoadMessageLogic.TAG, "pagedListLiveData.observe firstUpdate =" +firstUpdate + " count=" + messagePagedList.size() + " currentFolder="+currentFolder);
-/*
-          if (messagePagedList.size()>0)
-  //              Log.d(LoadMessageLogic.TAG, "pagedListLiveData.observe [0].folder="+messagePagedList.get(0).getFolder() );
-
-                for (int i =0; i <messagePagedList.size(); i++ ) {
-                    Message message = messagePagedList.get(i);
-                    if (message != null && message.getThreadList() != null) {
-                        List<Message> threadsMessages = database.messageDao().getAllThreadsMessages(message.getFolder(), message.getUid());
-                        if (threadsMessages == null)
-                            threadsMessages = new ArrayList<>();
-                        message.setThreadList(threadsMessages);
-                    }
-                }
-            }
-*/
 
             if (!paused) {
 
                 mailListAdapter.submitList(messagePagedList);
+                updateShowMoreBarVisible();
                 if (firstUpdate) {
                     requestMessages();
                     firstUpdate = false;
@@ -256,6 +271,47 @@ public class MailListActivity extends AppCompatActivity
 
         mailListAdapter.setOnMessageClick(this);
         rvMailList.setAdapter(mailListAdapter);
+
+        rvMailList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int totalItem = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+
+                if ( lastVisibleItem == totalItem - 1) {
+                    updateShowMoreBarVisible(false);
+                }
+            }
+        });
+    }
+
+
+    private void updateShowMoreBarVisible() {
+        updateShowMoreBarVisible(true);
+    }
+    private void updateShowMoreBarVisible(boolean update) {
+
+        int loadedCount = mailListAdapter.getItemMessageCount();
+        Account account = LoggedUserRepository.getInstance().getActiveAccount();
+        if (account==null)
+            return;
+        Folder folder = account.getFolders().getFolder(currentFolder);
+        if (folder==null)
+            return;
+        int totalCount = folder.getMeta().getCount();
+
+        if (loadedCount < totalCount-1 && loadedCount>0) {
+            mailListAdapter.setShowMoreBar(true);
+        }
+        else if (loadedCount == totalCount) {
+            mailListAdapter.setShowMoreBar(false);
+        }
+
+        if (update) {
+            mailListAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initUI() {
@@ -308,6 +364,7 @@ public class MailListActivity extends AppCompatActivity
 
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
         initSearch(searchView);
 
         updateMenu();
@@ -374,6 +431,10 @@ public class MailListActivity extends AppCompatActivity
                 return true;
             }
         });
+        if (!TextUtils.isEmpty(startSearchWord)) {
+            searchView.setQuery(startSearchWord, false);
+            searchView.setIconified(false);
+        }
     }
 
     @Override
@@ -545,11 +606,15 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
-        loadMessageLogic = new LoadMessagePoolLogic(currentFolder,   this);
+        updateShowMoreBarVisible();
+
+        LoadMoreMessageLogic.clearTemp();
+        loadMessageLogic = new LoadMessagePoolLogic(currentFolder, this);
         loadMessageLogic.setForceCurrent(forceCurrent);
         loadMessageLogic.execute();
 
     }
+
 
     private void initUpdateTimer() {
         PrivateMailApplication.getInstance().getSyncLogic().setRequestMessagesRunnable(this::requestMessages);
@@ -560,7 +625,7 @@ public class MailListActivity extends AppCompatActivity
     public void onMessageClick(Message message, int position) {
         Intent intent;
         if (message!=null) {
-            if (message.getParentUid()==0) {
+            if (!message.isThreadMessage()) {
                 MailViewList mailViewList = new MailViewList() {
                     @Override
                     public Message getMessage(int index) {
@@ -569,7 +634,7 @@ public class MailListActivity extends AppCompatActivity
 
                     @Override
                     public int getItemCount() {
-                        return mailListAdapter.getItemCount();
+                        return mailListAdapter.getItemMessageCount();
                     }
                 };
                 intent = MailViewActivity.makeIntent(this, mailViewList, position, currentFolder);
@@ -640,5 +705,23 @@ public class MailListActivity extends AppCompatActivity
 
     public WeakReference<SwipeRefreshLayout> getSwipeRefreshLayout() {
         return new WeakReference<SwipeRefreshLayout>(slMain);
+    }
+
+    public void onLoadMoreClick() {
+        slMain.setRefreshing(true);
+        LoadMoreMessageLogic loadMoreMessageLogic = new LoadMoreMessageLogic(currentFolder, new LoadMoreMessageLogic.LoadMoreCallback() {
+            @Override
+            public void onSuccess() {
+                slMain.setRefreshing(false);
+            }
+
+            @Override
+            public void onFail(ErrorType errorType, int errorCode) {
+                slMain.setRefreshing(false);
+                RequestViewUtils.showError(MailListActivity.this, errorType, errorCode);
+
+            }
+        });
+        loadMoreMessageLogic.execute();
     }
 }

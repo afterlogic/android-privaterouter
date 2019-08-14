@@ -468,4 +468,8 @@ public class Message extends  MessageBase implements Serializable {
     public void setThreadList(List<Message> threadList) {
         this.threadList = threadList;
     }
+
+    public boolean isThreadMessage() {
+        return  getParentUid()!=0;
+    }
 }

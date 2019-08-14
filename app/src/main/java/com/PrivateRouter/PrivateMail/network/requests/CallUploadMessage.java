@@ -34,6 +34,9 @@ import retrofit2.Response;
 public class CallUploadMessage extends CallRequest<BaseResponse>  implements Callback<UploadAttachmentResponse> {
 
     Uri uri;
+    private String fileData;
+    private String fileName;
+
     public CallUploadMessage(CallRequestResult<BaseResponse> callback) {
         super(callback);
     }
@@ -43,7 +46,14 @@ public class CallUploadMessage extends CallRequest<BaseResponse>  implements Cal
 
     public void setFile(Uri uri) {
         this.uri = uri;
+    }
 
+    public void setFileData(String data) {
+        this.fileData = data;
+    }
+
+    public void setFileName(String data) {
+        this.fileName = data;
     }
 
     @Override
@@ -58,24 +68,24 @@ public class CallUploadMessage extends CallRequest<BaseResponse>  implements Cal
 
         Context context = PrivateMailApplication.getContext();
 
-        String path = UriUtils.getPath(PrivateMailApplication.getContext(), uri);
-        File file = new File(path);
 
 
+        RequestBody requestBody;
+        if (uri!=null) {
+            String path = UriUtils.getPath(PrivateMailApplication.getContext(), uri);
+            File file = new File(path);
+            requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+            fileName = file.getName();
+        }
+        else
+            requestBody = RequestBody.create(MediaType.parse("image/*"), fileData);
 
-        String fileData = getFileData();
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-        //RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), fileData);
-
-
-        //MultipartBody.Part body2 =  MultipartBody.Part.createFormData("file", "name", requestFile);
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("jua-uploader", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("jua-uploader", fileName, requestBody);
 
 
         RequestBody module = RequestBody.create(MediaType.parse("text/plain"), ApiModules.MAIL);
         RequestBody method = RequestBody.create(MediaType.parse("text/plain"), ApiMethods.UPLOAD_ATTACHMENT);
         RequestBody parameter = RequestBody.create(MediaType.parse("text/plain"), json);
-        RequestBody requestFile2 = RequestBody.create(MediaType.parse("text/plain"), fileData);
 
 
         Call<UploadAttachmentResponse> call= ApiFactory.getService().uploadAttachment( filePart, module,  method,

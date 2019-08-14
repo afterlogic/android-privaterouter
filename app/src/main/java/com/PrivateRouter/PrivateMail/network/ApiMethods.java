@@ -10,6 +10,7 @@ public class ApiMethods {
     public static String GET_MESSAGE = "GetMessageResponse";
     public static String GET_MESSAGES_BODIES = "GetMessagesBodies";
     public static String SEND_MESSAGE = "SendMessage";
+    public static String SAVE_MESSAGE = "SaveMessage";
     public static String MOVE_MESSAGES = "MoveMessages";
     public static String GET_FOLDERS = "GetFolders";
     public static String GET_RELEVANT_FOLDERS_INFORMATION= "GetRelevantFoldersInformation";

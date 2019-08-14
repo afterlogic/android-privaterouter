@@ -26,6 +26,7 @@ import retrofit2.Response;
 public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  implements Callback<GetMessageBaseResponse>
 {
     GetMessageParametersInfo getMessageParameters = new GetMessageParametersInfo();
+    private int iteration;
 
     public CallGetMessagesBase(){
         super(null);
@@ -64,8 +65,7 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
         if (monthAgo>0) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date() );
-            calendar.add(Calendar.MONTH, -monthAgo);
-//            calendar.add(Calendar.DAY_OF_YEAR, -monthAgo);
+            calendar.add(Calendar.MONTH, -monthAgo*(iteration+1));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.US);
             search = "date:"+ simpleDateFormat.format( calendar.getTime() )+"/";
             //"Search":"date:2019.02.05/"
@@ -138,6 +138,10 @@ public class CallGetMessagesBase extends CallRequest<ArrayList<MessageBase>>  im
     public void cancel() {
         if (call!=null)
             call.cancel();
+    }
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
     }
 
     class GetMessageParametersInfo {

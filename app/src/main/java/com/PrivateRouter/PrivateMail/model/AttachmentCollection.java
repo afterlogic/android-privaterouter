@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class AttachmentCollection implements Serializable {
 
+
     @SerializedName("@Count")
     private
     int count;
@@ -48,4 +49,5 @@ public class AttachmentCollection implements Serializable {
         }
         return null;
     }
+
 }

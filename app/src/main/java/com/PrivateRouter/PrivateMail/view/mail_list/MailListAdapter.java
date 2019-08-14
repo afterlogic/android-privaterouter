@@ -21,14 +21,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MailListAdapter extends PagedListAdapter<Message, MessageViewHolder> {
+public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_ADD_MORE_BAR = 1;
 
     private boolean selectedMode = false;
     private MailListModeMediator mailListModeMediator;
     private List<Message> selectedMessages = new LinkedList<>();
     private HashMap<Integer, Boolean> expandedMessageUids = new HashMap<>();
     private HashMap<Integer, Boolean> selectedMessageUids = new HashMap<>();
+    private boolean flatMode;
 
     protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator) {
         super(diffUtilCallback);
@@ -39,27 +43,20 @@ public class MailListAdapter extends PagedListAdapter<Message, MessageViewHolder
 
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_main, parent, false);
-        MessageViewHolder holder = new MessageViewHolder(view);
-        holder.setOnMessageClick(onMessageClick);
-        return holder;
-    }
-
-     /*
-    public void onCurrentListChanged(@Nullable PagedList<Message> currentList) {
-
-        AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
-        for (int i =0; i <currentList.size(); i++ ) {
-            Message message = currentList.get(i);
-            if (message != null && message.getThreadList() != null) {
-                List<Message> threadsMessages = database.messageDao().getAllThreadsMessages(message.getFolder(), message.getUid());
-                if (threadsMessages == null)
-                    threadsMessages = new ArrayList<>();
-                message.setThreadList(threadsMessages);
-            }
+    public MailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        MailViewHolder mailViewHolder = null;
+        if (viewType == TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_main, parent, false);
+            MessageViewHolder holder = new MessageViewHolder(view);
+            holder.setOnMessageClick(onMessageClick);
+            mailViewHolder = holder;
         }
-    }*/
+        else if (viewType == TYPE_ADD_MORE_BAR) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_show_bar, parent, false);
+            mailViewHolder = new MailViewBarHolder(view);
+        }
+        return mailViewHolder;
+    }
 
     public boolean isMessageSelected(Message message) {
         if (message==null)
@@ -80,15 +77,35 @@ public class MailListAdapter extends PagedListAdapter<Message, MessageViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MailViewHolder holder, int position) {
+        int type = getItemViewType(position);
+
+        switch (type) {
+            case TYPE_ITEM:
+                bindMessageItem(holder, position);
+                break;
+            case TYPE_ADD_MORE_BAR:
+                bindBarItem(holder, position);
+                break;
+        }
+    }
+
+    private void bindBarItem(MailViewHolder holder, int position) {
+        ((MailViewBarHolder)holder).bind(mailListModeMediator);
+    }
+
+    private void bindMessageItem(MailViewHolder holder, int position) {
+
+        MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
         Message message = getItem(position);
         boolean selected = isMessageSelected(message);
         boolean expand = isMessageExpanded(message);
-        holder.bind(message , position, selected, expand, this);
-
-        holder.setSelectedMode( selectedMode );
+        messageViewHolder.setFlatMode(flatMode);
+        messageViewHolder.bind(message , position, selected, expand, this);
+        messageViewHolder.setSelectedMode( selectedMode );
 
     }
+
     public Message getMessage(int position) {
         return getItem(position);
     }
@@ -179,8 +196,8 @@ public class MailListAdapter extends PagedListAdapter<Message, MessageViewHolder
         selectedMessageUids.clear();
     }
 
-    public WeakReference<SwipeRefreshLayout> getSwipeRefreshLayout() {
-        return null;//mailListModeMediator.getSwipeRefreshLayout();
+    public void useFlatMode() {
+        flatMode = true;
     }
 
 
@@ -189,5 +206,45 @@ public class MailListAdapter extends PagedListAdapter<Message, MessageViewHolder
     }
 
 
+    @Nullable
+    protected Message getItem(int position) {
+        if (hasShowMoreBar() && position == getItemCount()-1 )
+            return null;
+        else
+            return super.getItem(position);
+    }
+
+
+    public  int getItemMessageCount() {
+        return super.getItemCount();
+    }
+
+    @Override
+    public int getItemCount() {
+        int count = super.getItemCount();
+        if (hasShowMoreBar())
+            count++;
+
+        return count;
+    }
+
+    boolean showMoreBar = false;
+    public void setShowMoreBar(boolean val) {
+        showMoreBar = val;
+    }
+
+    public boolean hasShowMoreBar() {
+
+        return showMoreBar;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == getItemCount()-1 && hasShowMoreBar() )
+            return TYPE_ADD_MORE_BAR;
+        else
+            return TYPE_ITEM;
+    }
 
 }

@@ -29,6 +29,7 @@
     <string name="all_compose">Compose</string>
     <string name="all_to">To</string>
     <string name="all_cc">CC</string>
+    <string name="all_bcc">BCC</string>
     <string name="all_subject">Subject</string>
     <string name="all_cancel">Cancel</string>
     <string name="all_ok">Ok</string>
@@ -52,10 +53,12 @@
     <string name="encrypt_dialog_title_decrypt">Open PGP Decrypt</string>
     <string name="encrypt_dialog_sign_encrypt">Sign/encrypt</string>
 
-    <string name="encrypt_error_not_found_key">Can\'t find public key for email: %s </string>
+    <string name="encrypt_error_not_found_private_key">Can\'t find private key for email: %s </string>
+    <string name="encrypt_error_not_found_public_key">Can\'t find public key for email: %s </string>
     <string name="encrypt_error_null_message">Message is null</string>
     <string name="encrypt_error_empty_message">Empty message</string>
     <string name="encrypt_error_empty_receiver">Select recipient before encrypt</string>
+    <string name="encrypt_error_failed_key_password">Password for private key is incorrect</string>
 
     <string name="decrypt_error_common">Can\'t decrypt message</string>
 
@@ -195,6 +198,8 @@
     <string name="contacts_birthday">Birthday</string>
     <string name="contacts_other_e_mail">Other E-mail</string>
     <string name="contacts_notes">Notes</string>
+    <string name="all_attach">Attach</string>
+    <string name="mail_list_show_more">Show more messages</string>
 
     <string name="all_groups">Groups</string>
     <string name="all_create_group">Create group</string>
@@ -210,5 +215,6 @@
     <string name="create_group_phone">Phone</string>
     <string name="create_group_fax">Fax</string>
     <string name="create_group_web">Web</string>
+    <string name="groups_personal">Personal</string>
 
 </resources>

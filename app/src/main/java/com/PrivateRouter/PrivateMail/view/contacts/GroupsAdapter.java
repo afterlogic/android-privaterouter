@@ -12,19 +12,24 @@ import com.PrivateRouter.PrivateMail.model.Group;
 import java.util.ArrayList;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
+    public enum GroupWorkMode {
+        SINGLE_MODE,
+        CHECK_MODE
+    }
+
     private OnGroupClick onGroupClick;
     private ArrayList<Group> groups;
     private GroupsListMediator groupsListMediator;
-    private GroupsListActivity.GroupWorkMode groupsMode;
+    private GroupWorkMode groupsMode;
 
-    GroupsAdapter(GroupsListActivity.GroupWorkMode groupsMode, ArrayList<Group> groups, GroupsListMediator groupsListMediator){
+    GroupsAdapter(GroupWorkMode groupsMode, ArrayList<Group> groups, GroupsListMediator groupsListMediator){
         this.groupsMode = groupsMode;
         this.groups = groups;
         this.groupsListMediator = groupsListMediator;
         groupsListMediator.setAdapter(this);
     }
 
-    GroupsAdapter(GroupsListActivity.GroupWorkMode groupsMode, ArrayList<Group> groups){
+    GroupsAdapter(GroupWorkMode groupsMode, ArrayList<Group> groups){
         this.groupsMode = groupsMode;
         this.groups = groups;
     }
@@ -41,11 +46,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull GroupsViewHolder groupsViewHolder, int i) {
         Group group = groups.get(i);
-        if(groupsMode.equals(GroupsListActivity.GroupWorkMode.MULTI_MODE)) {
-            groupsViewHolder.bind(group, i, this, groupsListMediator.isGroupSelected(group));
-        } else if(groupsMode.equals(GroupsListActivity.GroupWorkMode.SINGLE_MODE)){
-            groupsViewHolder.bind(group, i, this);
-        }
+        groupsViewHolder.bind(group, i, this, groupsListMediator != null && groupsListMediator.isGroupSelected(group));
     }
 
     @Override
@@ -68,7 +69,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
 
     public interface OnGroupClick{
         void onGroupClick(Group group, int position);
-
     }
 
 

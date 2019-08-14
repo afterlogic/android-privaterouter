@@ -33,7 +33,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-public class MessageViewHolder extends RecyclerView.ViewHolder {
+public class MessageViewHolder extends MailViewHolder {
 
     @BindView(R.id.tv_mail_messageSender)
     TextView tvMailMessageSender;
@@ -68,7 +68,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.vw_line)
     View vwLine;
 
-    WeakReference<SwipeRefreshLayout> swipeRefreshLayout;
 
     boolean selectedMode;
     boolean checked;
@@ -79,6 +78,7 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     private int position;
     private MailListAdapter mailListAdapter;
     boolean loadingThread = false;
+    private boolean flatMode;
 
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
@@ -152,8 +152,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         this.position = position;
         this.message = message;
         this.mailListAdapter = mailListAdapter;
-        if (mailListAdapter!=null)
-            swipeRefreshLayout = mailListAdapter.getSwipeRefreshLayout();
 
         this.loadingThread = false;
 
@@ -227,14 +225,15 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
                 tvMailMessageDate.setTypeface(null, Typeface.BOLD);
             }
 
-            if (message.getThreadUidsList()!=null && !message.getThreadUidsList().isEmpty()) {
+            if (message.getThreadUidsList()!=null && !message.getThreadUidsList().isEmpty() && !flatMode) {
                 ivThreadsIcon.setVisibility(View.VISIBLE);
             }
             else {
                 ivThreadsIcon.setVisibility(View.GONE);
             }
 
-            updateThreads();
+            if (!flatMode)
+                updateThreads();
 
         }
         else {
@@ -326,5 +325,9 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         else
             cbSelected.setVisibility(View.GONE);
 
+    }
+
+    public void setFlatMode(boolean flatMode) {
+        this.flatMode = flatMode;
     }
 }

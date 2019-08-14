@@ -13,6 +13,7 @@ import com.PrivateRouter.PrivateMail.model.FolderHash;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
 import com.PrivateRouter.PrivateMail.model.StorageCTag;
+import com.PrivateRouter.PrivateMail.model.TempMessageIds;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +29,17 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFactory(String folder);
 
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+    @Query("SELECT * FROM messages WHERE Folder =:folder and " +
             "(Subject LIKE :filter or plain LIKE :filter or attachmentsattachments LIKE :filter) " +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);
+
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(fromemails  LIKE :filter) " +
+            " ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter);
+
+
 
     @Query("SELECT * FROM messages WHERE parentUid = :parentUid and Folder =:folder ORDER BY uid DESC")
     List<Message> getAllThreadsMessages(String folder, int parentUid);
@@ -91,12 +99,21 @@ public interface MessageDao {
     void deletedFolderHashes( );
 
 
-    @Query("SELECT * FROM contacts WHERE Storage =:storage ")
-    DataSource.Factory<Integer, Contact> getAllContactsFactory(String storage);
+    @Query("SELECT * FROM contacts WHERE (Storage =:storage)")
+    DataSource.Factory<Integer, Contact> getAllContactsInStorage(String storage);
 
     @Query("SELECT * FROM contacts WHERE Storage =:storage and " +
             "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
-    DataSource.Factory<Integer, Contact> getAllFilteredContactsFactory(String storage, String filter );
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInStorage(String storage, String filter );
+
+
+    @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID)")
+    DataSource.Factory<Integer, Contact> getAllContactsInGroup(String groupID);
+
+    @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID) and " +
+            "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInGroup(String groupID, String filter );
+
 
 
     @Query("SELECT * FROM contacts WHERE   UUID = :uuid")
@@ -118,5 +135,18 @@ public interface MessageDao {
 
     @Query("SELECT * FROM storage_c_tag WHERE storage =:storage")
     StorageCTag getStorageCTag(String storage);
+
+
+    @Query("SELECT ids FROM temp_message_ids ")
+    Long[] getMessageTempIds( );
+
+
+    @Insert(onConflict = REPLACE)
+    Long insertTempMessageId(TempMessageIds tempMessageIds);
+
+
+    @Query("DELETE FROM temp_message_ids")
+    void removeTempMessagesIds();
+
 
 }

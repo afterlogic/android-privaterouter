@@ -2,7 +2,9 @@ package com.PrivateRouter.PrivateMail.model;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.TypeConverters;
 
+import com.PrivateRouter.PrivateMail.dbase.ArrayStringConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -184,10 +186,11 @@ public class Contact  extends  ContactBase implements Serializable {
     private
     String davContactsUID;
 
-    @Embedded(prefix = "groupUUIDs")
+    @TypeConverters({ArrayStringConverter.class})
     @SerializedName("GroupUUIDs")
     private
     ArrayList<String> groupUUIDs;
+
 
     public String getParentUUID() {
         return parentUUID;
@@ -540,4 +543,6 @@ public class Contact  extends  ContactBase implements Serializable {
     public void setGroupUUIDs(ArrayList<String> groupUUIDs) {
         this.groupUUIDs = groupUUIDs;
     }
+
+
 }

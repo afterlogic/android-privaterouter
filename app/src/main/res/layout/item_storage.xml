@@ -1,0 +1,11 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_storage"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+    android:maxLines="1"
+    android:ellipsize="end"
+    android:gravity="center_vertical"
+    android:textSize="@dimen/size_subtitle_text_medium"
+    android:textColor="@color/color_black"
+    android:orientation="vertical"></TextView>

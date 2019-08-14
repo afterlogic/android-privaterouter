@@ -33,27 +33,30 @@ public class MessageBaseDeserializer implements JsonDeserializer<MessageBase>  {
             messageBase.setThread(messageThreads);
         }
 
-        JsonArray flags = obj.get("flags").getAsJsonArray();
-        for (int i = 0; i< flags.size(); i++) {
-            String flag = flags.get(i).getAsString();
 
-            if (flag.equals("\\seen"))
-                messageBase.setSeen(true);
-            else if (flag.equals("\\answered"))
-                messageBase.setAnswered(true);
-            else if (flag.equals("\\flagged"))
-                messageBase.setFlagged(true);
-            else if (flag.equals("\\deleted"))
-                messageBase.setDeleted(true);
-            else  if (flag.equals("\\draft"))
-                messageBase.setDraft(true);
-            else if (flag.equals("\\recent"))
-                messageBase.setRecent(true);
-            else if (flag.equals("$forwarded"))
-                messageBase.setForwarded(true);
+        JsonElement flagsJson = obj.get("flags");
+        if (flagsJson instanceof  JsonArray) {
+            JsonArray flags = flagsJson.getAsJsonArray();
+            for (int i = 0; i < flags.size(); i++) {
+                String flag = flags.get(i).getAsString();
 
+                if (flag.equals("\\seen"))
+                    messageBase.setSeen(true);
+                else if (flag.equals("\\answered"))
+                    messageBase.setAnswered(true);
+                else if (flag.equals("\\flagged"))
+                    messageBase.setFlagged(true);
+                else if (flag.equals("\\deleted"))
+                    messageBase.setDeleted(true);
+                else if (flag.equals("\\draft"))
+                    messageBase.setDraft(true);
+                else if (flag.equals("\\recent"))
+                    messageBase.setRecent(true);
+                else if (flag.equals("$forwarded"))
+                    messageBase.setForwarded(true);
+
+            }
         }
-
         return messageBase;
     }
 }

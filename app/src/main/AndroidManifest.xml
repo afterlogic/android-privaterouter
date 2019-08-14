@@ -97,6 +97,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
 
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="896845501d8cdcca6a2097a3346cacc8300e74aa" />
