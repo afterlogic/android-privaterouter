@@ -51,7 +51,6 @@ public class ContactsAdapter extends PagedListAdapter<Contact, ContactViewHolder
 
 
     public void onSelectChange(boolean value, Contact contact) {
-
         contactsListModeMediator.onSelectChange(value, contact);
     }
 

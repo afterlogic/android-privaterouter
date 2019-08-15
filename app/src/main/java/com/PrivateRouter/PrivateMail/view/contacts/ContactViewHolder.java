@@ -42,17 +42,17 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     private ContactsAdapter.OnContactClick onContactClick;
     private int position;
     private ContactsAdapter contactsAdapter;
+    private boolean programChange = false;
 
+    /*
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
     public void bgImageClick() {
+        programChange = true;
         cbSelected.setChecked(!cbSelected.isChecked());
+        programChange = false;
     }
-
-
-    public void onCheckedChange(CompoundButton button, boolean value) {
-        contactsAdapter.onSelectChange(value, contact);
-    }
+*/
 
 
     public ContactViewHolder(@NonNull View itemView) {
@@ -65,7 +65,11 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     @SuppressWarnings("unused")
     @OnCheckedChanged(R.id.cb_selected)
     public void bgCheckClick(boolean checked) {
+        if (programChange)
+            return;
         this.checked = checked;
+        if (!TextUtils.isEmpty(contact.getViewEmail()) )
+            contactsAdapter.onSelectChange(checked, contact);
     }
 
     @SuppressWarnings("unused")
@@ -95,8 +99,10 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
             if (selectionMode && !TextUtils.isEmpty(contact.getViewEmail())) {
 
                 cbSelected.setVisibility(View.VISIBLE);
+                programChange = true;
                 cbSelected.setChecked(checked);
-                cbSelected.setOnCheckedChangeListener(this::onCheckedChange);
+                programChange = false;
+                //cbSelected.setOnCheckedChangeListener(this::onCheckedChange);
             } else {
                 cbSelected.setVisibility(View.INVISIBLE);
             }
