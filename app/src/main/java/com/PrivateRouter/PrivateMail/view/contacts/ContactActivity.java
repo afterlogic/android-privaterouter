@@ -790,17 +790,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         }
     }
 
-    private void showSpinners(boolean show) {
-        for (Spinner sp : spList) {
-            sp.setEnabled(show);
-            sp.setClickable(show);
-            if (show) {
-                sp.setVisibility(View.VISIBLE);
-            } else {
-                sp.setVisibility(View.GONE);
-            }
-        }
-    }
+
 
     private void logout() {
         LoggedUserRepository.getInstance().logout(this);
@@ -958,6 +948,18 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         rvGroups.setAdapter(groupsAdapter);
     }
 
+    private void showSpinners(boolean show) {
+        for (Spinner sp : spList) {
+            sp.setEnabled(show);
+            sp.setClickable(show);
+            if (show) {
+                sp.setVisibility(View.VISIBLE);
+            } else {
+                sp.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void primaryFieldsChangeMode(boolean changing) {
         int positionAddressInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
         String primaryAddressValue = contactSettings.getPrimaryAddress().get(positionAddressInList).getName();
@@ -979,38 +981,49 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillPrimaryEmail(String primaryEmailValue) {
-        if (primaryEmailValue.equals("Personal")) {
-            if (contact.getPersonalEmail() != null)
-                etPrimaryEmail.setText(contact.getPersonalEmail());
-        } else if (primaryEmailValue.equals("Business")) {
-            if (contact.getBusinessEmail() != null)
-                etPrimaryEmail.setText(contact.getBusinessEmail());
-        } else if (primaryEmailValue.equals("Other")) {
-            if (contact.getOtherEmail() != null)
-                etPrimaryEmail.setText(contact.getOtherEmail());
+        switch (primaryEmailValue) {
+            case "Personal":
+                if (contact.getPersonalEmail() != null)
+                    etPrimaryEmail.setText(contact.getPersonalEmail());
+                break;
+            case "Business":
+                if (contact.getBusinessEmail() != null)
+                    etPrimaryEmail.setText(contact.getBusinessEmail());
+                break;
+            case "Other":
+                if (contact.getOtherEmail() != null)
+                    etPrimaryEmail.setText(contact.getOtherEmail());
+                break;
         }
     }
 
     private void fillPrimaryPhone(String primaryPhoneValue) {
-        if (primaryPhoneValue.equals("Personal")) {
-            if (contact.getPersonalPhone() != null)
-                etPrimaryPhone.setText(contact.getPersonalPhone());
-        } else if (primaryPhoneValue.equals("Business")) {
-            if (contact.getBusinessPhone() != null)
-                etPrimaryPhone.setText(contact.getBusinessPhone());
-        } else if (primaryPhoneValue.equals("Mobile")) {
-            if (contact.getPersonalMobile() != null)
-                etPrimaryEmail.setText(contact.getPersonalMobile());
+        switch (primaryPhoneValue) {
+            case "Personal":
+                if (contact.getPersonalPhone() != null)
+                    etPrimaryPhone.setText(contact.getPersonalPhone());
+                break;
+            case "Business":
+                if (contact.getBusinessPhone() != null)
+                    etPrimaryPhone.setText(contact.getBusinessPhone());
+                break;
+            case "Mobile":
+                if (contact.getPersonalMobile() != null)
+                    etPrimaryEmail.setText(contact.getPersonalMobile());
+                break;
         }
     }
 
     private void fillPrimaryAddress(String primaryAddressValue) {
-        if (primaryAddressValue.equals("Personal")) {
-            if (contact.getPersonalAddress() != null)
-                etPrimaryAddress.setText(contact.getPersonalAddress());
-        } else if (primaryAddressValue.equals("Business")) {
-            if (contact.getBusinessAddress() != null)
-                etPrimaryAddress.setText(contact.getBusinessAddress());
+        switch (primaryAddressValue) {
+            case "Personal":
+                if (contact.getPersonalAddress() != null)
+                    etPrimaryAddress.setText(contact.getPersonalAddress());
+                break;
+            case "Business":
+                if (contact.getBusinessAddress() != null)
+                    etPrimaryAddress.setText(contact.getBusinessAddress());
+                break;
         }
     }
 }
