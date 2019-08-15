@@ -276,7 +276,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             @Override
             public void onSuccess(Object result) {
                 RequestViewUtils.hideRequest();
-                finish();
             }
 
             @Override
@@ -562,7 +561,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
 
         ViewGroup.MarginLayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(Utils.getDP(this, 8), 8, 0, 0);
+        layoutParams.setMargins(Utils.getDP(this, 8), 0, 0, 0);
         view.setLayoutParams(layoutParams);
         return view;
     }

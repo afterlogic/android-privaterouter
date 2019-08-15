@@ -49,8 +49,11 @@
 
                     <EditText
                         android:id="@+id/et_email_to"
+                        android:background="@android:color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/padding_all_element_small"
+                        android:paddingBottom="@dimen/padding_all_element_small"
                         android:inputType="text"
                         android:textSize="@dimen/size_text_small" />
                 </org.apmem.tools.layouts.FlowLayout>
@@ -110,9 +113,12 @@
 
                     <EditText
                         android:id="@+id/et_email_cc"
+                        android:background="@android:color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:paddingTop="@dimen/padding_all_element_small"
+                        android:paddingBottom="@dimen/padding_all_element_small"
                         android:textSize="@dimen/size_text_small" />
 
                 </org.apmem.tools.layouts.FlowLayout>
@@ -172,6 +178,9 @@
 
                     <EditText
                         android:id="@+id/et_email_bcc"
+                        android:paddingTop="@dimen/padding_all_element_small"
+                        android:paddingBottom="@dimen/padding_all_element_small"
+                        android:background="@android:color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"
@@ -206,9 +215,8 @@
                 android:id="@+id/tv_compose_subject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_all_element_medium"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
-                android:paddingTop="@dimen/padding_all_element_medium"
+                android:layout_marginTop="10dp"
                 android:paddingStart="@dimen/padding_all_element_small"
                 android:text="@string/all_subject"
                 android:textSize="@dimen/size_text_medium"
@@ -219,11 +227,9 @@
                 android:id="@+id/et_compose_subject"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_all_element_small"
 
                 android:background="@null"
-
-                android:layout_marginLeft="@dimen/margin_all_element_small"
-                android:paddingTop="@dimen/padding_all_element_medium"
                 android:scrollHorizontally="false"
                 android:textSize="@dimen/size_text_medium"
                 app:layout_constraintLeft_toRightOf="@+id/tv_compose_subject"
@@ -235,7 +241,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
-                android:layout_marginTop="@dimen/margin_all_element_large"
+                android:layout_marginTop="10dp"
                 android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
