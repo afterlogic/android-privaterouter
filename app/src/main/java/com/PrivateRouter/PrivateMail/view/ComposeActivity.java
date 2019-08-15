@@ -168,7 +168,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void uploadStartAttachment() {
-        if (getIntent()!=null && getIntent().getSerializableExtra("uploadFileName")!=null) {
+        if (getIntent()!=null && !TextUtils.isEmpty(getIntent().getStringExtra("uploadFileName")) ) {
             String uploadFileName  = getIntent().getStringExtra("uploadFileName");
             String uploadData  = getIntent().getStringExtra("uploadData");
 

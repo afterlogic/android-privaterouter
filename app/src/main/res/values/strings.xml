@@ -215,5 +215,6 @@
     <string name="create_group_fax">Fax</string>
     <string name="create_group_web">Web</string>
     <string name="groups_personal">Personal</string>
+    <string name="create_group_title">Create group</string>
 
 </resources>

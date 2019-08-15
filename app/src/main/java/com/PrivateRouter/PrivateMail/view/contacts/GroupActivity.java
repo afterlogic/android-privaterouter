@@ -339,6 +339,7 @@ public class GroupActivity extends AppCompatActivity {
 
     private void initCreateMode() {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        setTitle(getString(R.string.create_group_title));
         group = new Group();
         displayOrganizationFields(false);
         for (EditText et : etList) {
@@ -419,6 +420,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void hideEmptyFields() {
+        swGroupIsACompany.setVisibility(View.GONE);
         int position = 0;
         for (EditText et : etOrganizationFieldsList) {
             if (et.getText().toString().isEmpty()) {
