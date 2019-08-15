@@ -81,14 +81,20 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     TextInputEditText etDisplayName;
     @BindView(R.id.tv_email)
     TextView tvEmail;
+    @BindView(R.id.et_primary_email)
+    EditText etPrimaryEmail;
     @BindView(R.id.sp_email)
     Spinner spEmail;
     @BindView(R.id.tv_phone)
     TextView tvPhone;
+    @BindView(R.id.et_primary_phone)
+    EditText etPrimaryPhone;
     @BindView(R.id.sp_phone)
     Spinner spPhone;
     @BindView(R.id.tv_address)
     TextView tvAddress;
+    @BindView(R.id.et_primary_address)
+    EditText etPrimaryAddress;
     @BindView(R.id.sp_address)
     Spinner spAddress;
     @BindView(R.id.et_skype)
@@ -208,6 +214,11 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.et_other_notes
     })
     List<EditText> etList;
+
+    @BindViews({R.id.et_primary_address,
+            R.id.et_primary_email,
+            R.id.et_primary_phone})
+    List<EditText> primaryEtList;
 
     @BindViews({R.id.sp_email,
             R.id.sp_phone,
@@ -359,9 +370,9 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         String vCardData = VCardHelper.getVCardData(contact);
 
-        String fileName = contact.getViewEmail()+".vcf";
+        String fileName = contact.getViewEmail() + ".vcf";
 
-        Intent intent = ComposeActivity.makeIntent(this, message,  fileName, vCardData );
+        Intent intent = ComposeActivity.makeIntent(this, message, fileName, vCardData);
         startActivity(intent);
 
     }
@@ -385,9 +396,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (llAdditionalFields.getVisibility() == View.VISIBLE) {
             llAdditionalFields.setVisibility(View.GONE);
             tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
+            primaryFieldsChangeMode(false);
+
         } else {
             llAdditionalFields.setVisibility(View.VISIBLE);
             tvAdditionalFields.setText(R.string.contacts_hide_additional_fields);
+            primaryFieldsChangeMode(true);
         }
     }
 
@@ -591,6 +605,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         fillContactFields(contact);
+        llAdditionalFields.setVisibility(View.GONE);
+        tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
         etOtherBirthday.setFocusable(false);
     }
 
@@ -606,6 +622,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         for (EditText et : etList) {
             et.setText("");
         }
+        llAdditionalFields.setVisibility(View.GONE);
+        tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
         etOtherBirthday.setFocusable(false);
     }
 
@@ -650,6 +668,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         if (modeEnum.equals(Mode.VIEW)) {
             getSupportActionBar().setTitle("");
         }
+        primaryFieldsChangeMode(false);
     }
 
     private void loadContactSettings() {
@@ -754,12 +773,32 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             et.setKeyListener(null);
             et.setTextColor(Color.BLACK);
         }
+        for (EditText et : primaryEtList) {
+            et.setFocusable(false);
+            et.setEnabled(false);
+            et.setCursorVisible(false);
+            et.setKeyListener(null);
+            et.setBackgroundColor(Color.TRANSPARENT);
+            et.setTextColor(Color.BLACK);
+        }
     }
 
     private void blockSpinnersSelect() {
         for (Spinner sp : spList) {
             sp.setEnabled(false);
             sp.setClickable(false);
+        }
+    }
+
+    private void showSpinners(boolean show) {
+        for (Spinner sp : spList) {
+            sp.setEnabled(show);
+            sp.setClickable(show);
+            if (show) {
+                sp.setVisibility(View.VISIBLE);
+            } else {
+                sp.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -899,16 +938,15 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         ArrayList<Group> groups;
         if (modeEnum == Mode.VIEW) {
             mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
-            groups = new ArrayList<>(  );
-            if (contact.getGroupUUIDs()!=null) {
+            groups = new ArrayList<>();
+            if (contact.getGroupUUIDs() != null) {
                 for (Group group : allGroups) {
                     if (contact.getGroupUUIDs().contains(group.getUUID())) {
                         groups.add(group);
                     }
                 }
             }
-        }
-        else {
+        } else {
             groups = allGroups;
             mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
         }
@@ -918,5 +956,61 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 LinearLayoutManager.VERTICAL, false);
         rvGroups.setLayoutManager(customLayoutManager);
         rvGroups.setAdapter(groupsAdapter);
+    }
+
+    private void primaryFieldsChangeMode(boolean changing) {
+        int positionAddressInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
+        String primaryAddressValue = contactSettings.getPrimaryAddress().get(positionAddressInList).getName();
+        fillPrimaryAddress(primaryAddressValue);
+
+        int positionEmailInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
+        String primaryEmailValue = contactSettings.getPrimaryEmail().get(positionEmailInList).getName();
+        fillPrimaryEmail(primaryEmailValue);
+
+        int positionPhoneInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
+        String primaryPhoneValue = contactSettings.getPrimaryPhone().get(positionPhoneInList).getName();
+        fillPrimaryPhone(primaryPhoneValue);
+
+        if (!changing) {
+            showSpinners(false);
+        } else {
+            showSpinners(true);
+        }
+    }
+
+    private void fillPrimaryEmail(String primaryEmailValue) {
+        if (primaryEmailValue.equals("Personal")) {
+            if (contact.getPersonalEmail() != null)
+                etPrimaryEmail.setText(contact.getPersonalEmail());
+        } else if (primaryEmailValue.equals("Business")) {
+            if (contact.getBusinessEmail() != null)
+                etPrimaryEmail.setText(contact.getBusinessEmail());
+        } else if (primaryEmailValue.equals("Other")) {
+            if (contact.getOtherEmail() != null)
+                etPrimaryEmail.setText(contact.getOtherEmail());
+        }
+    }
+
+    private void fillPrimaryPhone(String primaryPhoneValue) {
+        if (primaryPhoneValue.equals("Personal")) {
+            if (contact.getPersonalPhone() != null)
+                etPrimaryPhone.setText(contact.getPersonalPhone());
+        } else if (primaryPhoneValue.equals("Business")) {
+            if (contact.getBusinessPhone() != null)
+                etPrimaryPhone.setText(contact.getBusinessPhone());
+        } else if (primaryPhoneValue.equals("Mobile")) {
+            if (contact.getPersonalMobile() != null)
+                etPrimaryEmail.setText(contact.getPersonalMobile());
+        }
+    }
+
+    private void fillPrimaryAddress(String primaryAddressValue) {
+        if (primaryAddressValue.equals("Personal")) {
+            if (contact.getPersonalAddress() != null)
+                etPrimaryAddress.setText(contact.getPersonalAddress());
+        } else if (primaryAddressValue.equals("Business")) {
+            if (contact.getBusinessAddress() != null)
+                etPrimaryAddress.setText(contact.getBusinessAddress());
+        }
     }
 }

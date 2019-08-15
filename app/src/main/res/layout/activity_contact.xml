@@ -86,12 +86,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_email"></View>
 
-                <TextView
-                    android:id="@+id/tvPrimaryEmail"
+                <EditText
+                    android:id="@+id/et_primary_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_all_element_small"
                     android:text="TextView"
+                    style="@style/EditTextSingleLine"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/size_subtitle_text_medium"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_email"
@@ -137,12 +138,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_phone"></View>
 
-                <TextView
-                    android:id="@+id/tvPrimaryPhone"
+                <EditText
+                    android:id="@+id/et_primary_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_all_element_small"
                     android:text="TextView"
+                    style="@style/EditTextSingleLine"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/size_subtitle_text_medium"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_phone"
@@ -188,12 +190,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_address"></View>
 
-                <TextView
-                    android:id="@+id/tvPrimaryAddress"
+                <EditText
+                    android:id="@+id/et_primary_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_all_element_small"
                     android:text="TextView"
+                    style="@style/EditTextSingleLine"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/size_subtitle_text_medium"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_address"
