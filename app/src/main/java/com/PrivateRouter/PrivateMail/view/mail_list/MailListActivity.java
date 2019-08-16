@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -60,6 +61,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public class MailListActivity extends AppCompatActivity
         implements  CallRequestResult<Boolean>,
@@ -322,18 +325,19 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setOnRefreshListener(this);
 
-       // rvMailList.setHasFixedSize(true);
-        rvMailList.setLayoutManager( new CoolLayoutManager(this));
+        CoolLayoutManager layoutManager = new CoolLayoutManager(this);
+        rvMailList.setLayoutManager( layoutManager );
 
-        rvMailList.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mailListAdapter!=null) {
-                    mailListAdapter.onLongTap();
-                }
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvMailList.getContext(), layoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
+        rvMailList.addItemDecoration(dividerItemDecoration);
 
-                return true;
+        rvMailList.setOnLongClickListener(view -> {
+            if (mailListAdapter!=null) {
+                mailListAdapter.onLongTap();
             }
+
+            return true;
         });
     }
 

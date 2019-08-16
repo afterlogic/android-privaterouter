@@ -55,6 +55,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.LOGOUT;
 
 public class ContactsActivity extends AppCompatActivity
@@ -138,6 +139,7 @@ public class ContactsActivity extends AppCompatActivity
         initModeMediator();
         initUI();
 
+        slMain.setEnabled(false);
         initGroups();
         contactsListModeMediator.setSelectionMode(chooseMode);
 
@@ -151,6 +153,7 @@ public class ContactsActivity extends AppCompatActivity
             public void onGroupsLoad(ArrayList<Group> groups) {
                 RequestViewUtils.hideRequest();
                 initList();
+                slMain.setEnabled(true);
             }
 
             @Override
@@ -295,8 +298,8 @@ public class ContactsActivity extends AppCompatActivity
         CoolLayoutManager layoutManager = new CoolLayoutManager(this);
         rvContacts.setLayoutManager(layoutManager );
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvContacts.getContext(),
-                layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvContacts.getContext(), layoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
         rvContacts.addItemDecoration(dividerItemDecoration);
 
 
@@ -548,12 +551,8 @@ public class ContactsActivity extends AppCompatActivity
     public void onSuccess(Boolean hasNew) {
         loadContactLogic = null;
         slMain.setRefreshing(false);
-        if (hasNew) {
-            moveScrollToTop();
-        }
 
-        SettingsRepository.getInstance().setLastSyncDate(this, new Date().getTime());
-
+        contactsAdapter.notifyDataSetChanged();
         RequestViewUtils.hideRequest();
 
     }

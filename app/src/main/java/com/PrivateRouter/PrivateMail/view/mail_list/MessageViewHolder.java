@@ -65,9 +65,6 @@ public class MessageViewHolder extends MailViewHolder {
     @BindView(R.id.cb_selected)
     CheckBox cbSelected;
 
-    @BindView(R.id.vw_line)
-    View vwLine;
-
 
     boolean selectedMode;
     boolean checked;
