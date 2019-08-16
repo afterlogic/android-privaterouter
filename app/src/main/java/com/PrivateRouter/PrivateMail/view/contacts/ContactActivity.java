@@ -50,6 +50,7 @@ import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.EmailValidator;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
@@ -66,7 +67,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback   {
+public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback {
 
     private ContactSettings contactSettings;
     private Menu menu;
@@ -268,17 +269,17 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     List<TextInputLayout> tilList;
 
     @BindViews({R.id.et_home_personal_e_mail,
-    R.id.et_business_e_mail,
-    R.id.et_other_e_mail})
+            R.id.et_business_e_mail,
+            R.id.et_other_e_mail})
     List<EditText> etEmailsList;
 
     @BindViews({R.id.et_home_street_address,
-    R.id.et_business_street_address})
+            R.id.et_business_street_address})
     List<EditText> etAddressesList;
 
     @BindViews({R.id.et_home_phone,
-    R.id.et_business_phone,
-    R.id.et_home_mobile})
+            R.id.et_business_phone,
+            R.id.et_home_mobile})
     List<EditText> etPhonesList;
     //endregion
 
@@ -365,8 +366,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             Intent intent = ContactActivity.makeIntent(this, Mode.EDIT, contact);
             startActivityForResult(intent, UPDATED_CONTACT);
         } else if (id == R.id.item_menu_save) {
-            RequestViewUtils.showRequest(this);
-            saveContact(collectDataFromFields());
+            if (checkEmailFieldsDataCorrect()) {
+                RequestViewUtils.showRequest(this);
+                saveContact(collectDataFromFields());
+            }
         } else if (id == R.id.action_mail) {
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
             String folder = account.getFolders().getFolderName(FolderType.Inbox);
@@ -428,6 +431,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             tvAdditionalFields.setText(R.string.contacts_hide_additional_fields);
             primaryFieldsChangeMode(true);
         }
+        updatePrimaryFields();
     }
 
     @OnClick(R.id.tv_home)
@@ -463,7 +467,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         bindContact();
         RequestViewUtils.hideRequest();
     }
-
 
 
     @Override
@@ -508,8 +511,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         MenuItem searchItem = menu.findItem(R.id.item_menu_search);
         MenuItem editItem = menu.findItem(R.id.item_menu_edit);
         MenuItem saveItem = menu.findItem(R.id.item_menu_save);
-
-
 
 
         if (modeEnum.equals(Mode.VIEW)) {
@@ -702,6 +703,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         fillSpinnerPhone();
         fillSpinnerAddress();
         fillGroupsList();
+        updatePrimaryFields();
     }
 
     private void fillSpinnerEmail() {
@@ -942,6 +944,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private void initGroupsListMediator() {
         groupsListMediator = new GroupsListMediator(this);
     }
+
     private void fillGroupsList() {
         GroupsRepository.getInstance().load(new OnGroupsLoadCallback() {
             @Override
@@ -952,13 +955,12 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 if (modeEnum == Mode.VIEW) {
                     mode = GroupsAdapter.GroupWorkMode.SINGLE_MODE;
                     groups = selectGroups;
-                }
-                else {
+                } else {
                     groups = allGroups;
                     mode = GroupsAdapter.GroupWorkMode.CHECK_MODE;
 
 
-                    groupsListMediator.setSelectedGroups(selectGroups );
+                    groupsListMediator.setSelectedGroups(selectGroups);
                 }
 
 
@@ -977,7 +979,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
     }
 
-    private ArrayList<Group> getSelectedGroups(ArrayList<Group>  allGroups) {
+    private ArrayList<Group> getSelectedGroups(ArrayList<Group> allGroups) {
         ArrayList<Group> groups = new ArrayList<>();
         if (contact.getGroupUUIDs() != null) {
             for (Group group : allGroups) {
@@ -1003,25 +1005,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void primaryFieldsChangeMode(boolean changing) {
-        int positionAddressInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
-        String primaryAddressValue = contactSettings.getPrimaryAddress().get(positionAddressInList).getName();
-        fillPrimaryAddress(primaryAddressValue);
-
-
-
-        int positionEmailInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
-        String primaryEmailValue = contactSettings.getPrimaryEmail().get(positionEmailInList).getName();
-        fillPrimaryEmail(primaryEmailValue);
-
-
-        int positionPhoneInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
-        String primaryPhoneValue = contactSettings.getPrimaryPhone().get(positionPhoneInList).getName();
-        fillPrimaryPhone(primaryPhoneValue);
-
-        emailsAdapter.notifyDataSetChanged();
-        phonesAdapter.notifyDataSetChanged();
-        addressAdapter.notifyDataSetChanged();
-
         if (!changing) {
             showSpinners(false);
             etPrimaryPhone.setVisibility(View.VISIBLE);
@@ -1064,7 +1047,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 break;
             case "Mobile":
                 if (contact.getPersonalMobile() != null)
-                    etPrimaryEmail.setText(etHomeMobile.getText().toString());
+                    etPrimaryPhone.setText(etHomeMobile.getText().toString());
                 break;
         }
     }
@@ -1158,7 +1141,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 }
             }
         });
-        for(EditText editText : etEmailsList){
+        for (EditText editText : etEmailsList) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1176,7 +1159,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 }
             });
         }
-        for(EditText editText : etAddressesList){
+        for (EditText editText : etAddressesList) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1194,7 +1177,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 }
             });
         }
-        for(EditText editText : etPhonesList){
+        for (EditText editText : etPhonesList) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1213,5 +1196,41 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             });
         }
 
+    }
+
+    private boolean checkEmailFieldsDataCorrect() {
+        if (!TextUtils.isEmpty(etHomePersonalEMail.getText().toString()) && !EmailValidator.isValidEmail(etHomePersonalEMail.getText().toString())) {
+            etHomePersonalEMail.setError(getString(R.string.all_email_is_incorrect));
+            etHomePersonalEMail.requestFocus();
+            return false;
+        } else if (!TextUtils.isEmpty(etBusinessEMail.getText().toString()) && !EmailValidator.isValidEmail(etBusinessEMail.getText().toString())) {
+            etBusinessEMail.setError(getString(R.string.all_email_is_incorrect));
+            etBusinessEMail.requestFocus();
+            return false;
+        } else if (!TextUtils.isEmpty(etOtherEMail.getText().toString()) && !EmailValidator.isValidEmail(etOtherEMail.getText().toString())) {
+            etOtherEMail.setError(getString(R.string.all_email_is_incorrect));
+            etOtherEMail.requestFocus();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void updatePrimaryFields() {
+        int positionAddressInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
+        String primaryAddressValue = contactSettings.getPrimaryAddress().get(positionAddressInList).getName();
+        fillPrimaryAddress(primaryAddressValue);
+
+        int positionEmailInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
+        String primaryEmailValue = contactSettings.getPrimaryEmail().get(positionEmailInList).getName();
+        fillPrimaryEmail(primaryEmailValue);
+
+        int positionPhoneInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
+        String primaryPhoneValue = contactSettings.getPrimaryPhone().get(positionPhoneInList).getName();
+        fillPrimaryPhone(primaryPhoneValue);
+
+        emailsAdapter.notifyDataSetChanged();
+        phonesAdapter.notifyDataSetChanged();
+        addressAdapter.notifyDataSetChanged();
     }
 }

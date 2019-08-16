@@ -151,6 +151,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="@string/all_primary_phone"
+                    android:inputType="phone"
                     android:paddingStart="@dimen/padding_all_element_medium"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/size_subtitle_text_medium"
