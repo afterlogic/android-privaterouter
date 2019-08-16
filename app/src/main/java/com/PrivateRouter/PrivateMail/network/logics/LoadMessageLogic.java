@@ -18,6 +18,8 @@ import com.PrivateRouter.PrivateMail.network.requests.CallGetMessagesBase;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -37,7 +39,9 @@ public class LoadMessageLogic   implements OnErrorInterface {
     private List<MessageBase> serverList;
 
 
-    private InternalLists<MessageBase> uidsForLoading = new InternalLists<MessageBase>(MaxBodyMessageForLoad);
+
+    private InternalLists<MessageBase> uidsForLoadingMain = new InternalLists<MessageBase>(MaxBodyMessageForLoad);
+    private InternalLists<MessageBase> uidsForLoadingThreads = new InternalLists<MessageBase>(MaxBodyMessageForLoad);
     private InternalLists<Integer> uidsForDelete = new InternalLists<Integer>(MaxBodyMessageForDelete);
 
     LoadMessageAnswer loadMessageAnswer = new LoadMessageAnswer();
@@ -91,10 +95,13 @@ public class LoadMessageLogic   implements OnErrorInterface {
         if ( !success || isCancelled() ) return false;
 
 
+
         Log.i(TAG, "complete loading for folder "+folder);
 
         return true;
     }
+
+
 
     private boolean isCancelled() {
         return false;
@@ -111,7 +118,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
             for (int i = 0; i < serverCount; i++) {
                 MessageBase serverItem = serverList.get(i);
 
-                int index = findInListLessThanUids(cachedList, serverItem.getUid(), lastIndexInServerList );
+                int index = findInListLessThanUids(cachedList, serverItem.getUid(), 0);
                 if (index == -1  ) { //|| serverItem.getParentUid() > 0
                     addForLoading( serverItem );
                 }
@@ -211,10 +218,14 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
 
     private void addForLoading(MessageBase messageBase) {
-        Log.v(TAG, "addForLoading "+messageBase.getUid());
+        String str = (messageBase.getParentUid()==0)?"": " parentID = "+messageBase.getParentUid();
+        Log.v(TAG, "addForLoading "+ messageBase.getUid() + str);
 
         loadMessageAnswer.haveNewValue = true;
-        uidsForLoading.addElement(messageBase);
+        if (messageBase.getParentUid()==0)
+            uidsForLoadingMain.addElement(messageBase);
+        else
+            uidsForLoadingThreads.addElement(messageBase);
     }
 
     private void addForDelete(MessageBase messageBase) {
@@ -239,14 +250,25 @@ public class LoadMessageLogic   implements OnErrorInterface {
         Log.v(TAG, "removeDeletedFromCache complete");
     }
 
+
     private boolean loadMessagesBody() {
+        boolean success = loadMessagesBody(uidsForLoadingThreads);
+        if ( !success || isCancelled() ) return false;
+
+        success = loadMessagesBody(uidsForLoadingMain);
+        if ( !success || isCancelled() ) return false;
+
+        return success;
+    }
+
+    private boolean loadMessagesBody(InternalLists<MessageBase> internalLists) {
         Log.d(TAG, "loadMessagesBody "+folder);
 
         boolean hasSkipped = false;
 
-        //int index = 0;
-        for (int index = uidsForLoading.size()-1; index >=0 ; index--) {
-            ArrayList<MessageBase> list = uidsForLoading.get(index);
+
+        for (int index = 0; index < internalLists.size();  index++) {
+            ArrayList<MessageBase> list = internalLists.get(index);
 
             if (isCancelled()) return false;
 
