@@ -61,6 +61,8 @@ public class GroupActivity extends AppCompatActivity {
     TextInputEditText etGroupEmail;
     @BindView(R.id.et_group_company)
     TextInputEditText etGroupCompany;
+    @BindView(R.id.et_group_country)
+    TextInputEditText etGroupCountry;
     @BindView(R.id.et_group_state)
     TextInputEditText etGroupState;
     @BindView(R.id.et_group_city)
@@ -81,6 +83,7 @@ public class GroupActivity extends AppCompatActivity {
     @BindViews({R.id.et_group_name,
             R.id.et_group_email,
             R.id.et_group_company,
+            R.id.et_group_country,
             R.id.et_group_state,
             R.id.et_group_city,
             R.id.et_group_street,
@@ -93,6 +96,7 @@ public class GroupActivity extends AppCompatActivity {
 
     @BindViews({R.id.et_group_email,
             R.id.et_group_company,
+            R.id.et_group_country,
             R.id.et_group_state,
             R.id.et_group_city,
             R.id.et_group_street,
@@ -105,6 +109,7 @@ public class GroupActivity extends AppCompatActivity {
 
     @BindViews({R.id.til_group_email,
             R.id.til_group_company,
+            R.id.til_group_country,
             R.id.til_group_state,
             R.id.til_group_city,
             R.id.til_group_street,
@@ -263,6 +268,7 @@ public class GroupActivity extends AppCompatActivity {
         group.setIsOrganization(swGroupIsACompany.isChecked());
         group.setEmail(etGroupEmail.getText().toString());
         group.setCompany(etGroupCompany.getText().toString());
+        group.setCountry(etGroupCountry.getText().toString());
         group.setState(etGroupState.getText().toString());
         group.setCity(etGroupCity.getText().toString());
         group.setStreet(etGroupStreet.getText().toString());
@@ -389,6 +395,7 @@ public class GroupActivity extends AppCompatActivity {
             swGroupIsACompany.setChecked(group.getIsOrganization());
             etGroupEmail.setText(group.getEmail());
             etGroupCompany.setText(group.getCompany());
+            etGroupCountry.setText(group.getCountry());
             etGroupState.setText(group.getState());
             etGroupCity.setText(group.getCity());
             etGroupStreet.setText(group.getStreet());

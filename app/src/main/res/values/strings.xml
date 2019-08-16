@@ -174,6 +174,9 @@
     <string name="all_first_name">First name</string>
     <string name="all_last_name">Last name</string>
     <string name="all_nickname">Nickname</string>
+    <string name="all_primary_email">Primary Email</string>
+    <string name="all_primary_phone">PrimaryPhone</string>
+    <string name="all_primary_address">PrimaryAddress</string>
 
     <string name="contacts_home">Home</string>
     <string name="contacts_display_name">Display name</string>
@@ -207,6 +210,7 @@
     <string name="create_group_this_group_is_a_company">This group is a company</string>
     <string name="create_group_email">Email</string>
     <string name="create_group_company">Company</string>
+    <string name="create_group_country">Country</string>
     <string name="create_group_state">State</string>
     <string name="create_group_city">City</string>
     <string name="create_group_street">Street</string>
