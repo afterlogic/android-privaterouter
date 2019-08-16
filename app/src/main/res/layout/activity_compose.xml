@@ -55,7 +55,7 @@
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
                         android:inputType="text"
-                        android:textSize="@dimen/size_text_small" />
+                        android:textSize="@dimen/size_text_medium" />
                 </org.apmem.tools.layouts.FlowLayout>
 
                 <ImageButton
@@ -119,7 +119,7 @@
                         android:inputType="text"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
-                        android:textSize="@dimen/size_text_small" />
+                        android:textSize="@dimen/size_text_medium" />
 
                 </org.apmem.tools.layouts.FlowLayout>
 
@@ -184,7 +184,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:textSize="@dimen/size_text_small" />
+                        android:textSize="@dimen/size_text_medium" />
 
                 </org.apmem.tools.layouts.FlowLayout>
 
@@ -241,7 +241,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

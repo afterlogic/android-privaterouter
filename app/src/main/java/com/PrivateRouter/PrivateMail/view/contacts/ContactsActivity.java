@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -281,6 +282,7 @@ public class ContactsActivity extends AppCompatActivity
 
         contactsAdapter.setOnContactClick(this);
         rvContacts.setAdapter(contactsAdapter);
+
     }
 
     private void initUI() {
@@ -290,7 +292,13 @@ public class ContactsActivity extends AppCompatActivity
         slMain.setOnRefreshListener(this);
 
         rvContacts.setHasFixedSize(true);
-        rvContacts.setLayoutManager(new CoolLayoutManager(this));
+        CoolLayoutManager layoutManager = new CoolLayoutManager(this);
+        rvContacts.setLayoutManager(layoutManager );
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvContacts.getContext(),
+                layoutManager.getOrientation());
+        rvContacts.addItemDecoration(dividerItemDecoration);
+
 
         fabOpen = false;
     }

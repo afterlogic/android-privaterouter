@@ -316,16 +316,20 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     }
 
-    private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable) {
+    private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable, Runnable onFocusField) {
         ib.setVisibility(View.INVISIBLE);
         et.setVisibility(View.INVISIBLE);
 
 
         ll.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
+                if (onFocusField!=null)
+                    onFocusField.run();
                 ib.setVisibility(View.VISIBLE);
                 et.setVisibility(View.VISIBLE);
                 et.requestFocus();
+                et.setActivated(true);
+                et.setPressed(true);
                 SoftKeyboard.showKeyboard(this);
             } else if (!et.hasFocus()) {
                 ib.setVisibility(View.INVISIBLE);
@@ -349,9 +353,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
     }
     private void addFieldsFocusReaction() {
-        addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList);
-        addFieldsFocusReaction ( llCcRecipients,    ibAddCcRecipients,  etEmailCc,  message.getCc(),    ComposeActivity.this::updateCcToList);
-        addFieldsFocusReaction ( llBccRecipients,   ibAddBccRecipients, etEmailBcc, message.getBcc(),   ComposeActivity.this::updateBccToList);
+        addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList, null);
+        addFieldsFocusReaction(llCcRecipients, ibAddCcRecipients, etEmailCc, message.getCc(), ComposeActivity.this::updateCcToList, this::showCCFields);
+        addFieldsFocusReaction ( llBccRecipients,   ibAddBccRecipients, etEmailBcc, message.getBcc(),   ComposeActivity.this::updateBccToList, null);
     }
     private  void clearFieldsFocusReaction() {
 
@@ -367,9 +371,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         llBccRecipients.setOnFocusChangeListener(null);
     }
 
-    @SuppressWarnings("unused")
-    @OnClick(R.id.tv_compose_cc)
-    public void onLabelCCClick() {
+
+    private  void showCCFields() {
         llBccRecipients.setVisibility(View.VISIBLE);
         cvBccDivider.setVisibility(View.VISIBLE);
     }
@@ -561,7 +564,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
 
         ViewGroup.MarginLayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(Utils.getDP(this, 8), 0, 0, 0);
+        layoutParams.setMargins(0, 0, Utils.getDP(this, 8), 0);
         view.setLayoutParams(layoutParams);
         return view;
     }

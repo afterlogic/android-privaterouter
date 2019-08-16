@@ -43,6 +43,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     private int position;
     private ContactsAdapter contactsAdapter;
     private boolean programChange = false;
+    private boolean selectionMode;
 
     /*
     @SuppressWarnings("unused")
@@ -82,7 +83,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     @SuppressWarnings("unused")
     @OnClick(R.id.cl_background)
     public void bgClick() {
-        if (onContactClick != null) {
+        if (!selectionMode && onContactClick != null) {
             onContactClick.onContactClick(contact, position);
         }
     }
@@ -92,6 +93,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         this.checked = checked;
         this.position = position;
         this.contact = contact;
+        this.selectionMode = selectionMode;
         this.contactsAdapter = contactsAdapter;
 
         if (contact != null) {

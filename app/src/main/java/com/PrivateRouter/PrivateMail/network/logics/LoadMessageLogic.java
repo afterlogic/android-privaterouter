@@ -244,8 +244,10 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
         boolean hasSkipped = false;
 
-        int index = 0;
-        for (ArrayList<MessageBase> list : uidsForLoading) {
+        //int index = 0;
+        for (int index = uidsForLoading.size()-1; index >=0 ; index--) {
+            ArrayList<MessageBase> list = uidsForLoading.get(index);
+
             if (isCancelled()) return false;
 
             Log.v(TAG, "loadMessagesBody folder= "+folder +" list=" + index);
@@ -262,7 +264,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
                     return false;
                 hasSkipped = true;
             }
-            index++;
+          //  index++;
         }
         Log.d(TAG, "loadMessagesBody complete");
         return !hasSkipped;
