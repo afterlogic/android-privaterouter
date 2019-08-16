@@ -72,6 +72,10 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     private Enum<Mode> modeEnum = Mode.VIEW;
     private Contact contact;
     private GroupsListMediator groupsListMediator;
+    private NamedEnumsAdapter emailsAdapter;
+    private NamedEnumsAdapter phonesAdapter;
+    private NamedEnumsAdapter addressAdapter;
+
 
     public static final int OPEN_CONTACT = 111;
     public static final int UPDATED_CONTACT = 112;
@@ -261,6 +265,20 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             R.id.til_other_e_mail,
             R.id.til_other_notes})
     List<TextInputLayout> tilList;
+
+    @BindViews({R.id.et_home_personal_e_mail,
+    R.id.et_business_e_mail,
+    R.id.et_other_e_mail})
+    List<EditText> etEmailsList;
+
+    @BindViews({R.id.et_home_street_address,
+    R.id.et_business_street_address})
+    List<EditText> etAddressesList;
+
+    @BindViews({R.id.et_home_phone,
+    R.id.et_business_phone,
+    R.id.et_home_mobile})
+    List<EditText> etPhonesList;
     //endregion
 
     @NonNull
@@ -687,8 +705,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerEmail() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryEmail());
-        spEmail.setAdapter(adapter);
+        emailsAdapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryEmail(), etEmailsList);
+        spEmail.setAdapter(emailsAdapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
 
@@ -702,7 +720,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int selectedEmailNumberInList = getIndexInList(contactSettings.getPrimaryEmail(), position);
-                NamedEnums namedEnum = adapter.getItem(selectedEmailNumberInList);
+                NamedEnums namedEnum = emailsAdapter.getItem(selectedEmailNumberInList);
                 contact.setPrimaryEmail(namedEnum.getId());
             }
 
@@ -715,8 +733,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
 
     private void fillSpinnerPhone() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryPhone());
-        spPhone.setAdapter(adapter);
+        phonesAdapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryPhone(), etPhonesList);
+        spPhone.setAdapter(phonesAdapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
 
@@ -730,7 +748,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int selectedPhoneNumber = getIndexInList(contactSettings.getPrimaryPhone(), position);
-                NamedEnums namedEnum = adapter.getItem(selectedPhoneNumber);
+                NamedEnums namedEnum = phonesAdapter.getItem(selectedPhoneNumber);
                 contact.setPrimaryPhone(namedEnum.getId());
             }
 
@@ -742,8 +760,8 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void fillSpinnerAddress() {
-        NamedEnumsAdapter adapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryAddress());
-        spAddress.setAdapter(adapter);
+        addressAdapter = new NamedEnumsAdapter(this, R.layout.item_spinner, contactSettings.getPrimaryAddress(), etAddressesList);
+        spAddress.setAdapter(addressAdapter);
 
         int positionInList = getIndexInList(contactSettings.getPrimaryAddress(), contact.getPrimaryAddress());
 
@@ -757,7 +775,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 int selectedAddressNumber = getIndexInList(contactSettings.getPrimaryAddress(), position);
-                NamedEnums namedEnum = adapter.getItem(selectedAddressNumber);
+                NamedEnums namedEnum = addressAdapter.getItem(selectedAddressNumber);
                 contact.setPrimaryAddress(namedEnum.getId());
             }
 
@@ -967,13 +985,20 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         String primaryAddressValue = contactSettings.getPrimaryAddress().get(positionAddressInList).getName();
         fillPrimaryAddress(primaryAddressValue);
 
+
+
         int positionEmailInList = getIndexInList(contactSettings.getPrimaryEmail(), contact.getPrimaryEmail());
         String primaryEmailValue = contactSettings.getPrimaryEmail().get(positionEmailInList).getName();
         fillPrimaryEmail(primaryEmailValue);
 
+
         int positionPhoneInList = getIndexInList(contactSettings.getPrimaryPhone(), contact.getPrimaryPhone());
         String primaryPhoneValue = contactSettings.getPrimaryPhone().get(positionPhoneInList).getName();
         fillPrimaryPhone(primaryPhoneValue);
+
+        emailsAdapter.notifyDataSetChanged();
+        phonesAdapter.notifyDataSetChanged();
+        addressAdapter.notifyDataSetChanged();
 
         if (!changing) {
             showSpinners(false);
@@ -1111,6 +1136,60 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
                 }
             }
         });
+        for(EditText editText : etEmailsList){
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    emailsAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+        for(EditText editText : etAddressesList){
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    addressAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+        for(EditText editText : etPhonesList){
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    phonesAdapter.notifyDataSetChanged();
+                }
+            });
+        }
 
     }
 }
