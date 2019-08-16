@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -669,6 +671,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             getSupportActionBar().setTitle("");
         }
         primaryFieldsChangeMode(false);
+        initPrimaryFieldsListeners();
     }
 
     private void loadContactSettings() {
@@ -789,7 +792,6 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             sp.setClickable(false);
         }
     }
-
 
 
     private void logout() {
@@ -975,8 +977,14 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
 
         if (!changing) {
             showSpinners(false);
+            etPrimaryPhone.setVisibility(View.VISIBLE);
+            etPrimaryEmail.setVisibility(View.VISIBLE);
+            etPrimaryAddress.setVisibility(View.VISIBLE);
         } else {
             showSpinners(true);
+            etPrimaryPhone.setVisibility(View.GONE);
+            etPrimaryEmail.setVisibility(View.GONE);
+            etPrimaryAddress.setVisibility(View.GONE);
         }
     }
 
@@ -984,15 +992,15 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         switch (primaryEmailValue) {
             case "Personal":
                 if (contact.getPersonalEmail() != null)
-                    etPrimaryEmail.setText(contact.getPersonalEmail());
+                    etPrimaryEmail.setText(etHomePersonalEMail.getText().toString());
                 break;
             case "Business":
                 if (contact.getBusinessEmail() != null)
-                    etPrimaryEmail.setText(contact.getBusinessEmail());
+                    etPrimaryEmail.setText(etBusinessEMail.getText().toString());
                 break;
             case "Other":
                 if (contact.getOtherEmail() != null)
-                    etPrimaryEmail.setText(contact.getOtherEmail());
+                    etPrimaryEmail.setText(etOtherEMail.getText().toString());
                 break;
         }
     }
@@ -1001,15 +1009,15 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         switch (primaryPhoneValue) {
             case "Personal":
                 if (contact.getPersonalPhone() != null)
-                    etPrimaryPhone.setText(contact.getPersonalPhone());
+                    etPrimaryPhone.setText(etHomePhone.getText().toString());
                 break;
             case "Business":
                 if (contact.getBusinessPhone() != null)
-                    etPrimaryPhone.setText(contact.getBusinessPhone());
+                    etPrimaryPhone.setText(etBusinessPhone.getText().toString());
                 break;
             case "Mobile":
                 if (contact.getPersonalMobile() != null)
-                    etPrimaryEmail.setText(contact.getPersonalMobile());
+                    etPrimaryEmail.setText(etHomeMobile.getText().toString());
                 break;
         }
     }
@@ -1018,12 +1026,91 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         switch (primaryAddressValue) {
             case "Personal":
                 if (contact.getPersonalAddress() != null)
-                    etPrimaryAddress.setText(contact.getPersonalAddress());
+                    etPrimaryAddress.setText(etHomeStreetAddress.getText().toString());
                 break;
             case "Business":
                 if (contact.getBusinessAddress() != null)
-                    etPrimaryAddress.setText(contact.getBusinessAddress());
+                    etPrimaryAddress.setText(etBusinessStreetAddress.getText().toString());
                 break;
         }
+    }
+
+    private void initPrimaryFieldsListeners() {
+        etPrimaryEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                switch (contact.getPrimaryEmail()) {
+                    case 0:
+                        etHomePersonalEMail.setText(s.toString());
+                        break;
+                    case 1:
+                        etBusinessEMail.setText(s.toString());
+                        break;
+                    case 2:
+                        etOtherEMail.setText(s.toString());
+                        break;
+                }
+            }
+        });
+        etPrimaryAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                switch (contact.getPrimaryAddress()) {
+                    case 0:
+                        etHomeStreetAddress.setText(s.toString());
+                        break;
+                    case 1:
+                        etBusinessStreetAddress.setText(s.toString());
+                        break;
+                }
+            }
+        });
+        etPrimaryPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                switch (contact.getPrimaryPhone()) {
+                    case 0:
+                        etHomeMobile.setText(s.toString());
+                        break;
+                    case 1:
+                        etHomePhone.setText(s.toString());
+                        break;
+                    case 2:
+                        etBusinessPhone.setText(s.toString());
+                        break;
+                }
+            }
+        });
+
     }
 }
