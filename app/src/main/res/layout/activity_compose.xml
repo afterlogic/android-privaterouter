@@ -53,6 +53,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
+                        android:background="@android:color/transparent"
                         android:inputType="text"
                         android:textSize="@dimen/size_text_medium" />
                 </org.apmem.tools.layouts.FlowLayout>

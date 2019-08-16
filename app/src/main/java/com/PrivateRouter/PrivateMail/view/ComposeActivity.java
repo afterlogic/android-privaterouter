@@ -330,6 +330,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                 et.requestFocus();
                 et.setActivated(true);
                 et.setPressed(true);
+                et.setSelection(0);
                 SoftKeyboard.showKeyboard(this);
             } else if (!et.hasFocus()) {
                 ib.setVisibility(View.INVISIBLE);

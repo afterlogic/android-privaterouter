@@ -127,7 +127,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
                 Log.v(TAG, "folder = " + folderName + " newHash = " + newHash + " currentHash=" + oldHash);
 
-                boolean forceCurrentFolder = false;//folderName.equals(currentFolderName) && forceCurrent;
+                boolean forceCurrentFolder = folderName.equals(currentFolderName) && forceCurrent;
 
                 if (!newHash.equals(oldHash) || forceCurrentFolder ) {
 
