@@ -65,7 +65,7 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bind(Group group, int position, GroupsAdapter groupsAdapter, boolean checked) {
+    public void bind(Group group, int position, GroupsAdapter groupsAdapter, boolean checked, boolean selected) {
         this.group = group;
         this.position = position;
         this.groupsAdapter = groupsAdapter;
@@ -73,6 +73,14 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
         if (group != null) {
             ctvItem.setText("# " + group.getName());
             ctvItem.setChecked(checked);
+        }
+        if (selected ) {
+            ctvItem.setBackgroundColor(ctvItem.getContext().getResources().getColor(R.color.colorPrimary) );
+            ctvItem.setTextColor(ctvItem.getContext().getResources().getColor(R.color.color_white));
+        }
+        else  {
+            ctvItem.setTextColor(ctvItem.getContext().getResources().getColor(R.color.color_black));
+            ctvItem.setBackgroundColor(ctvItem.getContext().getResources().getColor(android.R.color.transparent) );
         }
     }
 

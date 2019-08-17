@@ -1,7 +1,9 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +22,7 @@ import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
@@ -39,6 +42,19 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
     @BindView(R.id.rv_storage_list)
     RecyclerView rvStorageList;
+    private Group currentGroup;
+    private String currentStorage;
+    private ContactsActivity.VIEW_MODE viewMode;
+
+
+    @NonNull
+    public static Intent makeIntent(ContactsActivity activity, Group currentGroup, String currentStorage, ContactsActivity.VIEW_MODE viewMode) {
+        Intent intent = new Intent(activity, GroupsListActivity.class);
+        intent.putExtra("mode", viewMode);
+        intent.putExtra("group", currentGroup);
+        intent.putExtra("storage", currentStorage);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +64,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
         ButterKnife.bind(this);
         overridePendingTransition(R.anim.left_to_right, R.anim.hold);
 
+        parseIntent();
 
 
         initStorageList();
@@ -57,8 +74,19 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
     }
 
+    private void parseIntent() {
+        if (getIntent()!=null) {
+            viewMode = (ContactsActivity.VIEW_MODE) getIntent().getSerializableExtra("mode");
+            if (viewMode == ContactsActivity.VIEW_MODE.GROUP)
+                currentGroup = (Group) getIntent().getSerializableExtra("group");
+            else
+                currentStorage = getIntent().getStringExtra("storage");
+
+        }
+    }
+
     private void initStorageList() {
-        StorageAdapter storageAdapter = new StorageAdapter(Storages.values());
+        StorageAdapter storageAdapter = new StorageAdapter(Storages.values(), currentStorage);
         storageAdapter.setOnStorageClick(this);
 
 
@@ -95,7 +123,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
     private void displayGroups(ArrayList<Group> groups) {
 
-        GroupsAdapter groupsAdapter = new GroupsAdapter(GroupsAdapter.GroupWorkMode.SINGLE_MODE, groups);
+        GroupsAdapter groupsAdapter = new GroupsAdapter(GroupsAdapter.GroupWorkMode.SINGLE_MODE, groups, currentGroup);
         groupsAdapter.setOnGroupClick(this);
         CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);

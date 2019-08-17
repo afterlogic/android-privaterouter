@@ -5,6 +5,8 @@
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
     android:maxLines="1"
     android:ellipsize="end"
+    android:paddingStart="@dimen/padding_all_element_large"
+    android:paddingEnd="@dimen/padding_all_element_large"
     android:gravity="center_vertical"
     android:textSize="@dimen/size_subtitle_text_medium"
     android:textColor="@color/color_black"

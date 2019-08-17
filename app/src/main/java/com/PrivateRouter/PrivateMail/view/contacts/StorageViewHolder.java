@@ -38,11 +38,19 @@ public class StorageViewHolder  extends RecyclerView.ViewHolder {
     }
 
 
-    public void bind(Storages storages, int position) {
+    public void bind(Storages storages, int position, boolean selected) {
         this.storages = storages;
         this.position = position;
 
         tvStorage.setText(storages.getId());
+        if (selected ) {
+            tvStorage.setBackgroundColor(tvStorage.getContext().getResources().getColor(R.color.colorPrimary) );
+            tvStorage.setTextColor(tvStorage.getContext().getResources().getColor(R.color.color_white));
+        }
+        else  {
+            tvStorage.setTextColor(tvStorage.getContext().getResources().getColor(R.color.color_black));
+            tvStorage.setBackgroundColor(tvStorage.getContext().getResources().getColor(android.R.color.transparent) );
+        }
     }
 
 

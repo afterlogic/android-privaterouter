@@ -329,7 +329,7 @@ public class ContactsActivity extends AppCompatActivity
                 if (contactsListModeMediator.isSelectionMode())
                     contactsListModeMediator.closeSelectionMode();
 
-                Intent intent = new Intent(this, GroupsListActivity.class);
+                Intent intent = GroupsListActivity.makeIntent(this, currentGroup, currentStorage, viewMode);
                 startActivityForResult(intent, SELECT_GROUP);
             }
         });

@@ -216,7 +216,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                 emailCollection.setEmails(new ArrayList<>());
 
             emailCollection.getEmails().add(0, email);
-            
+
 
             if (updateListRunnable!=null)
                 updateListRunnable.run();

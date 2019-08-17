@@ -2,6 +2,7 @@ package com.PrivateRouter.PrivateMail.view.contacts;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import com.PrivateRouter.PrivateMail.model.Group;
 import java.util.ArrayList;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
+    private Group selectedElement;
+
     public enum GroupWorkMode {
         SINGLE_MODE,
         CHECK_MODE
@@ -29,10 +32,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
         groupsListMediator.setAdapter(this);
     }
 
-    GroupsAdapter(GroupWorkMode groupsMode, ArrayList<Group> groups){
+    GroupsAdapter(GroupWorkMode groupsMode, ArrayList<Group> groups, Group selectedElement){
         this.groupsMode = groupsMode;
         this.groups = groups;
+        this.selectedElement = selectedElement;
     }
+
 
     @NonNull
     @Override
@@ -46,7 +51,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull GroupsViewHolder groupsViewHolder, int i) {
         Group group = groups.get(i);
-        groupsViewHolder.bind(group, i, this, groupsListMediator != null && groupsListMediator.isGroupSelected(group));
+        boolean selected = selectedElement !=null  && (group.getUUID().equals(selectedElement.getUUID()));
+        groupsViewHolder.bind(group, i, this, groupsListMediator != null && groupsListMediator.isGroupSelected(group), selected );
     }
 
     @Override
