@@ -4,12 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -129,6 +132,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     AttachmentsAdapter attachmentsAdapter;
 
     String preEncryptedText;
+    private Drawable defaultEditTextBackground;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, Message message) {
@@ -211,7 +215,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             if (emailCollection.getEmails()==null)
                 emailCollection.setEmails(new ArrayList<>());
 
-            emailCollection.getEmails().add(email);
+            emailCollection.getEmails().add(0, email);
+            
 
             if (updateListRunnable!=null)
                 updateListRunnable.run();
@@ -327,10 +332,14 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                     onFocusField.run();
                 ib.setVisibility(View.VISIBLE);
                 et.setVisibility(View.VISIBLE);
+                et.setBackground(defaultEditTextBackground);
+                int padding =  Utils.getDP(ComposeActivity.this, 4);
+                et.setPadding(0, padding, 0, padding);
                 et.requestFocus();
                 et.setActivated(true);
                 et.setPressed(true);
                 et.setSelection(0);
+                SoftKeyboard.showKeyboard(this);
                 SoftKeyboard.showKeyboard(this);
             } else if (!et.hasFocus()) {
                 ib.setVisibility(View.INVISIBLE);
@@ -341,6 +350,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         et.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 ib.setVisibility(View.INVISIBLE);
+                et.setVisibility(View.INVISIBLE);
                 createEmailFromText(et, emailCollection, updateRunnable);
             }
         });
@@ -352,10 +362,39 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             }
             return true;
         });
+
+
+        defaultEditTextBackground = et.getBackground();
+        et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int padding =  Utils.getDP(ComposeActivity.this, 4);
+                if (editable.toString().length()<=0) {
+                    et.setBackground(defaultEditTextBackground);
+
+                    et.setPadding(0, padding, 0, padding);
+                }
+                else {
+                    et.setBackground(null);
+
+                    et.setPadding(0, padding, 0, padding);
+                }
+            }
+        });
     }
     private void addFieldsFocusReaction() {
         addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList, null);
-        addFieldsFocusReaction(llCcRecipients, ibAddCcRecipients, etEmailCc, message.getCc(), ComposeActivity.this::updateCcToList, this::showCCFields);
+        addFieldsFocusReaction ( llCcRecipients,    ibAddCcRecipients,  etEmailCc,  message.getCc(),    ComposeActivity.this::updateCcToList, this::showCCFields);
         addFieldsFocusReaction ( llBccRecipients,   ibAddBccRecipients, etEmailBcc, message.getBcc(),   ComposeActivity.this::updateBccToList, null);
     }
     private  void clearFieldsFocusReaction() {
@@ -744,7 +783,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         if (emailCollectionToAdd.getEmails()==null) {
             emailCollectionToAdd.setEmails(new ArrayList<Email>());
         }
-        emailCollectionToAdd.getEmails().addAll(stringArrayListExtra);
+        emailCollectionToAdd.getEmails().addAll(0, stringArrayListExtra);
 
         if (runnableAfterAdd!=null)
             runnableAfterAdd.run();

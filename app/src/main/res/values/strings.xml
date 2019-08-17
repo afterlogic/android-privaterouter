@@ -220,5 +220,8 @@
     <string name="create_group_web">Web</string>
     <string name="groups_personal">Personal</string>
     <string name="create_group_title">Create group</string>
+    <string name="contacts_create">Create contact</string>
+    <string name="contacts_edit">Edit contact</string>
+    <string name="edit_group_title">Edit group</string>
 
 </resources>

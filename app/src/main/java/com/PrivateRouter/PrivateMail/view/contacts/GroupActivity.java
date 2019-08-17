@@ -365,6 +365,7 @@ public class GroupActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
         displayOrganizationFields(group.getIsOrganization());
         fillGroupFields(group);
+        setTitle(getString(R.string.edit_group_title));
     }
 
     private void sendMessageToGroup() {

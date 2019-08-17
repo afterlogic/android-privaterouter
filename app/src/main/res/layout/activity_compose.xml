@@ -53,7 +53,6 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
-                        android:background="@android:color/transparent"
                         android:inputType="text"
                         android:textSize="@dimen/size_text_medium" />
                 </org.apmem.tools.layouts.FlowLayout>
@@ -113,7 +112,6 @@
 
                     <EditText
                         android:id="@+id/et_email_cc"
-                        android:background="@android:color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"
@@ -180,7 +178,6 @@
                         android:id="@+id/et_email_bcc"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
-                        android:background="@android:color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"

@@ -628,6 +628,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         llAdditionalFields.setVisibility(View.GONE);
         tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
         etOtherBirthday.setFocusable(false);
+        setTitle(getString(R.string.contacts_edit));
     }
 
     private void initViewMode(Contact contact) {
@@ -645,6 +646,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         llAdditionalFields.setVisibility(View.GONE);
         tvAdditionalFields.setText(R.string.contacts_show_additional_fields);
         etOtherBirthday.setFocusable(false);
+        setTitle(getString(R.string.contacts_create));
     }
 
     private void fillContactFields(Contact contact) {
