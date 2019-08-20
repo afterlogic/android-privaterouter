@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -190,7 +191,18 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         nvBottomCompose.setOnNavigationItemSelectedListener(this);
         addFieldsFocusReaction();
 
+        etComposeSubject.setMaxLines(Integer.MAX_VALUE); // Or specify a lower value if you want
+        etComposeSubject.setHorizontallyScrolling(false);
 
+        etComposeSubject.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE ) {
+                    etComposeText.requestFocus();
+                }
+                return true;
+            }
+        });
         etComposeSubject.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -220,6 +232,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
             if (updateListRunnable!=null)
                 updateListRunnable.run();
+
         }
         text.setText("");
 
@@ -323,8 +336,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable, Runnable onFocusField) {
         ib.setVisibility(View.INVISIBLE);
-        et.setVisibility(View.INVISIBLE);
-
+        et.setVisibility(View.GONE);
 
         ll.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -332,26 +344,25 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                     onFocusField.run();
                 ib.setVisibility(View.VISIBLE);
                 et.setVisibility(View.VISIBLE);
-                et.setBackground(defaultEditTextBackground);
-                int padding =  Utils.getDP(ComposeActivity.this, 4);
-                et.setPadding(0, padding, 0, padding);
                 et.requestFocus();
                 et.setActivated(true);
                 et.setPressed(true);
                 et.setSelection(0);
                 SoftKeyboard.showKeyboard(this);
-                SoftKeyboard.showKeyboard(this);
             } else if (!et.hasFocus()) {
                 ib.setVisibility(View.INVISIBLE);
-                et.setVisibility(View.INVISIBLE);
+                et.setVisibility(View.GONE);
             }
         });
 
         et.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 ib.setVisibility(View.INVISIBLE);
-                et.setVisibility(View.INVISIBLE);
+                et.setVisibility(View.GONE);
                 createEmailFromText(et, emailCollection, updateRunnable);
+            }
+            else {
+                ib.setVisibility(View.VISIBLE);
             }
         });
 
@@ -363,7 +374,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             return true;
         });
 
-
+/*
         defaultEditTextBackground = et.getBackground();
         et.addTextChangedListener(new TextWatcher() {
             @Override
@@ -380,17 +391,18 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             public void afterTextChanged(Editable editable) {
                 int padding =  Utils.getDP(ComposeActivity.this, 4);
                 if (editable.toString().length()<=0) {
-                    et.setBackground(defaultEditTextBackground);
+                    //et.setBackground(null);
+                    //et.setBackground(defaultEditTextBackground);
 
                     et.setPadding(0, padding, 0, padding);
                 }
                 else {
-                    et.setBackground(null);
+                    //  et.setBackground(null);
 
                     et.setPadding(0, padding, 0, padding);
                 }
             }
-        });
+        });*/
     }
     private void addFieldsFocusReaction() {
         addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList, null);
@@ -466,26 +478,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void openInputDialog(final EmailCollection emailCollection, final Runnable runnable) {
         this.emailCollectionToAdd = emailCollection;
         this.runnableAfterAdd = runnable;
-
-        /*
-        InputEmailDialogFragment inputEmailDialogFragment = new InputEmailDialogFragment();
-        inputEmailDialogFragment.setOnEmailInput(new InputEmailDialogFragment.OnEmailInput() {
-            @Override
-            public void onEmailInput(String emailString) {
-                if (emailCollection.getEmails()==null) {
-                    emailCollection.setEmails(new ArrayList<Email>());
-                }
-                Email email = new Email();
-                email.setEmail(emailString);
-                email.setDisplayName("");
-                emailCollection.getEmails().add(email);
-                if (runnable!=null)
-                    runnable.run();
-
-            }
-        });
-        inputEmailDialogFragment.show(getSupportFragmentManager(), "inputEmailDialogFragment");
-        */
         Intent intent = ContactsActivity.makeIntent(this, true );
         startActivityForResult(intent, SELECT_CONTACT );
     }
@@ -604,7 +596,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
 
         ViewGroup.MarginLayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, Utils.getDP(this, 8), 0);
+        int margin = Utils.getDP(this, 8);
+        int marginV = Utils.getDP(this, 4);
+        layoutParams.setMargins(0, marginV, margin, marginV);
         view.setLayoutParams(layoutParams);
         return view;
     }

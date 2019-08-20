@@ -30,7 +30,8 @@ public interface MessageDao {
     DataSource.Factory<Integer, Message> getAllFactory(String folder);
 
     @Query("SELECT * FROM messages WHERE Folder =:folder and " +
-            "(Subject LIKE :filter or plain LIKE :filter or attachmentsattachments LIKE :filter) " +
+            "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
+            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);
 

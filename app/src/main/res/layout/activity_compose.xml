@@ -36,6 +36,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:padding="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:textSize="@dimen/size_text_medium"
                     android:text="@string/all_to" />
 
@@ -49,11 +51,12 @@
 
                     <EditText
                         android:id="@+id/et_email_to"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
-                        android:inputType="text"
+                        android:background="@null"
+                        android:inputType="text|textNoSuggestions"
                         android:textSize="@dimen/size_text_medium" />
                 </org.apmem.tools.layouts.FlowLayout>
 
@@ -99,6 +102,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:padding="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:textSize="@dimen/size_text_medium"
                     android:text="@string/all_cc" />
 
@@ -112,9 +117,10 @@
 
                     <EditText
                         android:id="@+id/et_email_cc"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
+                        android:background="@null"
+                        android:inputType="text|textNoSuggestions"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
                         android:textSize="@dimen/size_text_medium" />
@@ -163,6 +169,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:padding="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:textSize="@dimen/size_text_medium"
                     android:text="@string/all_bcc" />
 
@@ -178,9 +186,10 @@
                         android:id="@+id/et_email_bcc"
                         android:paddingTop="@dimen/padding_all_element_small"
                         android:paddingBottom="@dimen/padding_all_element_small"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
+                        android:background="@null"
+                        android:inputType="text|textNoSuggestions"
                         android:textSize="@dimen/size_text_medium" />
 
                 </org.apmem.tools.layouts.FlowLayout>
@@ -220,18 +229,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cv_bcc_divider" />
 
+
             <EditText
                 android:id="@+id/et_compose_subject"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_all_element_small"
-
                 android:background="@null"
+                android:inputType="text"
                 android:scrollHorizontally="false"
+                android:maxLines="1000"
+                android:imeOptions="actionDone"
                 android:textSize="@dimen/size_text_medium"
                 app:layout_constraintLeft_toRightOf="@+id/tv_compose_subject"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_compose_subject" />
+                app:layout_constraintTop_toTopOf="@+id/tv_compose_subject"
+                tools:text="sdf shkfh sfhs kdf hskjhf ksdhf sdhf kjsdhf kjsdhfk jsdhfk jsdhfkjsdhfkjsdhfkj sdhkjsdh fkjsdhf kjsdhf jksdhfkjsdhf kjsdhf  sdf sdf sdf sdf " />
 
             <View
                 android:id="@+id/cv_message_divider"

@@ -512,6 +512,13 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
         MenuItem editItem = menu.findItem(R.id.item_menu_edit);
         MenuItem saveItem = menu.findItem(R.id.item_menu_save);
 
+        MenuItem actionMail = menu.findItem(R.id.action_mail);
+        MenuItem actionContacts = menu.findItem(R.id.action_contacts);
+        MenuItem actionSettings = menu.findItem(R.id.action_settings);
+        MenuItem actionLogout = menu.findItem(R.id.action_logout);
+
+
+
 
         if (modeEnum.equals(Mode.VIEW)) {
             attachItem.setVisible(true);
@@ -519,12 +526,21 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             searchItem.setVisible(true);
             editItem.setVisible(true);
             saveItem.setVisible(false);
+            actionMail.setVisible(true);
+            actionContacts.setVisible(true);
+            actionSettings.setVisible(true);
+            actionLogout.setVisible(true);
+
         } else if (modeEnum.equals(Mode.EDIT) || modeEnum.equals(Mode.CREATE)) {
             attachItem.setVisible(false);
             sendItem.setVisible(false);
             searchItem.setVisible(false);
             editItem.setVisible(false);
             saveItem.setVisible(true);
+            actionMail.setVisible(false);
+            actionContacts.setVisible(false);
+            actionSettings.setVisible(false);
+            actionLogout.setVisible(false);
         }
     }
 
