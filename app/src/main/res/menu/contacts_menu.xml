@@ -9,12 +9,21 @@
         android:title=""
         app:showAsAction="always" />
 
+
+
     <item
         android:id="@+id/se_actionBar_search"
         android:icon="@drawable/ic_zoom_white"
         android:title="@string/all_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/item_menu_choose"
+        android:icon="@drawable/ic_check_black_24dp"
+        android:title=""
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/item_menu_send"
@@ -29,11 +38,6 @@
         app:showAsAction="always" />
 
 
-    <item
-        android:id="@+id/item_menu_choose"
-        android:icon="@drawable/ic_check_black_24dp"
-        android:title=""
-        app:showAsAction="always" />
 
 
 

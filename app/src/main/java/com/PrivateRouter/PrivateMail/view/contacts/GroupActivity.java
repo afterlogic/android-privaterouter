@@ -233,7 +233,7 @@ public class GroupActivity extends AppCompatActivity {
         if (modeEnum.equals(Mode.VIEW)) {
             getSupportActionBar().setTitle("");
         }
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
+        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
 
     }
 

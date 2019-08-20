@@ -68,6 +68,7 @@ public class ContactsActivity extends AppCompatActivity
     public static final int CONTACT = 10;
     public static final int CREATE_GROUP = 11;
     private static final int VIEW_GROUP = 12;
+    private MenuItem viewGroupItem;
 
     enum VIEW_MODE {
         GROUP,
@@ -348,13 +349,20 @@ public class ContactsActivity extends AppCompatActivity
             return;
 
 
+        MenuItem actionMail = menu.findItem(R.id.action_mail);
+        MenuItem actionSettings = menu.findItem(R.id.action_settings);
+        MenuItem actionLogout = menu.findItem(R.id.action_logout);
+
         MenuItem searchItem = menu.findItem(R.id.se_actionBar_search);
         MenuItem sendItem = menu.findItem(R.id.item_menu_send);
         MenuItem toRecycleItem = menu.findItem(R.id.item_menu_recyclebin);
         MenuItem chooseItem = menu.findItem(R.id.item_menu_choose);
-        MenuItem viewGroupItem = menu.findItem(R.id.item_menu_view_group);
+        viewGroupItem = menu.findItem(R.id.item_menu_view_group);
 
 
+        actionMail.setVisible(!chooseMode);
+        actionSettings.setVisible(!chooseMode);
+        actionLogout.setVisible(!chooseMode);
         viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
 
 
@@ -379,6 +387,25 @@ public class ContactsActivity extends AppCompatActivity
     }
 
     private void initSearch(SearchView searchView) {
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewGroupItem.setVisible(false);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
+
+                int size = contactsListModeMediator.getSelectionList().size();
+                updateSelectedTitle( size );
+                return false;
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchText) {
