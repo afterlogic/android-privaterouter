@@ -44,9 +44,10 @@ public class ContactsListModeMediator {
             selected.add(contact);
         }
         else {
-            for (Contact selectedContact : selected) {
+            for (int i = 0; i < selected.size(); i++) {
+                Contact selectedContact = selected.get(i);
                 if (selectedContact.getUUID().equals( contact.getUUID())) {
-                    selected.remove( selectedContact );
+                    selected.remove( i );
                 }
 
             }

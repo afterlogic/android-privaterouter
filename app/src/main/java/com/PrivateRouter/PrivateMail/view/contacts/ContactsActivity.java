@@ -400,8 +400,10 @@ public class ContactsActivity extends AppCompatActivity
             public boolean onClose() {
                 viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
 
-                int size = contactsListModeMediator.getSelectionList().size();
-                updateSelectedTitle( size );
+                if (chooseMode) {
+                    int size = contactsListModeMediator.getSelectionList().size();
+                    updateSelectedTitle(size);
+                }
                 return false;
             }
         });
