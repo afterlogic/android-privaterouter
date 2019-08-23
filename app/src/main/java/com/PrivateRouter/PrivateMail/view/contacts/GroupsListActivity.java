@@ -3,7 +3,6 @@ package com.PrivateRouter.PrivateMail.view.contacts;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,7 +24,7 @@ import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -140,7 +139,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
         selectGroup(group);
     }
 
-    private void selectStorage(@Nonnull String storageId) {
+    private void selectStorage(@NonNull String storageId) {
         Intent intent = new Intent();
         intent.putExtra("SelectedStorage", storageId );
         intent.putExtra("viewGroupMode", false);
@@ -149,7 +148,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
     }
 
 
-    private void selectGroup(@Nonnull Group group) {
+    private void selectGroup(@NonNull Group group) {
         Intent intent = new Intent();
         intent.putExtra("SelectedGroup", group );
         intent.putExtra("viewGroupMode", true);

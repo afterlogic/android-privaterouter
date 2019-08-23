@@ -120,6 +120,19 @@ public class EncryptDialogFragment extends DialogFragment implements View.OnClic
 
 
     @SuppressWarnings("unused")
+    @OnClick(R.id.cb_encrypt_dialog_sign)
+    public void btSignClick() {
+
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.cb_encrypt_dialog_encrypt)
+    public void btEncyptClick() {
+
+    }
+
+
+    @SuppressWarnings("unused")
     @OnClick(R.id.bt_encrypt_cancel)
     public void btCancelClick() {
         dismiss();

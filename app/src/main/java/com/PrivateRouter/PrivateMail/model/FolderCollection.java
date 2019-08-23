@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 public class FolderCollection implements Serializable {
     @SerializedName("@Collection")
@@ -20,7 +20,7 @@ public class FolderCollection implements Serializable {
         this.collection = collection;
     }
 
-    public String getFolderName(@Nonnull FolderType folderType) {
+    public String getFolderName(@NonNull FolderType folderType) {
         if (collection==null)
             return null;
 
@@ -32,7 +32,7 @@ public class FolderCollection implements Serializable {
         return null;
     }
 
-    public Folder getFolder(@Nonnull String name) {
+    public Folder getFolder(@NonNull String name) {
         if (collection==null)
             return null;
 

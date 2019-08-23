@@ -76,6 +76,11 @@ public class MessageUtils {
                 && message.getPlain().contains("-----END PGP MESSAGE-----");
     }
 
+    public static boolean isSigned(Message message) {
+        return !TextUtils.isEmpty(message.getPlain()) && message.getPlain().contains("-----BEGIN PGP SIGNATURE-----")
+                && message.getPlain().contains("-----END PGP SIGNATURE-----");
+    }
+
     public static String convertToPlain(String html) {
         return android.text.Html.fromHtml(html).toString();
     }

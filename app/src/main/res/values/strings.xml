@@ -22,6 +22,7 @@
     <string name="all_mail">Mail</string>
     <string name="all_encrypt">Encrypt</string>
     <string name="all_decrypt">Decrypt</string>
+    <string name="all_unsign">Unsign</string>
     <string name="all_save">Save</string>
     <string name="all_generate">Generate</string>
     <string name="all_public_key">Public key</string>
@@ -72,7 +73,7 @@
     </string-array>
 
 
-
+    <string name="server_error">Server Error</string>
     <string name="request_error_code">Error code</string>
     <string name="request_connection">Connection</string>
     <string name="dialog_input_title">Input email</string>

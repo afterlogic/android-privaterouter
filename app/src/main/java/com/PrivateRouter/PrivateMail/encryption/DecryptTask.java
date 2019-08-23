@@ -18,6 +18,7 @@ import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.util.io.Streams;
+import org.jetbrains.annotations.Nullable;
 import org.pgpainless.PGPainless;
 import org.pgpainless.algorithm.HashAlgorithm;
 import org.pgpainless.algorithm.SymmetricKeyAlgorithm;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nullable;
 
 public class DecryptTask extends AsyncTask<Void, Void, Message> {
     Context context;

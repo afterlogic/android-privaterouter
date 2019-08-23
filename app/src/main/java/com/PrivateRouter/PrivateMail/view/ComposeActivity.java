@@ -374,35 +374,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             return true;
         });
 
-/*
-        defaultEditTextBackground = et.getBackground();
-        et.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                int padding =  Utils.getDP(ComposeActivity.this, 4);
-                if (editable.toString().length()<=0) {
-                    //et.setBackground(null);
-                    //et.setBackground(defaultEditTextBackground);
-
-                    et.setPadding(0, padding, 0, padding);
-                }
-                else {
-                    //  et.setBackground(null);
-
-                    et.setPadding(0, padding, 0, padding);
-                }
-            }
-        });*/
     }
     private void addFieldsFocusReaction() {
         addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList, null);
@@ -630,7 +601,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void openEncryptPopup() {
         updateMessage();
 
-        if (MessageUtils.isEncrypted(message) && preEncryptedText !=null ) {
+        if (preEncryptedText !=null && (MessageUtils.isEncrypted(message) || MessageUtils.isSigned(message) ) ) {
             message.setPlain(preEncryptedText);
             onDecrypt(message);
         }
@@ -732,6 +703,10 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         if (MessageUtils.isEncrypted(message)) {
             menuItem.setIcon(R.drawable.ic_lock_open);
             menuItem.setTitle(R.string.all_decrypt);
+        }
+        else if (MessageUtils.isSigned(message)) {
+            menuItem.setIcon(R.drawable.ic_lock_open);
+            menuItem.setTitle(R.string.all_unsign);
         }
         else {
             menuItem.setIcon(R.drawable.ic_lock_outline);

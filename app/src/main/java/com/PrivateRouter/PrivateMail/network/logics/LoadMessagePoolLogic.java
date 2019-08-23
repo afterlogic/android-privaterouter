@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> implements OnErrorInterface  {
 
@@ -37,7 +37,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private boolean haveErrorLoadingFolder = false;
     private boolean forceCurrent = false;
 
-    public  LoadMessagePoolLogic(@Nonnull String folder, @Nonnull CallRequestResult<Boolean> callback) {
+    public  LoadMessagePoolLogic(@NonNull String folder, @NonNull CallRequestResult<Boolean> callback) {
         this.callback = callback;
         this.currentFolderName = folder;
     }

@@ -1,7 +1,10 @@
 package com.PrivateRouter.PrivateMail.network.logics;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.PrivateRouter.PrivateMail.PrivateMailApplication;
+import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.FolderCollection;
 import com.PrivateRouter.PrivateMail.model.User;
@@ -43,7 +46,11 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
     @Override
     public void onSuccess(LoginResponse result) {
-
+        if (result==null) {
+            Context context = PrivateMailApplication.getContext();
+            Toast.makeText(context, context.getString(R.string.server_error), Toast.LENGTH_LONG).show();
+            return;
+        }
         String token = result.getResult().getAuthToken();
         ApiFactory.setToken( token );
         LoggedUserRepository.getInstance().setAuthToken(token);

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 public class LoadMessageLogic   implements OnErrorInterface {
 
@@ -63,7 +63,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
         int errorCode;
     }
 
-    public  LoadMessageLogic(@Nonnull String folder) {
+    public  LoadMessageLogic(@NonNull String folder) {
         this.folder = folder;
     }
 

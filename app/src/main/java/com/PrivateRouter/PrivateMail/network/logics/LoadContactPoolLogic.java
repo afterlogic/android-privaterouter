@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import androidx.annotation.NonNull;
 
 public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> implements OnErrorInterface {
 
@@ -40,7 +40,7 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private int oldCTag;
 
 
-    public  LoadContactPoolLogic(@Nonnull String storage, @Nonnull CallRequestResult<Boolean> callback) {
+    public  LoadContactPoolLogic(@NonNull String storage, @NonNull CallRequestResult<Boolean> callback) {
         this.callback = callback;
         this.currentStorage = storage;
     }

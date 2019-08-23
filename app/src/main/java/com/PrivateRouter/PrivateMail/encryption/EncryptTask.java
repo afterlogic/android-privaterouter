@@ -16,10 +16,14 @@ import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 
 
 import org.bouncycastle.asn1.ocsp.Signature;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
+import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
+import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.util.io.Streams;
 import org.pgpainless.PGPainless;
 import org.pgpainless.algorithm.HashAlgorithm;
@@ -48,7 +52,9 @@ import java.nio.file.Files;
 import java.security.PublicKey;
 import java.security.Security;
 
-import javax.annotation.Nullable;
+
+
+import io.reactivex.annotations.Nullable;
 
 import static org.pgpainless.PGPainless.createEncryptor;
 
@@ -125,7 +131,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                 else
                     signWith = toRecipients.doNotEncrypt();
 
-
+                String clearSign = "";
                 if (useSign) {
 
                     Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
@@ -150,6 +156,13 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                         }
                     });
 
+                    PGPSecretKey secretKey = secretKeys.getSecretKey();
+                    PGPPrivateKey privateKey1 =  secretKey.extractPrivateKey(secretKeyDecryptor.getDecryptor(secretKey.getKeyID()));
+
+
+                    clearSign = SignHelper.signArmoredAscii(privateKey1, sourceText, HashAlgorithmTags.SHA256);
+
+
                     armor = signWith.signWith(secretKeyDecryptor, secretKeys);
                 } else {
                     armor = signWith.doNotSign();
@@ -164,7 +177,22 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                 byte[] encryptedSecretMessage = outputStream.toByteArray();
                 String encrypted = new String(encryptedSecretMessage);
 
-                message.setPlain(encrypted);
+                if (useEncrypt) {
+                    message.setPlain(encrypted);
+                }
+                else {
+                    String text =  "";
+                    if (useSign) {
+                        text = "-----BEGIN PGP SIGNED MESSAGE-----\n";
+                        text = text + "Hash: SHA256\n\n";
+                        text = text + sourceText + "\n\n";
+                        text = text+ clearSign;
+                    }
+                    else {
+                        text = clearSign;
+                    }
+                    message.setPlain(text);
+                }
                 message.setHtml("");
 
             } catch (Exception e) {
