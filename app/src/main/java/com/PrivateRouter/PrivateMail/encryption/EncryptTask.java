@@ -160,9 +160,8 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                     PGPSecretKey secretKey = secretKeys.getSecretKey();
                     PGPPrivateKey privateKey1 =  secretKey.extractPrivateKey(secretKeyDecryptor.getDecryptor(secretKey.getKeyID()));
 
-
+                    Security.addProvider(new BouncyCastleProvider());
                     clearSign = SignHelper.signArmoredAscii(privateKey1, sourceText, HashAlgorithmTags.SHA256);
-
 
                     armor = signWith.signWith(secretKeyDecryptor, secretKeys);
                 } else {
@@ -184,9 +183,9 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                 else {
                     String text =  "";
                     if (useSign) {
-                        text = PGP_SIGN_TITLE +"\n";
-                        text = text + "Hash: SHA256\n\n";
-                        text = text + sourceText + "\n\n";
+                        text = PGP_SIGN_TITLE +"\r\n";
+                        text = text + "Hash: SHA256\r\n\r\n";
+                        text = text + sourceText + "\r\n";
                         text = text+ clearSign;
                     }
                     else {

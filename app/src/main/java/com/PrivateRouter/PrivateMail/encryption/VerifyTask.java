@@ -52,7 +52,8 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... voids) {
 
-        String str = MessageUtils.convertToPlain( message.getPlain() );;
+        String str =  message.getPlainRaw() ;
+     //   str = str.replace("<br />", "\n");
         String signTitle = "-----BEGIN PGP SIGNATURE-----";
         String endSignTitle = "-----END PGP SIGNATURE-----";
         int signEndIndex = str.lastIndexOf(endSignTitle)+endSignTitle.length();
@@ -61,13 +62,15 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
             return null;
         }
 
-        int index = str.indexOf("Hash: ");
-        int indexClearText  = str.indexOf("\n", index+4);
+        String hashText = "Hash: ";
+        int index = str.indexOf(hashText);
+        int indexClearText  = str.indexOf("\n", index+hashText.length());
 
 
         String signatureString = str.substring(signIndex, signEndIndex);
 
-        clearMessage  = str.substring( indexClearText+2, signIndex -2);
+
+        clearMessage  = str.substring( indexClearText+3, signIndex -2);
 
         InputStream signData = new ByteArrayInputStream(clearMessage.getBytes(StandardCharsets.UTF_8));
         InputStream signature = new ByteArrayInputStream(signatureString.getBytes(StandardCharsets.UTF_8));

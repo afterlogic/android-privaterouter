@@ -72,7 +72,7 @@ public class PGPKeyViewHolder extends RecyclerView.ViewHolder  {
         });
 
 
-        PGPKey pubKey = PrivateMailApplication.getInstance().getKeysRepository().getKey(pgpKey.getUserID(), "");
+        PGPKey pubKey = PrivateMailApplication.getInstance().getKeysRepository().getKey(pgpKey.getUserID(),  pgpKey.getType());
         boolean disable =  pubKey!=null;
         cl_background.setEnabled(!disable);
         cbSelect.setEnabled(!disable);
