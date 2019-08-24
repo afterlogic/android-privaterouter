@@ -5,17 +5,20 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
+import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
-import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
-import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 
 
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.util.io.Streams;
 import org.jetbrains.annotations.Nullable;
@@ -23,12 +26,11 @@ import org.pgpainless.PGPainless;
 import org.pgpainless.algorithm.HashAlgorithm;
 import org.pgpainless.algorithm.SymmetricKeyAlgorithm;
 import org.pgpainless.decryption_verification.DecryptionStream;
-import org.pgpainless.key.collection.PGPKeyRing;
+import org.pgpainless.decryption_verification.MissingPublicKeyCallback;
 import org.pgpainless.key.protection.KeyRingProtectionSettings;
 import org.pgpainless.key.protection.PasswordBasedSecretKeyRingProtector;
 import org.pgpainless.key.protection.SecretKeyPassphraseProvider;
 import org.pgpainless.key.protection.SecretKeyRingProtector;
-import org.pgpainless.key.protection.UnprotectedKeysProtector;
 import org.pgpainless.util.BCUtil;
 import org.pgpainless.util.Passphrase;
 
@@ -85,17 +87,14 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
                 InputStream sourceInputStream = new ByteArrayInputStream(encryptedText.getBytes(StandardCharsets.UTF_8));
 
 
+                PGPPublicKeyRingCollection publicKeyRings = getPublicKeyRings(message);
 
-                DecryptionStream decryptor = PGPainless.createDecryptor()
-                        .onInputStream(sourceInputStream) // insert encrypted data here
-                        //.doNotDecrypt()
-                        .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
-                        .doNotVerify()
 
-                        //.ignoreMissingPublicKeys()
-                        .build();
 
-                //.verifyWith(trustedKeyIds, senderKeys)
+                DecryptionStream decryptor;
+                decryptor = createDecryptorWithVerify(sourceInputStream, secretKeyDecryptor, secretKeys, publicKeyRings);
+                if (decryptor == null)
+                    decryptor = createDecryptorWithOutVerify(sourceInputStream, secretKeyDecryptor, secretKeys, publicKeyRings);
 
                 ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
 
@@ -112,6 +111,71 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
         errorDescription = context.getString(R.string.decrypt_error_common);
         return null;
 
+    }
+
+    private DecryptionStream createDecryptorWithOutVerify(InputStream sourceInputStream, SecretKeyRingProtector secretKeyDecryptor, PGPSecretKeyRing secretKeys, PGPPublicKeyRingCollection publicKeyRings) {
+        DecryptionStream pgPainless = null;
+        try {
+            pgPainless = PGPainless.createDecryptor()
+                    .onInputStream(sourceInputStream)
+                    .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
+                    .doNotVerify().build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (PGPException e) {
+            e.printStackTrace();
+        }
+        return pgPainless;
+    }
+
+    private DecryptionStream createDecryptorWithVerify(InputStream sourceInputStream, SecretKeyRingProtector secretKeyDecryptor, PGPSecretKeyRing secretKeys, PGPPublicKeyRingCollection publicKeyRings) {
+        DecryptionStream pgPainless = null;
+        try {
+            pgPainless = PGPainless.createDecryptor()
+                    .onInputStream(sourceInputStream)
+                    .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
+                    .verifyWith(publicKeyRings).handleMissingPublicKeysWith(new MissingPublicKeyCallback() {
+                        @Override
+                        public PGPPublicKey onMissingPublicKeyEncountered(@NonNull Long keyId) {
+                            Log.d("2", "mis key");
+                            return null;
+                        }
+                    })  .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (PGPException e) {
+            e.printStackTrace();
+        }
+        return pgPainless;
+    }
+
+    private PGPPublicKeyRingCollection getPublicKeyRings(Message message) {
+        KeysRepository keysRepository = PrivateMailApplication.getInstance().getKeysRepository();
+        Context context = PrivateMailApplication.getContext();
+        String publicKeysArmored = "";
+        for (Email email : message.getTo().getEmails()) {
+            PGPKey pgpkey = keysRepository.getKey(email.getEmail(), PGPKey.PUBLIC);
+            if (pgpkey != null) {
+                String data = pgpkey.getKeyObject().toString();
+
+                publicKeysArmored = publicKeysArmored + data + "\n";
+            } else {
+                String failMessage = String.format(context.getString(R.string.encrypt_error_not_found_public_key), email.getEmail());
+                return null;
+            }
+
+        }
+        PGPPublicKeyRingCollection pgpPublicKeyRings = null;
+
+        try {
+            pgpPublicKeyRings = PGPainless.readKeyRing().publicKeyRingCollection(publicKeysArmored);
+        } catch (IOException e) {
+
+
+        } catch (PGPException e) {
+            e.printStackTrace();
+        }
+        return pgpPublicKeyRings;
     }
 
 

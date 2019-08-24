@@ -22,6 +22,7 @@
     <string name="all_mail">Mail</string>
     <string name="all_encrypt">Encrypt</string>
     <string name="all_decrypt">Decrypt</string>
+    <string name="all_verify">Verify</string>
     <string name="all_unsign">Unsign</string>
     <string name="all_save">Save</string>
     <string name="all_generate">Generate</string>
@@ -73,6 +74,7 @@
     </string-array>
 
 
+    <string name="view_mail_fail_verify">Fail verify message</string>
     <string name="server_error">Server Error</string>
     <string name="request_error_code">Error code</string>
     <string name="request_connection">Connection</string>
@@ -224,5 +226,6 @@
     <string name="contacts_create">Create contact</string>
     <string name="contacts_edit">Edit contact</string>
     <string name="edit_group_title">Edit group</string>
+    <string name="mail_view_verify_success">Verified successfully</string>
 
 </resources>

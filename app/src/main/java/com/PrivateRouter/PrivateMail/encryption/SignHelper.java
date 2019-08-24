@@ -1,12 +1,20 @@
 package com.PrivateRouter.PrivateMail.encryption;
 
+import com.PrivateRouter.PrivateMail.model.Message;
+
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
+import org.bouncycastle.openpgp.PGPSignatureList;
+import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.pgpainless.key.generation.KeyRingBuilder;
 
 import java.io.ByteArrayInputStream;
@@ -17,6 +25,17 @@ import java.nio.charset.StandardCharsets;
 
 public class SignHelper {
     private static final int BUFFER_SIZE = 4096;
+
+    private Runnable runnableOnFinish;
+
+
+    public Runnable getRunnableOnFinish() {
+        return runnableOnFinish;
+    }
+
+    public void setRunnableOnFinish(Runnable runnableOnFinish) {
+        this.runnableOnFinish = runnableOnFinish;
+    }
 
     public interface StreamHandler {
         void handleStreamBuffer(byte[] buffer, int offset, int length) throws IOException;
@@ -60,4 +79,27 @@ public class SignHelper {
 
         return signature;
     }
+
+
+    public static  boolean verify(InputStream signedData, InputStream signature, PGPPublicKeyRingCollection pgpPublicKeyRings) {
+        try {
+            signature = PGPUtil.getDecoderStream(signature);
+            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(signature);
+            PGPSignature sig = ((PGPSignatureList) pgpFact.nextObject()).get(0);
+            PGPPublicKey key = pgpPublicKeyRings.getPublicKey(sig.getKeyID());
+            sig.init(new JcaPGPContentVerifierBuilderProvider() , key);
+            byte[] buff = new byte[1024];
+            int read = 0;
+            while ((read = signedData.read(buff)) != -1) {
+                sig.update(buff, 0, read);
+            }
+            signedData.close();
+            return sig.verify();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
 }

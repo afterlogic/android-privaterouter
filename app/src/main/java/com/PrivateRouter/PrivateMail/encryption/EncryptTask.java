@@ -60,6 +60,7 @@ import static org.pgpainless.PGPainless.createEncryptor;
 
 
 public class EncryptTask extends AsyncTask<Void, Void, Message> {
+    public static final String PGP_SIGN_TITLE = "-----BEGIN PGP SIGNED MESSAGE-----";
     private Context context;
     private Message message;
     private String pass;
@@ -183,7 +184,7 @@ public class EncryptTask extends AsyncTask<Void, Void, Message> {
                 else {
                     String text =  "";
                     if (useSign) {
-                        text = "-----BEGIN PGP SIGNED MESSAGE-----\n";
+                        text = PGP_SIGN_TITLE +"\n";
                         text = text + "Hash: SHA256\n\n";
                         text = text + sourceText + "\n\n";
                         text = text+ clearSign;

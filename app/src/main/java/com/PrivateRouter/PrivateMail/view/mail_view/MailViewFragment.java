@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
+import com.PrivateRouter.PrivateMail.encryption.SignHelper;
+import com.PrivateRouter.PrivateMail.encryption.VerifyTask;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Message;
@@ -114,7 +116,13 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
         nvBottomMailView.setOnNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
             if(id == R.id.nav_menu_encrypt) {
-                openEncryptPopup();
+
+                if (MessageUtils.isEncrypted(message)) {
+                    openEncryptPopup();
+                }
+                else {
+                    verifyMessage();
+                }
             }
             return false;
         });
@@ -124,6 +132,7 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
 
         return view;
     }
+
 
     private void bind() {
         tvSubject.setText(message.getSubject());
@@ -279,7 +288,7 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
     }
 
     private void openEncryptPopup() {
-        //    message.setPlain( tvMessageText.getText().toString());
+
 
         String encryptedText = MessageUtils.convertToPlain(message.getPlain() );
         message.setPlain(encryptedText);
@@ -290,6 +299,27 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
         encryptDialogFragment.setDecryptCallback(this);
         encryptDialogFragment.show(getActivity().getSupportFragmentManager(), "encryptDialogFragment");
 
+    }
+
+
+
+    private void verifyMessage() {
+        VerifyTask verifyTask = new VerifyTask(message);
+        verifyTask.setVerifyTaskCallback(new VerifyTask.VerifyTaskCallback() {
+            @Override
+            public void onSuccessVerify(String clearMessage) {
+                Toast.makeText(MailViewFragment.this.getActivity(), getString(R.string.mail_view_verify_success), Toast.LENGTH_LONG).show();
+                MailViewFragment.this.message.setPlain( clearMessage );
+                MailViewFragment.this.message.setHtml ( clearMessage );
+                bind();
+            }
+
+            @Override
+            public void onFail(String description) {
+                Toast.makeText(MailViewFragment.this.getActivity(), description, Toast.LENGTH_LONG).show();
+            }
+        });
+        verifyTask.execute();
     }
 
 
@@ -319,6 +349,11 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
 
         if (MessageUtils.isEncrypted(message)) {
             nvBottomMailView.setVisibility(View.VISIBLE);
+            nvBottomMailView.getMenu().getItem(0).setTitle(getString(R.string.all_decrypt));
+        }
+        else  if (MessageUtils.isSigned(message)) {
+            nvBottomMailView.setVisibility(View.VISIBLE);
+            nvBottomMailView.getMenu().getItem(0).setTitle(getString(R.string.all_verify));
         }
         else {
             nvBottomMailView.setVisibility(View.GONE);
