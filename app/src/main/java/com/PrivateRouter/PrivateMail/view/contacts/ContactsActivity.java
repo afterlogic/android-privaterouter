@@ -387,7 +387,6 @@ public class ContactsActivity extends AppCompatActivity
     }
 
     private void initSearch(SearchView searchView) {
-
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

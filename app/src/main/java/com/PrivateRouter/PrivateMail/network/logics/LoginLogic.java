@@ -19,6 +19,7 @@ import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFolderResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 public class LoginLogic implements CallRequestResult<LoginResponse> {
 
@@ -46,9 +47,10 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
     @Override
     public void onSuccess(LoginResponse result) {
-        if (result==null) {
+        if (result==null || result.getResult() == null) {
             Context context = PrivateMailApplication.getContext();
-            Toast.makeText(context, context.getString(R.string.server_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.login_error), Toast.LENGTH_LONG).show();
+            RequestViewUtils.hideRequest();
             return;
         }
         String token = result.getResult().getAuthToken();

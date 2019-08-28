@@ -77,6 +77,7 @@
     <string name="view_mail_fail_verify">Fail verify message</string>
     <string name="server_error">Server Error</string>
     <string name="request_error_code">Error code</string>
+    <string name="login_error">Login error</string>
     <string name="request_connection">Connection</string>
     <string name="dialog_input_title">Input email</string>
     <string name="dialog_not_valid_email">Email not valid</string>

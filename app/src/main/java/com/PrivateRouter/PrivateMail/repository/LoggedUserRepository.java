@@ -76,6 +76,7 @@ public class LoggedUserRepository {
 
     public void logout(Context context) {
         authToken = "";
+        ApiFactory.setToken( "" );
         user = null;
         login =  "";
         save(context);

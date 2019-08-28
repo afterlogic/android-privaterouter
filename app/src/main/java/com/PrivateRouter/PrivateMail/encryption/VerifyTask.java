@@ -24,6 +24,8 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
 
 
     private String failMessage = "";
+    private String prefixText = "";
+    private String postfixText = "";
     private String clearMessage = "";
 
     public VerifyTaskCallback getVerifyTaskCallback() {
@@ -54,6 +56,7 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
 
         String str =  message.getPlainRaw() ;
      //   str = str.replace("<br />", "\n");
+        String signMessageTitle = "-----BEGIN PGP SIGNED MESSAGE-----";
         String signTitle = "-----BEGIN PGP SIGNATURE-----";
         String endSignTitle = "-----END PGP SIGNATURE-----";
         int signEndIndex = str.lastIndexOf(endSignTitle)+endSignTitle.length();
@@ -61,6 +64,13 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
         if (signIndex == -1) {
             return null;
         }
+        prefixText = "";
+        int signMessageTextIndex  =str.indexOf(signMessageTitle);
+        if (signMessageTextIndex>0){
+            prefixText = str.substring(0, signMessageTextIndex-1);
+        }
+
+        postfixText = str.substring(signEndIndex  );
 
         String hashText = "Hash: ";
         int index = str.indexOf(hashText);
@@ -74,18 +84,21 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
 
         InputStream signData = new ByteArrayInputStream(clearMessage.getBytes(StandardCharsets.UTF_8));
         InputStream signature = new ByteArrayInputStream(signatureString.getBytes(StandardCharsets.UTF_8));
-        PGPPublicKeyRingCollection publicKeys =  getPublicKeyRings(message);
+        PGPPublicKeyRingCollection publicKeys =  getPublicSenderKeyRings(message);
         if (publicKeys == null)
             return false;
 
         return SignHelper.verify( signData, signature,   publicKeys);
     }
 
-    private PGPPublicKeyRingCollection getPublicKeyRings(Message message) {
+    private PGPPublicKeyRingCollection getPublicSenderKeyRings(Message message) {
         KeysRepository keysRepository = PrivateMailApplication.getInstance().getKeysRepository();
         Context context = PrivateMailApplication.getContext();
         String publicKeysArmored = "";
-        for (Email email : message.getTo().getEmails()) {
+        if ( message.getFrom() == null)
+            return null;
+
+        for (Email email : message.getFrom().getEmails()) {
             PGPKey pgpkey = keysRepository.getKey(email.getEmail(), PGPKey.PUBLIC);
             if (pgpkey != null) {
                 String data = pgpkey.getKeyObject().toString();
@@ -114,7 +127,7 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
     protected void onPostExecute(Boolean result) {
         if (verifyTaskCallback !=null) {
             if (result) {
-                verifyTaskCallback.onSuccessVerify(clearMessage );
+                verifyTaskCallback.onSuccessVerify( toHtml(prefixText) + clearMessage + toHtml(postfixText));
             }
             else {
                 verifyTaskCallback.onFail(failMessage);
@@ -122,5 +135,10 @@ public class VerifyTask extends AsyncTask<Void,  Void, Boolean> {
         }
 
     }
+
+    private String toHtml(String prefixText) {
+        return prefixText.replace("\r\n" , "<br />");
+    }
+
 
 }

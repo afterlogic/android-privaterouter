@@ -382,9 +382,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
     private  void clearFieldsFocusReaction() {
 
-        etEmailTo.setVisibility(View.INVISIBLE);
-        etEmailCc.setVisibility(View.INVISIBLE);
-        etEmailBcc.setVisibility(View.INVISIBLE);
+        etEmailTo.setVisibility(View.GONE);
+        etEmailCc.setVisibility(View.GONE);
+        etEmailBcc.setVisibility(View.GONE);
         ibAddRecipients.setVisibility(View.INVISIBLE);
         ibAddCcRecipients.setVisibility(View.INVISIBLE);
         ibAddBccRecipients.setVisibility(View.INVISIBLE);
@@ -643,7 +643,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         if (sign) {
             etComposeText.setEnabled(false);
-
         }
 
         updateBottomMenuTitle();

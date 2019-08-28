@@ -58,6 +58,12 @@ public class EncryptDialogFragment extends DialogFragment implements View.OnClic
     @BindView(R.id.bt_decrypt)
     Button btDecrypt;
 
+    @BindView(R.id.ll_sign)
+    View llSign;
+
+    @BindView(R.id.ll_encrypt)
+    View llEncrypt;
+
     @BindView(R.id.bt_encrypt)
     Button btEncrypt;
 
@@ -101,7 +107,8 @@ public class EncryptDialogFragment extends DialogFragment implements View.OnClic
                 cvSignDivider.setVisibility(View.GONE);
                 cbEncrypt.setVisibility(View.GONE);
                 cbSign.setVisibility(View.GONE);
-
+                llSign.setVisibility(View.GONE);
+                llEncrypt.setVisibility(View.GONE);
             }
             else {
                 btEncrypt.setVisibility(View.VISIBLE);
