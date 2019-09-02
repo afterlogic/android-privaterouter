@@ -74,6 +74,7 @@ public class MailListActivity extends AppCompatActivity
     public static final String PERFORM_FOLDER_PARAM = "PerformFolder";
     public static final String SEARCH_WORD = "SearchWord";
     public static final String EMAIL_SEARCH_PREFIX = "email:";
+    public static final String UNREAD_ONLY_PARAM = "UnreadOnly";
     @BindView(R.id.rv_mail_list)
     RecyclerView rvMailList;
 
@@ -108,6 +109,7 @@ public class MailListActivity extends AppCompatActivity
     private Menu menu;
     private boolean paused = false;
     private String startSearchWord;
+    private boolean unreadOnly = false;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -238,36 +240,20 @@ public class MailListActivity extends AppCompatActivity
             starredOnly = true;
         }
 
-
-
-        if (!starredOnly) {
-            if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllFactory(performFolder);
-            else {
-                needFlatMode = true;
-                if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
-                    String value = filter.substring(EMAIL_SEARCH_PREFIX.length() + 1);
-                    factory = database.messageDao().getAllFilterEmailFactory(performFolder, "%" + value + "%");
-                } else {
-                    factory = database.messageDao().getAllFilterFactory(performFolder, "%" + filter + "%");
-                }
-
-            }
-        }
+        if (TextUtils.isEmpty(filter))
+            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly);
         else {
-            if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllFactoryStarredOnly(performFolder);
-            else {
-                needFlatMode = true;
-                if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
-                    String value = filter.substring(EMAIL_SEARCH_PREFIX.length() + 1);
-                    factory = database.messageDao().getAllFilterEmailFactoryStarredOnly(performFolder, "%" + value + "%");
-                } else {
-                    factory = database.messageDao().getAllFilterFactoryStarredOnly(performFolder, "%" + filter + "%");
-                }
-
+            needFlatMode = true;
+            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
+                String value = filter.substring(EMAIL_SEARCH_PREFIX.length() + 1);
+                factory = database.messageDao().getAllFilterEmailFactory(performFolder, "%" + value + "%", starredOnly, unreadOnly);
+            } else {
+                factory = database.messageDao().getAllFilterFactory(performFolder, "%" + filter + "%", starredOnly, unreadOnly);
             }
+
         }
+
+
 
 
 
@@ -338,7 +324,7 @@ public class MailListActivity extends AppCompatActivity
             return;
         int totalCount = folder.getMeta().getCount();
 
-        if (loadedCount < totalCount-1 && loadedCount>0) {
+        if (loadedCount < totalCount-1 && loadedCount>0 && !unreadOnly) {
             mailListAdapter.setShowMoreBar(true);
         }
         else if (loadedCount == totalCount) {
@@ -394,7 +380,7 @@ public class MailListActivity extends AppCompatActivity
                 mailListModeMediator.closeSelectionMode();
             }
             else {
-                Intent intent = FoldersListActivity.makeIntent(MailListActivity.this, currentFolder );
+                Intent intent = FoldersListActivity.makeIntent(MailListActivity.this, currentFolder, unreadOnly );
                 startActivityForResult(intent, SELECT_FOLDER);
             }
         });
@@ -701,7 +687,10 @@ public class MailListActivity extends AppCompatActivity
 
         if (requestCode == SELECT_FOLDER) {
             if (resultCode == RESULT_OK) {
-                onChangeFolder( data.getStringExtra( MailListActivity.FOLDER_PARAM ) );
+                String folderName = data.getStringExtra( MailListActivity.FOLDER_PARAM );
+                unreadOnly = data.getBooleanExtra( MailListActivity.UNREAD_ONLY_PARAM, false );
+
+                onChangeFolder( folderName  );
             }
         }
         else if (resultCode == LOGOUT) {

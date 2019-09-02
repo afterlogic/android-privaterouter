@@ -29,34 +29,23 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface MessageDao {
 
 
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFactory(String folder);
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder " +
+            "and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen ) " +
+            "  ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFactory(String folder, boolean starredOnly, boolean unreadOnly);
 
     @Query("SELECT * FROM messages WHERE Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
             "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
             " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);
+    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
 
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
             "(fromemails  LIKE :filter) " +
             " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter);
-
-
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and isFlagged ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFactoryStarredOnly(String folder);
-
-    @Query("SELECT * FROM messages WHERE Folder =:folder and isFlagged and " +
-            "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
-            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
-            " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterFactoryStarredOnly(String folder, String filter);
-
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and isFlagged and " +
-            "(fromemails  LIKE :filter) " +
-            " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterEmailFactoryStarredOnly(String folder, String filter);
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
 
 
 

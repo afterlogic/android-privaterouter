@@ -44,6 +44,13 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
             onFolderClick.onFolderClick(folder);
     }
 
+    @SuppressWarnings("unused")
+    @OnClick(R.id.tv_counter)
+    public void tvCounterClick() {
+        if (onFolderClick!=null)
+            onFolderClick.onFolderUnreadClick(folder);
+    }
+
 
     public FolderViewHolder(@NonNull View itemView) {
         super(itemView);

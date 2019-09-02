@@ -29,6 +29,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderViewHolder> {
 
     public interface OnFolderClick{
         void onFolderClick(Folder folder);
+        void onFolderUnreadClick(Folder folder);
     }
 
     private OnFolderClick onFolderClick;

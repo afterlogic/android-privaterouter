@@ -46,12 +46,14 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
 
     FolderAdapter folderAdapter;
     private String currentFolder;
+    private boolean currentUnreadOnly;
 
 
     @NonNull
-    public static Intent makeIntent(@NonNull Activity activity, String folder) {
+    public static Intent makeIntent(@NonNull Activity activity, String folder, boolean unreadOnly) {
         Intent intent = new Intent(activity, FoldersListActivity.class);
         intent.putExtra("folder", folder);
+        intent.putExtra("unreadOnly", unreadOnly);
         return intent;
     }
 
@@ -66,6 +68,7 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
 
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra("folder");
+            currentUnreadOnly = getIntent().getBooleanExtra("unreadOnly", false);
         }
         slMain.setOnRefreshListener(this);
         bindUI();
@@ -146,20 +149,30 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
 
     @Override
     public void onFolderClick(Folder folder) {
+        openFolder(folder, false);
+    }
 
-        if (!folder.getFullName().equals(currentFolder)) {
+    @Override
+    public void onFolderUnreadClick(Folder folder) {
+        openFolder(folder, true);
+    }
+
+    private void openFolder(Folder folder, boolean unreadOnly) {
+
+        if (!folder.getFullName().equals(currentFolder) || currentUnreadOnly != unreadOnly) {
 
             Intent intent = new Intent();
             intent.putExtra(MailListActivity.FOLDER_PARAM, folder.getFullName());
             if (folder.getFullName().equals(FolderType.VirtualStarred) ) {
                 Account account = LoggedUserRepository.getInstance().getActiveAccount();
                 intent.putExtra(MailListActivity.PERFORM_FOLDER_PARAM, account.getFolders().getFolderName(FolderType.Inbox) );
-
             }
+
+            intent.putExtra(MailListActivity.UNREAD_ONLY_PARAM, unreadOnly );
+
             setResult(RESULT_OK, intent);
         }
         finish();
-
     }
 
     @Override
