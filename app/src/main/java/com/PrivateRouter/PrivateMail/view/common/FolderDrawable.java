@@ -15,6 +15,7 @@ public class FolderDrawable {
             case Spam:return R.drawable.ic_folder_sent;
             case Trash:return R.drawable.ic_folder_trash;
             case Drafts:return R.drawable.ic_folder_draft;
+            case VirtualStarred: return R.drawable.ic_folder_starred;
         }
         return 0;
     }

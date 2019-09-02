@@ -1,10 +1,12 @@
 package com.PrivateRouter.PrivateMail.dbase;
 
 import android.arch.paging.DataSource;
+import android.arch.persistence.db.SupportSQLiteQuery;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RawQuery;
 import android.arch.persistence.room.Update;
 
 import com.PrivateRouter.PrivateMail.model.Contact;
@@ -26,6 +28,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface MessageDao {
 
+
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFactory(String folder);
 
@@ -39,6 +42,21 @@ public interface MessageDao {
             "(fromemails  LIKE :filter) " +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter);
+
+
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and isFlagged ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFactoryStarredOnly(String folder);
+
+    @Query("SELECT * FROM messages WHERE Folder =:folder and isFlagged and " +
+            "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
+            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
+            " ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFilterFactoryStarredOnly(String folder, String filter);
+
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and isFlagged and " +
+            "(fromemails  LIKE :filter) " +
+            " ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactoryStarredOnly(String folder, String filter);
 
 
 

@@ -1,10 +1,11 @@
 package com.PrivateRouter.PrivateMail.model;
 
+import com.PrivateRouter.PrivateMail.PrivateMailApplication;
+import com.PrivateRouter.PrivateMail.R;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Account implements Serializable {
 
@@ -245,6 +246,16 @@ public class Account implements Serializable {
             folder.setLevel(level);
             if (folder.isSubscribed()) {
                 returnArray.add(folder);
+                if (folder.getType() == FolderType.Inbox.getId()) {
+                    Folder starFolder = new Folder();
+                    starFolder.setType(FolderType.VirtualStarred.getId());
+                    String starredName = FolderType.VIRTUAL_STARRED_NAME;
+                    starFolder.setFullName( starredName );
+                    starFolder.setName(starredName );
+                    starFolder.setSelectable(true);
+                    returnArray.add( starFolder );
+                }
+
 
                 if (folder.getSubFolders() != null && folder.getSubFolders().getCollection() != null) {
                     ArrayList<Folder> rec = getFoldersWithSubFolder(folder.getSubFolders().getCollection(), level + 1);

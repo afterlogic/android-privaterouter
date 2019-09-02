@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
+import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.network.logics.LoadFolderLogic;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
@@ -150,6 +151,11 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
 
             Intent intent = new Intent();
             intent.putExtra(MailListActivity.FOLDER_PARAM, folder.getFullName());
+            if (folder.getFullName().equals(FolderType.VirtualStarred) ) {
+                Account account = LoggedUserRepository.getInstance().getActiveAccount();
+                intent.putExtra(MailListActivity.PERFORM_FOLDER_PARAM, account.getFolders().getFolderName(FolderType.Inbox) );
+
+            }
             setResult(RESULT_OK, intent);
         }
         finish();

@@ -267,7 +267,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
         boolean hasSkipped = false;
 
 
-        for (int index = 0; index < internalLists.size();  index++) {
+        for (int index = internalLists.size()-1; index >=0 ;  index--) {
             ArrayList<MessageBase> list = internalLists.get(index);
 
             if (isCancelled()) return false;
