@@ -22,6 +22,9 @@ import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLoginCallback {
 
+    @BindView(R.id.et_host)
+    EditText etHost;
+
     @BindView(R.id.et_email)
     EditText etEmail;
 

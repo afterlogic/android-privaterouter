@@ -2,6 +2,7 @@
     <string name="app_name">PrivateMail</string>
 
     <string name="all_yesterday">Yesterday</string>
+    <string name="all_host">Host</string>
     <string name="all_login">Login</string>
     <string name="all_email">Email</string>
     <string name="all_password">Password</string>

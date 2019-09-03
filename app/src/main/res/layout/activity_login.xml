@@ -24,7 +24,7 @@
             app:srcCompat="@drawable/logo" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/til_email"
+            android:id="@+id/til_host"
             style="@style/WhiteEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,6 +34,31 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_login_logo">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/et_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
+                android:hint="@string/all_host"
+                android:text="test.afterlogic.com"
+                android:inputType="textEmailAddress"
+                android:textColor="@android:color/white" />
+            <!--android:text="mobilepgp@afterlogic.com"-->
+            <!--android:text="test1@afterlogic.com"-->
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_email"
+            style="@style/WhiteEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding_all_element_medium"
+            android:paddingEnd="@dimen/padding_all_element_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_host">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/et_email"
