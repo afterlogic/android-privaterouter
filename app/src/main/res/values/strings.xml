@@ -43,6 +43,7 @@
     <string name="all_email_is_incorrect">Email is incorrect</string>
     <string name="all_host_is_empty">Host is empty</string>
     <string name="all_host_is_incorrect">Host is incorrect</string>
+    <string name="all_password_is_empty">Password is empty</string>
 
     <string name="mail_list_selected">Selected: %d</string>
 

@@ -1,6 +1,8 @@
 package com.PrivateRouter.PrivateMail.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +10,6 @@ import android.view.Window;
 import android.webkit.URLUtil;
 import android.widget.EditText;
 
-import com.PrivateRouter.PrivateMail.BuildConfig;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.FolderType;
@@ -22,7 +23,6 @@ import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.fabric.sdk.android.services.network.UrlUtils;
 
 public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLoginCallback {
 
@@ -63,9 +63,25 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 
-        etHost.setText(HostManager.getHost());
+        initInputFields();
 
         checkLogged();
+    }
+
+    private void initInputFields() {
+        initHostInputCorrector();
+
+        etHost.setText(HostManager.getHost());
+        etPassword.setText("");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("userEmail", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("userEmail", "");
+
+        etEmail.setText(email);
+    }
+
+    private void initHostInputCorrector() {
+
     }
 
 
@@ -80,6 +96,11 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     @Override
     public void onLogin() {
         RequestViewUtils.hideRequest();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("userEmail", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("userEmail", etEmail.getText().toString());
+        editor.apply();
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         String folder = account.getFolders().getFolderName(FolderType.Inbox);
@@ -114,7 +135,12 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
             etHost.requestFocus();
             return false;
 
-        }  else if (!URLUtil.isValidUrl(host)) {
+        } else if (etPassword.getText().toString().isEmpty()) {
+            etPassword.setError(getString(R.string.all_password_is_empty));
+            etPassword.requestFocus();
+            return false;
+
+        } else if (!URLUtil.isValidUrl(host)) {
             etHost.setError(getString(R.string.all_host_is_incorrect));
             etHost.requestFocus();
             return false;
