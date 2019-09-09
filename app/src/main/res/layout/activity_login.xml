@@ -41,7 +41,6 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/white"
                 android:hint="@string/all_host"
-                android:text="test.afterlogic.com"
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/white" />
             <!--android:text="mobilepgp@afterlogic.com"-->
