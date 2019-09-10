@@ -8,10 +8,9 @@ import android.content.res.Resources;
 
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.logic.SyncLogic;
-import com.PrivateRouter.PrivateMail.model.Message;
+import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
-import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.crashlytics.android.Crashlytics;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +46,12 @@ public class PrivateMailApplication  extends Application {
 
         initSyncLogic();
 
+        initHostManager();
+
+    }
+
+    private void initHostManager() {
+        HostManager.init();
     }
 
     private void initSyncLogic() {
