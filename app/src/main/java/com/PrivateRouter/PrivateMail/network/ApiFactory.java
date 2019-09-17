@@ -31,7 +31,7 @@ public final class ApiFactory {
 
     private static String token = "";
 
-    private static boolean test = true;
+    private static String host = "";
 
     @NonNull
     public static AfterLogicAPI getService() {
@@ -47,11 +47,9 @@ public final class ApiFactory {
         return service;
     }
 
-    public static void useTest() {
-        test = true;
-        synchronized (ApiFactory.class) {
-            sService = null;
-        }
+    public static void restartService(){
+        sService = null;
+        getService();
     }
 
     private static Gson getGson() {
@@ -77,10 +75,7 @@ public final class ApiFactory {
     }
 
     public static String getUrl() {
-        if (test)
-            return BuildConfig.API_ENDPOINT_TEST;
-        else
-            return BuildConfig.API_ENDPOINT;
+            return getHost();
     }
 
     @NonNull
@@ -138,4 +133,14 @@ public final class ApiFactory {
     public static void setToken(String token) {
         ApiFactory.token = token;
     }
+
+    public static String getHost(){
+        return host;
+    }
+
+    public static void setHost(String host){
+        ApiFactory.host = host;
+    }
+
+
 }
