@@ -1,10 +1,12 @@
 package com.PrivateRouter.PrivateMail.dbase;
 
 import android.arch.paging.DataSource;
+import android.arch.persistence.db.SupportSQLiteQuery;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RawQuery;
 import android.arch.persistence.room.Update;
 
 import com.PrivateRouter.PrivateMail.model.Contact;
@@ -26,19 +28,24 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface MessageDao {
 
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFactory(String folder);
+
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder " +
+            "and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen ) " +
+            "  ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFactory(String folder, boolean starredOnly, boolean unreadOnly);
 
     @Query("SELECT * FROM messages WHERE Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
             "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
             " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter);
+    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
 
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
             "(fromemails  LIKE :filter) " +
             " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter);
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
 
 
 

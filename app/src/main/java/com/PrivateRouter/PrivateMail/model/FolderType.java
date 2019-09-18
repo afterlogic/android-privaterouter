@@ -7,7 +7,8 @@ public enum FolderType {
     Drafts(3),
     Spam(4),
     Trash(5),
-    User(10);
+    User(10),
+    VirtualStarred(-10);
 
 
     int id;
@@ -17,6 +18,7 @@ public enum FolderType {
 
     public  int getId() {return id;}
 
+    public static final String VIRTUAL_STARRED_NAME = "Starred";
     public static FolderType getByInt(int val) {
         for (FolderType folderType: values()) {
             if (folderType.id == val)

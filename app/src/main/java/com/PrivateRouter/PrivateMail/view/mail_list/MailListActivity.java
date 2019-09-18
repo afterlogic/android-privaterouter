@@ -28,7 +28,6 @@ import android.view.Window;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
-import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
 import com.PrivateRouter.PrivateMail.model.FolderType;
@@ -72,8 +71,10 @@ public class MailListActivity extends AppCompatActivity
     public static final int OPEN_CONTACT = 1001;
     public static final int SELECT_FOLDER = 1000;
     public static final String FOLDER_PARAM = "Folder";
+    public static final String PERFORM_FOLDER_PARAM = "PerformFolder";
     public static final String SEARCH_WORD = "SearchWord";
     public static final String EMAIL_SEARCH_PREFIX = "email:";
+    public static final String UNREAD_ONLY_PARAM = "UnreadOnly";
     @BindView(R.id.rv_mail_list)
     RecyclerView rvMailList;
 
@@ -93,6 +94,7 @@ public class MailListActivity extends AppCompatActivity
 
 
     String currentFolder = "Inbox";
+    String currentPerformFolder = "Inbox";
     MailListAdapter mailListAdapter;
 
     LoadMessagePoolLogic loadMessageLogic;
@@ -107,6 +109,7 @@ public class MailListActivity extends AppCompatActivity
     private Menu menu;
     private boolean paused = false;
     private String startSearchWord;
+    private boolean unreadOnly = false;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -118,7 +121,6 @@ public class MailListActivity extends AppCompatActivity
         Intent intent = new Intent(activity, MailListActivity.class);
         intent.putExtra(MailListActivity.FOLDER_PARAM, defaultFolder);
         intent.putExtra(MailListActivity.SEARCH_WORD, searchText);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
 
@@ -135,6 +137,11 @@ public class MailListActivity extends AppCompatActivity
 
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
+            currentPerformFolder = getIntent().getStringExtra(MailListActivity.PERFORM_FOLDER_PARAM);
+            if (TextUtils.isEmpty(currentPerformFolder ))
+                currentPerformFolder = currentFolder;
+
+
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
@@ -228,19 +235,29 @@ public class MailListActivity extends AppCompatActivity
 
         DataSource.Factory<Integer, Message> factory;
         boolean needFlatMode = false;
+        boolean starredOnly = false;
+
+        String performFolder = currentPerformFolder;
+        if (currentFolder.equals( FolderType.VIRTUAL_STARRED_NAME )) {
+            needFlatMode = true;
+            starredOnly = true;
+        }
+
         if (TextUtils.isEmpty(filter))
-            factory = database.messageDao().getAllFactory(currentFolder);
+            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly);
         else {
             needFlatMode = true;
-            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length()> EMAIL_SEARCH_PREFIX.length()) {
-                String value = filter.substring(EMAIL_SEARCH_PREFIX.length()+1);
-                factory = database.messageDao().getAllFilterEmailFactory(currentFolder, "%" + value + "%");
-            }
-            else {
-                factory = database.messageDao().getAllFilterFactory(currentFolder, "%" + filter + "%");
+            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
+                String value = filter.substring(EMAIL_SEARCH_PREFIX.length() + 1);
+                factory = database.messageDao().getAllFilterEmailFactory(performFolder, "%" + value + "%", starredOnly, unreadOnly);
+            } else {
+                factory = database.messageDao().getAllFilterFactory(performFolder, "%" + filter + "%", starredOnly, unreadOnly);
             }
 
         }
+
+
+
 
 
         int messagePerMessage = 10;
@@ -310,7 +327,7 @@ public class MailListActivity extends AppCompatActivity
             return;
         int totalCount = folder.getMeta().getCount();
 
-        if (loadedCount < totalCount-1 && loadedCount>0) {
+        if (loadedCount < totalCount-1 && loadedCount>0 && !unreadOnly) {
             mailListAdapter.setShowMoreBar(true);
         }
         else if (loadedCount == totalCount) {
@@ -366,7 +383,7 @@ public class MailListActivity extends AppCompatActivity
                 mailListModeMediator.closeSelectionMode();
             }
             else {
-                Intent intent = FoldersListActivity.makeIntent(MailListActivity.this, currentFolder );
+                Intent intent = FoldersListActivity.makeIntent(MailListActivity.this, currentFolder, unreadOnly );
                 startActivityForResult(intent, SELECT_FOLDER);
             }
         });
@@ -619,7 +636,9 @@ public class MailListActivity extends AppCompatActivity
         updateShowMoreBarVisible();
 
         LoadMoreMessageLogic.clearTemp();
-        loadMessageLogic = new LoadMessagePoolLogic(currentFolder, this);
+
+
+        loadMessageLogic = new LoadMessagePoolLogic(currentPerformFolder, this);
         loadMessageLogic.setForceCurrent(forceCurrent);
         loadMessageLogic.execute();
 
@@ -672,7 +691,10 @@ public class MailListActivity extends AppCompatActivity
 
         if (requestCode == SELECT_FOLDER) {
             if (resultCode == RESULT_OK) {
-                onChangeFolder( data.getStringExtra( MailListActivity.FOLDER_PARAM ) );
+                String folderName = data.getStringExtra( MailListActivity.FOLDER_PARAM );
+                unreadOnly = data.getBooleanExtra( MailListActivity.UNREAD_ONLY_PARAM, false );
+
+                onChangeFolder( folderName  );
             }
         }
         else if (resultCode == LOGOUT) {
