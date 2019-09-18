@@ -16,6 +16,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+            <LinearLayout
+                android:id="@+id/ll_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:layout_marginEnd="@dimen/margin_all_element_medium"
+                android:clickable="true"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="@dimen/size_text_medium"
+                    android:text="@string/all_from" />
+
+                <Spinner
+                    android:id="@+id/sp_from"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/padding_all_element_medium"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_from"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_from"
+                    app:layout_constraintTop_toTopOf="@id/tv_from" />
+
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/cv_from_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_all_element_medium"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_from" />
+
             <LinearLayout
                 android:id="@+id/ll_recipients"
                 android:layout_width="match_parent"
@@ -28,7 +80,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/cv_from_divider">
 
                 <TextView
                     android:id="@+id/tv_compose_to"

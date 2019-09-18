@@ -75,6 +75,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
                 LoggedUserRepository.getInstance().setUser(user);
                 LoggedUserRepository.getInstance().setLogin( login );
 
+                PrivateMailApplication.getInstance().getIdentitiesRepository().init();
                 loadFolders();
             }
 

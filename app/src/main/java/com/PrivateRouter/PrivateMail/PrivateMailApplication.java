@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.logic.SyncLogic;
 import com.PrivateRouter.PrivateMail.repository.HostManager;
+import com.PrivateRouter.PrivateMail.repository.IdentitiesRepository;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.crashlytics.android.Crashlytics;
@@ -27,6 +28,7 @@ public class PrivateMailApplication  extends Application {
     private LoggedUserRepository loggedUserRepository;
     private KeysRepository keysRepository;
     private SyncLogic syncLogic;
+    private IdentitiesRepository identitiesRepository;
 
     @Override
     public void onCreate() {
@@ -48,6 +50,11 @@ public class PrivateMailApplication  extends Application {
 
         initHostManager();
 
+        initIdentities();
+    }
+
+    private void initIdentities() {
+        identitiesRepository = new IdentitiesRepository();
     }
 
     private void initHostManager() {
@@ -160,9 +167,7 @@ public class PrivateMailApplication  extends Application {
         return keysRepository;
     }
 
-    public void setKeysRepository(KeysRepository keysRepository) {
-        this.keysRepository = keysRepository;
-    }
+    public IdentitiesRepository getIdentitiesRepository() {return  identitiesRepository;}
 
     public SyncLogic getSyncLogic() {
         return syncLogic;

@@ -51,6 +51,7 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
         parameters.SentFolder = account.getFolders().getFolderName(FolderType.Sent);
         parameters.DraftFolder = account.getFolders().getFolderName(FolderType.Drafts);
 
+//IdentityID
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(AttachmentObj.class, new AttachmentsSerializer()).create();
@@ -100,6 +101,7 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
         boolean IsHtml;
         String SentFolder;
         String DraftFolder;
+        int IdentityID;
         AttachmentObj Attachments;
 
 
@@ -119,6 +121,8 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
                         this.IsHtml = false;
                         this.Text = message.getPlain();
                     }
+
+                    parameters.IdentityID = message.getIdentityID();
 
                     if (message.getAttachments() != null && message.getAttachments().getAttachments() != null) {
                         this.Attachments = new AttachmentObj();

@@ -142,6 +142,9 @@ public class MailListActivity extends AppCompatActivity
         openNormalMode();
         initUI();
 
+        PrivateMailApplication.getInstance().getIdentitiesRepository().init();
+
+
         initList(startSearchWord );
 
         initUpdateTimer();
@@ -525,6 +528,7 @@ public class MailListActivity extends AppCompatActivity
 
         MessagesRepository.getInstance().clear(() -> {
 
+            PrivateMailApplication.getInstance().getIdentitiesRepository().clear();
             RequestViewUtils.showRequest(this);
             CallLogout callLogout = new CallLogout(new CallRequestResult() {
                 @Override

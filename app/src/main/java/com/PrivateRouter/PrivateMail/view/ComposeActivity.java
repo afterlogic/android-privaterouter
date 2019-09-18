@@ -20,20 +20,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
+import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.AttachmentCollection;
 import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.EmailCollection;
+import com.PrivateRouter.PrivateMail.model.Identities;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallSaveMessage;
@@ -44,6 +50,7 @@ import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
 import com.PrivateRouter.PrivateMail.view.common.ActivityWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
+import com.PrivateRouter.PrivateMail.view.contacts.NamedEnumsAdapter;
 import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
@@ -79,6 +86,17 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     View cvBccDivider;
 
 
+    @BindView(R.id.ll_from)
+    LinearLayout llFrom;
+
+    @BindView(R.id.cv_from_divider)
+    View cvFromDivider;
+
+    @BindView(R.id.tv_from)
+    TextView tvFrom;
+
+    @BindView(R.id.sp_from)
+    Spinner spFrom;
 
     @BindView(R.id.ll_recipients)
     LinearLayout llRecipients;
@@ -162,9 +180,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         updateBottomMenuTitle();
 
-
         intiUI();
-
 
         bind();
 
@@ -331,7 +347,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void updateMessage() {
         message.setSubject(etComposeSubject.getText().toString());
         message.setPlain(etComposeText.getText().toString() );
-
+        //message.setIdentityID();
     }
 
     private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable, Runnable onFocusField) {
@@ -454,6 +470,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void bind() {
+        initFromField();
         updateToList();
         updateCcToList();
 
@@ -461,6 +478,36 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         MessageUtils.setMessageBody(message, etComposeText);
 
         initAttachmentList();
+    }
+
+    private void initFromField() {
+        ArrayList<Identities> identities = PrivateMailApplication.getInstance().getIdentitiesRepository().getIdentities();
+        if (identities.isEmpty()) {
+            cvFromDivider.setVisibility(View.GONE);
+            llFrom.setVisibility(View.GONE);
+        }
+        else {
+            ArrayList<Identities> fullIdentities = new ArrayList<>(identities.size()+1);
+            Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
+            fullIdentities.add( new Identities(account.getEmail(), account.getFriendlyName()) );
+            fullIdentities.addAll( identities );
+            ArrayAdapter<Identities> adapter = new ArrayAdapter(this, R.layout.item_spinner, fullIdentities);
+            spFrom.setAdapter(adapter);
+            spFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Identities item = (Identities) parent.getItemAtPosition(position);
+                    message.setIdentityID( item.getEntityId() );
+
+
+                }
+
+                public void onNothingSelected(AdapterView<?> arg0) {
+                    message.setIdentityID(0);
+                }
+            });
+
+        }
     }
 
     private void initAttachmentList() {

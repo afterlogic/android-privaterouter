@@ -38,6 +38,10 @@ public class Message extends  MessageBase implements Serializable {
     private
     int textSize;
 
+    @SerializedName("IdentityID")
+    private
+    int identityID;
+
     @SerializedName("InternalTimeStampInUTC")
     private
     long internalTimeStampInUTC;
@@ -471,5 +475,13 @@ public class Message extends  MessageBase implements Serializable {
 
     public boolean isThreadMessage() {
         return  getParentUid()!=0;
+    }
+
+    public int getIdentityID() {
+        return identityID;
+    }
+
+    public void setIdentityID(int identityID) {
+        this.identityID = identityID;
     }
 }

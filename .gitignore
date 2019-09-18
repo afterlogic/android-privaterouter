@@ -8,3 +8,4 @@
 .externalNativeBuild
 *.apk
 key/key.jks
+keys/key.jks
