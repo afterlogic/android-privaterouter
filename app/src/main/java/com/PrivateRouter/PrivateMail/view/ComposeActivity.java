@@ -491,7 +491,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
             fullIdentities.add( new Identities(account.getEmail(), account.getFriendlyName()) );
             fullIdentities.addAll( identities );
-            ArrayAdapter<Identities> adapter = new ArrayAdapter(this, R.layout.item_spinner, fullIdentities);
+            ArrayAdapter<Identities> adapter = new ArrayAdapter(this, R.layout.item_spinner_identities, fullIdentities);
             spFrom.setAdapter(adapter);
             spFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -506,6 +506,12 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                     message.setIdentityID(0);
                 }
             });
+            for (int i = 0; i<fullIdentities.size(); i++) {
+                if (fullIdentities.get(i).isDefault()) {
+                    spFrom.setSelection(i);
+                    break;
+                }
+            }
 
         }
     }

@@ -94,7 +94,6 @@ public class MailListActivity extends AppCompatActivity
 
 
     String currentFolder = "Inbox";
-    String currentPerformFolder = "Inbox";
     MailListAdapter mailListAdapter;
 
     LoadMessagePoolLogic loadMessageLogic;
@@ -137,11 +136,6 @@ public class MailListActivity extends AppCompatActivity
 
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
-            currentPerformFolder = getIntent().getStringExtra(MailListActivity.PERFORM_FOLDER_PARAM);
-            if (TextUtils.isEmpty(currentPerformFolder ))
-                currentPerformFolder = currentFolder;
-
-
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
@@ -237,8 +231,10 @@ public class MailListActivity extends AppCompatActivity
         boolean needFlatMode = false;
         boolean starredOnly = false;
 
-        String performFolder = currentPerformFolder;
+        String performFolder = currentFolder;
         if (currentFolder.equals( FolderType.VIRTUAL_STARRED_NAME )) {
+            Account account = LoggedUserRepository.getInstance().getActiveAccount();
+            performFolder = account.getFolders().getFolderName(FolderType.Inbox);
             needFlatMode = true;
             starredOnly = true;
         }
@@ -638,7 +634,7 @@ public class MailListActivity extends AppCompatActivity
         LoadMoreMessageLogic.clearTemp();
 
 
-        loadMessageLogic = new LoadMessagePoolLogic(currentPerformFolder, this);
+        loadMessageLogic = new LoadMessagePoolLogic(currentFolder, this);
         loadMessageLogic.setForceCurrent(forceCurrent);
         loadMessageLogic.execute();
 
@@ -712,7 +708,6 @@ public class MailListActivity extends AppCompatActivity
 
         rvMailList.setAdapter(null);
         currentFolder = newFolder;
-
         openNormalMode();
         initList();
     }

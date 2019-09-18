@@ -60,4 +60,20 @@ public class Identities {
     public void setEntityId(int entityId) {
         this.entityId = entityId;
     }
+
+    public boolean isUseSignature() {
+        return useSignature;
+    }
+
+    public void setUseSignature(boolean useSignature) {
+        this.useSignature = useSignature;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
 }
