@@ -2,7 +2,7 @@ package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +14,7 @@ import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
+import com.PrivateRouter.PrivateMail.view.components.SettingSwitch;
 import com.PrivateRouter.PrivateMail.view.components.SettingTextView;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class CommonSettingsActivity extends AppCompatActivity {
     @BindView(R.id.sv_time_format)
     SettingTextView svTimeFormat;
 
-
+    @BindView(R.id.sv_night_mode)
+    SettingSwitch svNightMode;
 
 
     @Override
@@ -40,7 +42,20 @@ public class CommonSettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initTimeFormat();
+
+        initNightMode();
         setTitle(R.string.settings_common);
+    }
+
+    private void initNightMode() {
+
+        svNightMode.setCheck( SettingsRepository.getInstance().isNightMode(this) );
+        svNightMode.setOnValueChangeCallback(new SettingSwitch.OnValueChangeCallback() {
+            @Override
+            public void onValueChangeCallback(boolean value) {
+                SettingsRepository.getInstance().setNightMode(CommonSettingsActivity.this, value);
+            }
+        });
     }
 
     private void initTimeFormat() {

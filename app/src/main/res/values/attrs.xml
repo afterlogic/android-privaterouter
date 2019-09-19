@@ -3,5 +3,8 @@
     <declare-styleable name="SettingTextView">
         <attr name="android:name" />
     </declare-styleable>
+    <declare-styleable name="SettingSwitch">
+        <attr name="android:name" />
+    </declare-styleable>
 
 </resources>
