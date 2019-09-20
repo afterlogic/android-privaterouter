@@ -31,6 +31,7 @@ import com.PrivateRouter.PrivateMail.view.utils.DateUtils;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
+import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -113,6 +114,7 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
 
         ButterKnife.bind(this, view);
 
+        Utils.updateBottomMenuColors(nvBottomMailView);
         nvBottomMailView.setOnNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
             if(id == R.id.nav_menu_encrypt) {

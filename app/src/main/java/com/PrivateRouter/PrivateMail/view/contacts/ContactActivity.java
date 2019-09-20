@@ -49,6 +49,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallUpdateContact;
 import com.PrivateRouter.PrivateMail.repository.ContactSettingsRepository;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.EmailValidator;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
@@ -807,12 +808,19 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
     }
 
     private void blockFieldsInput() {
+        int color;
+        if (SettingsRepository.getInstance().isNightMode(this))
+            color = Color.WHITE;
+        else
+            color = Color.BLACK;
+
+
         for (EditText et : etList) {
             et.setFocusable(false);
             et.setEnabled(false);
             et.setCursorVisible(false);
             et.setKeyListener(null);
-            et.setTextColor(Color.BLACK);
+            et.setTextColor(color);
         }
         for (EditText et : primaryEtList) {
             et.setFocusable(false);
@@ -820,7 +828,7 @@ public class ContactActivity extends AppCompatActivity implements ContactSetting
             et.setCursorVisible(false);
             et.setKeyListener(null);
             et.setBackgroundColor(Color.TRANSPARENT);
-            et.setTextColor(Color.BLACK);
+            et.setTextColor(color);
         }
     }
 

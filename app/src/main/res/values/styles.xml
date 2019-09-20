@@ -40,7 +40,6 @@
     </style>
 
     <style name="InputLayout">
-        <item name="android:textColorHint">@color/color_black</item>
     </style>
 
     <style name="EditTextSingleLine">

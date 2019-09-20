@@ -4,15 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,9 +48,9 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallUploadMessage;
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.common.ActivityWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
-import com.PrivateRouter.PrivateMail.view.contacts.NamedEnumsAdapter;
 import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
@@ -205,6 +205,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void intiUI() {
 
         nvBottomCompose.setOnNavigationItemSelectedListener(this);
+        Utils.updateBottomMenuColors(nvBottomCompose);
+
         addFieldsFocusReaction();
 
         etComposeSubject.setMaxLines(Integer.MAX_VALUE); // Or specify a lower value if you want
@@ -231,6 +233,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
 
     }
+
+
 
     private void createEmailFromText(EditText text, EmailCollection emailCollection, Runnable updateListRunnable) {
         String emailStr = text.getText().toString();

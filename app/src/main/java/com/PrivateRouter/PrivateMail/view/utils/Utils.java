@@ -1,11 +1,14 @@
 package com.PrivateRouter.PrivateMail.view.utils;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.support.design.widget.BottomNavigationView;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.PrivateRouter.PrivateMail.R;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 
 import java.text.DecimalFormat;
 
@@ -40,5 +43,36 @@ public class Utils {
             return format.format(length / KiB) +" " + context.getString(R.string.all_kb);
         }
         return format.format(length) + " " + context.getString(R.string.all_b);
+    }
+    public static void updateBottomMenuColors(BottomNavigationView bottomNavigationView) {
+
+        Context context = bottomNavigationView.getContext();
+        int colorChecked = context.getResources().getColor(R.color.color_white);
+        if (SettingsRepository.getInstance().isNightMode(context))
+            colorChecked = context.getResources().getColor(R.color.color_white);
+
+        ColorStateList iconsColorStates = new ColorStateList(
+                new int[][]{
+                        new int[]{-android.R.attr.state_checked},
+                        new int[]{android.R.attr.state_checked}
+                },
+                new int[]{
+                        context.getResources().getColor(R.color.color_white),
+                        colorChecked
+                });
+
+
+        ColorStateList textColorStates = new ColorStateList(
+                new int[][]{
+                        new int[]{-android.R.attr.state_checked},
+                        new int[]{android.R.attr.state_checked}
+                },
+                new int[]{
+                        context.getResources().getColor(R.color.color_white),
+                        colorChecked
+                });
+
+        bottomNavigationView.setItemIconTintList(iconsColorStates);
+        bottomNavigationView.setItemTextColor(textColorStates);
     }
 }

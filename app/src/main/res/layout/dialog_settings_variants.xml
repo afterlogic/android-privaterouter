@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_item_recipient_background"
     android:orientation="vertical"
     android:paddingLeft="@dimen/padding_all_element_large"
     android:paddingRight="@dimen/padding_all_element_large">
@@ -18,7 +17,6 @@
         android:maxLines="1"
         android:paddingBottom="@dimen/padding_all_element_large"
         android:text="@string/import_dialog_title"
-        android:textColor="@android:color/black"
         android:textSize="@dimen/size_title_text_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

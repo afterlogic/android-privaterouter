@@ -1,6 +1,9 @@
 package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -17,8 +20,10 @@ import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.components.SettingSwitch;
 import com.PrivateRouter.PrivateMail.view.components.SettingTextView;
+import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,8 +66,13 @@ public class CommonSettingsActivity extends AppCompatActivity {
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+                updateConfig();
             }
         });
+    }
+
+    private void updateConfig() {
+        recreate();
     }
 
     private void initTimeFormat() {

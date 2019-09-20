@@ -55,6 +55,8 @@ public class AttachmentsViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.iv_attachment_remove)
     ImageView ivAttachmentRemove;
 
+    @BindView(R.id.iv_attachment)
+    ImageView ivAttachment;
 
     @BindView(R.id.iv_open_pgp_key)
     ImageView ivOpenPgpKey;
@@ -185,12 +187,15 @@ public class AttachmentsViewHolder extends RecyclerView.ViewHolder{
 
         Context context = ivAttachmentDownload.getContext();
         if (SettingsRepository.getInstance().isNightMode(context)) {
-            DrawableCompat.setTint(ivAttachmentDownload.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+            DrawableCompat.setTint(ivAttachment.getDrawable(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+            DrawableCompat.setTint(ivAttachmentDownload.getDrawable(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
             ivAttachmentRemove.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_cross_circled_white_16dp) );
         }
         else {
+            DrawableCompat.setTint(ivAttachment.getDrawable(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
             DrawableCompat.setTint(ivAttachmentDownload.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
             ivAttachmentRemove.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_cross_circled_transp_16dp) );
+
         }
     }
 

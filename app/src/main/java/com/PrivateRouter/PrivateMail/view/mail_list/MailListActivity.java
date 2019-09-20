@@ -109,6 +109,7 @@ public class MailListActivity extends AppCompatActivity
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
+    private static boolean lastNightMode;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -196,6 +197,7 @@ public class MailListActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         paused = true;
+        lastNightMode = SettingsRepository.getInstance().isNightMode(this);
         if (loadMessageLogic!=null) {
             loadMessageLogic.cancel(true);
             loadMessageLogic = null;
@@ -207,6 +209,12 @@ public class MailListActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         paused = false;
+        boolean newMode = SettingsRepository.getInstance().isNightMode(this);
+        if (lastNightMode != newMode) {
+            lastNightMode = newMode;
+            recreate();
+            return;
+        }
         if (requestOnResume) {
             requestOnResume = false;
             requestMessages();

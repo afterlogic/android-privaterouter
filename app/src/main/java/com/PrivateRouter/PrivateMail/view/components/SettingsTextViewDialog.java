@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.ImportTask;
@@ -28,7 +29,11 @@ public class SettingsTextViewDialog  extends DialogFragment   {
     @BindView(R.id.rv_variants)
     RecyclerView rvVariants;
 
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+
     String [] variants;
+    private String title;
 
     public OnSelectInterface getOnSelectInterface() {
         return onSelectInterface;
@@ -40,6 +45,10 @@ public class SettingsTextViewDialog  extends DialogFragment   {
 
     public void setVariants(String [] variants) {
         this.variants = variants;
+    }
+
+    public void setTitle(String name) {
+        title = name;
     }
 
 
@@ -54,6 +63,9 @@ public class SettingsTextViewDialog  extends DialogFragment   {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.dialog_settings_variants, null);
         ButterKnife.bind(this, view);
+
+
+        tvTitle.setText(title);
 
         StringAdapter stringAdapter = new StringAdapter(getContext(), variants);
         stringAdapter.setElementLayoutResId(R.layout.item_settings_variant);

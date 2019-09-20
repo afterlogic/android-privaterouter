@@ -24,6 +24,7 @@ public class SettingTextView extends FrameLayout implements View.OnClickListener
 
     String[] variants;
     private int selected;
+    private String name;
 
     public OnSelectInterface getOnSelectInterface() {
         return onSelectInterface;
@@ -92,7 +93,7 @@ public class SettingTextView extends FrameLayout implements View.OnClickListener
 
 
         TypedArray theAttrs = context.obtainStyledAttributes(attrs, R.styleable.SettingTextView );
-        String name  = theAttrs.getString(R.styleable.SettingTextView_android_name );
+        name  = theAttrs.getString(R.styleable.SettingTextView_android_name );
         tvName.setText(name);
 
         theAttrs.recycle();
@@ -106,6 +107,7 @@ public class SettingTextView extends FrameLayout implements View.OnClickListener
         AppCompatActivity activity = (AppCompatActivity) getContext();
 
         SettingsTextViewDialog dialogFragment = new SettingsTextViewDialog();
+        dialogFragment.setTitle(name);
         dialogFragment.setVariants(variants);
         dialogFragment.setOnSelectInterface(new SettingsTextViewDialog.OnSelectInterface() {
             @Override
