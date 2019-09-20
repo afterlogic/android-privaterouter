@@ -11,6 +11,7 @@ import android.webkit.WebViewClient;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -67,54 +68,13 @@ public class WebViewPrivateMailClient extends WebViewClient {
         }
 
     }
-/*
-    @SuppressWarnings("deprecation")
-    @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        final String mime = URLConnection.guessContentTypeFromName(url);
-        boolean loadImg = url.contains( ApiFactory.getUrl() );
-        if (!loadImg) {
-            return super.shouldInterceptRequest(view, url);
-        }
 
-        try {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(new Interceptor() {
-                        @Override
-                        public Response intercept(Chain chain) throws IOException {
-                            String authToken = "Bearer "+ApiFactory.getToken();
-                            Log.e("WebView", "authToken ="+authToken );
-                            Request newRequest = chain.request().newBuilder()
-                                    .addHeader("Authorization", authToken)
-                                    .build();
-                            return chain.proceed(newRequest);
-                        }
-                    })
-                    .build();
-
-
-            Context context = PrivateMailApplication.getContext();
-            Picasso picasso = new Picasso.Builder( context ).listener(new Picasso.Listener() {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                    exception.printStackTrace();
-                }
-            })
-                    .downloader(new OkHttp3Downloader(client))
-                    .build();
-
-            final Bitmap image = picasso.load(url).get();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
-
-            InputStream in = new ByteArrayInputStream(out.toByteArray());
-            return new WebResourceResponse(mime, "UTF-8", in);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("TAG", "Unable to load image", e);
-            return super.shouldInterceptRequest(view, url);
+    public void onPageFinished(WebView view, String url) {
+        if (SettingsRepository.getInstance().isNightMode( view.getContext() )) {
+            view.loadUrl(
+                    "javascript:document.body.style.setProperty(\"color\", \"white\");"
+            );
         }
     }
-*/
 
 }

@@ -38,8 +38,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".view.mail_view.MailViewActivity"
-            android:parentActivityName=".view.mail_list.MailListActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" ></activity>
         <activity
             android:name=".view.settings.SettingsActivity"
             android:label="@string/app_name"
@@ -47,11 +46,13 @@
             android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".view.folders_list.FoldersListActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <activity
             android:name=".view.settings.PGPSettingsActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
 
         <activity
             android:name=".view.settings.PGPKeysActivity"
@@ -59,7 +60,8 @@
 
         <activity
             android:name=".view.settings.CommonSettingsActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
 
         <activity
             android:name=".view.settings.SyncSettingsActivity"

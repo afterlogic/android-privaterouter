@@ -50,6 +50,7 @@ android {
 apply from: '../versions.gradle'
 
 dependencies {
+    
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:support-v4:$supportVersion"

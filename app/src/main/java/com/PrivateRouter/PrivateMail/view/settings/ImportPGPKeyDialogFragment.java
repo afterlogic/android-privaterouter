@@ -17,6 +17,7 @@ import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.ImportTask;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -63,6 +64,14 @@ public class ImportPGPKeyDialogFragment extends DialogFragment implements View.O
         ButterKnife.bind(this, view);
 
         etKeyData.setText("");
+        Context context = etKeyData.getContext();
+        if (SettingsRepository.getInstance().isNightMode(context)) {
+            etKeyData.setBackgroundColor(context.getResources().getColor(R.color.color_dark_gray ) );
+        }
+        else  {
+            etKeyData.setBackgroundColor(context.getResources().getColor(R.color.color_light_gray));
+        }
+
 
         if (getArguments()!=null) {
             boolean checkMode = getArguments().getBoolean(CheckMode);

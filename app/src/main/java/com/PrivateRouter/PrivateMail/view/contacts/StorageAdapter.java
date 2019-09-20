@@ -1,5 +1,6 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,7 +18,6 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageViewHolder> {
     private final String selectStorage;
     private OnStorageClick onStorageClick;
     private Storages[] storages;
-
 
     StorageAdapter(Storages[] storages, String currentStorage){
         this.storages = storages;

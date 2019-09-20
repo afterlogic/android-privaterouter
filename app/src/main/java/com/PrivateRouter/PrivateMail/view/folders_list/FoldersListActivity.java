@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -71,6 +73,10 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
             currentUnreadOnly = getIntent().getBooleanExtra("unreadOnly", false);
         }
         slMain.setOnRefreshListener(this);
+
+        Window window = getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+
         bindUI();
     }
 
@@ -158,6 +164,9 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
     }
 
     private void openFolder(Folder folder, boolean unreadOnly) {
+
+        if (unreadOnly && folder.getType() == FolderType.Drafts.getId())
+            unreadOnly = false;
 
         if (!folder.getFullName().equals(currentFolder) || currentUnreadOnly != unreadOnly) {
 

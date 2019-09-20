@@ -3,6 +3,7 @@ package com.PrivateRouter.PrivateMail.view.settings;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.ExportTask;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.common.ActivityWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
@@ -73,6 +75,12 @@ public class PGPKeyActivity extends ActivityWithRequestPermission {
     private void bind() {
         tvKeyData.setText( pgpKey.getKeyObject().toString() );
         tvKeyId.setText( pgpKey.getUserID() );
+        Context context = tvKeyData.getContext();
+        if (SettingsRepository.getInstance().isNightMode(context))
+            tvKeyData.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+        else
+            tvKeyData.setBackgroundColor(context.getResources().getColor(R.color.color_light_gray));
+
     }
 
 

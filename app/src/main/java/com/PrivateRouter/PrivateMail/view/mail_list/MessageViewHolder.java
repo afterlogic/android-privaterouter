@@ -1,8 +1,14 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.ImageViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +27,7 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.network.logics.AsyncThreadLoader;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.DateUtils;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
@@ -32,6 +39,8 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+
+import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public class MessageViewHolder extends MailViewHolder {
 
@@ -157,8 +166,24 @@ public class MessageViewHolder extends MailViewHolder {
             tvMailMessageSubject.setVisibility(View.VISIBLE);
             tvMailMessageDate.setVisibility(View.VISIBLE);
             ivMailAttachments.setVisibility(View.VISIBLE);
-
             Context context = tvMailMessageDate.getContext();
+
+            if (SettingsRepository.getInstance().isNightMode(context)) {
+                ivThreadsIcon.setImageDrawable( context.getResources().getDrawable(R.drawable.ic_filter_none_white_24dp) );
+
+                DrawableCompat.setTint(ivMailReplied.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+                DrawableCompat.setTint(ivMailForwarded.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+                DrawableCompat.setTint(ivMailAttachments.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+
+            }
+            else {
+                ivThreadsIcon.setImageDrawable( context.getResources().getDrawable(R.drawable.ic_filter_none_black_24dp) );
+
+                DrawableCompat.setTint(ivMailReplied.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
+                DrawableCompat.setTint(ivMailForwarded.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
+                DrawableCompat.setTint(ivMailAttachments.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
+            }
+
 
             cbSelected.setOnCheckedChangeListener(this::onCheckedChange);
 
@@ -177,10 +202,11 @@ public class MessageViewHolder extends MailViewHolder {
             String subject = message.getSubject();
             if (TextUtils.isEmpty(subject)) {
                 subject = tvMailMessageSender.getContext().getString(R.string.mail_no_subject);
-                tvMailMessageSubject.setTextColor( context.getResources().getColor(android.R.color.darker_gray ) );
+                tvMailMessageSubject.setAlpha(0.6f);// setTextColor( context.getResources().getColor(android.R.color.darker_gray ) );
             }
             else {
-                tvMailMessageSubject.setTextColor( context.getResources().getColor(android.R.color.black) );
+                tvMailMessageSubject.setAlpha(1f);//
+                //tvMailMessageSubject.setTextColor( context.getResources().getColor(android.R.color.black) );
             }
             tvMailMessageSubject.setText(subject);
 
@@ -253,7 +279,7 @@ public class MessageViewHolder extends MailViewHolder {
     }
 
     private void updateThreads() {
-        Context context = PrivateMailApplication.getContext();
+        Context context = getContext();
 
 
         if (expanded) {

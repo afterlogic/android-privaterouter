@@ -2,7 +2,8 @@ package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +55,12 @@ public class CommonSettingsActivity extends AppCompatActivity {
             @Override
             public void onValueChangeCallback(boolean value) {
                 SettingsRepository.getInstance().setNightMode(CommonSettingsActivity.this, value);
+
+                if (value) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
             }
         });
     }

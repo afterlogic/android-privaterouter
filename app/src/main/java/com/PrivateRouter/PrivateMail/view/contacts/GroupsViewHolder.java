@@ -1,5 +1,6 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,6 +24,7 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
     CheckedTextView ctvItem;
 
     private GroupsAdapter.OnGroupClick onGroupClick;
+    private ColorStateList oldColors;
 
     public GroupsAdapter.OnGroupClick getOnGroupClick() {
         return onGroupClick;
@@ -74,12 +76,16 @@ public class GroupsViewHolder extends RecyclerView.ViewHolder {
             ctvItem.setText("# " + group.getName());
             ctvItem.setChecked(checked);
         }
+
+        if (oldColors == null)
+            oldColors = ctvItem.getTextColors();
+
         if (selected ) {
             ctvItem.setBackgroundColor(ctvItem.getContext().getResources().getColor(R.color.colorPrimary) );
             ctvItem.setTextColor(ctvItem.getContext().getResources().getColor(R.color.color_white));
         }
         else  {
-            ctvItem.setTextColor(ctvItem.getContext().getResources().getColor(R.color.color_black));
+            ctvItem.setTextColor(oldColors);
             ctvItem.setBackgroundColor(ctvItem.getContext().getResources().getColor(android.R.color.transparent) );
         }
     }

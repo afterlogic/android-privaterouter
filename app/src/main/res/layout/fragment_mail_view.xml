@@ -33,7 +33,6 @@
                 android:layout_marginStart="@dimen/margin_all_element_medium"
                 android:layout_marginRight="@dimen/margin_all_element_medium"
                 android:text="@string/mail_blocked_picture"
-                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/bt_always_show_picture"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +72,6 @@
             android:layout_marginTop="@dimen/margin_all_element_large"
             android:layout_marginEnd="@dimen/margin_all_element_medium"
             android:text="The message subject"
-            android:textColor="@android:color/black"
             android:textSize="@dimen/size_title_text_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -106,7 +104,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Tetst team"
-                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toStartOf="@id/tv_short_info_date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -120,7 +117,6 @@
                 android:gravity="right"
                 android:maxLines="1"
                 android:text="12:37"
-                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="@id/tv_short_info_sender"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_short_info_sender" />
@@ -173,7 +169,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/all_from"
-                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/from_top_divider" />
 
@@ -189,7 +184,6 @@
                 android:gravity="right"
                 android:maxLines="1"
                 android:text="12:37"
-                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="@id/tv_from"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_from"
@@ -205,7 +199,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/all_to"
-                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/cv_from_divider" />
 
@@ -220,7 +213,6 @@
                 android:gravity="right"
                 android:maxLines="1"
                 android:text="12:37"
-                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="@id/tv_to"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_to"
@@ -237,7 +229,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@string/all_date"
-                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_to_divider" />
 
@@ -251,7 +242,6 @@
                 android:ellipsize="end"
                 android:gravity="right"
                 android:maxLines="1"
-                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="@id/tv_date_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_date_label"
@@ -339,7 +329,6 @@
 
             android:layout_marginEnd="@dimen/margin_all_element_medium"
             android:layout_weight="1"
-            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

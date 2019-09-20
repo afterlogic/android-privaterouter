@@ -26,7 +26,6 @@
         android:layout_marginEnd="@dimen/margin_all_element_small"
         android:layout_marginBottom="@dimen/margin_all_element_small"
         android:text="TextView"
-        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/tv_attachment_size"
         app:layout_constraintEnd_toStartOf="@id/iv_open_pgp_key"
         app:layout_constraintStart_toEndOf="@id/iv_attachment"

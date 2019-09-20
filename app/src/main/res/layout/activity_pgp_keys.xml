@@ -25,7 +25,6 @@
             android:padding="@dimen/padding_all_element_medium"
             android:textIsSelectable="true"
             android:text=" sd fsd fsd fsdf sdf sdf sdf sdf sdf sdf kjhf khsfkj hkjfhs kjfhsdkj hfkjsd hfkjsdhf ksjdhf ksdh @string/all_folder"
-            android:textColor="@android:color/black"
             android:textSize="@dimen/size_text_small" />
 
         <Button

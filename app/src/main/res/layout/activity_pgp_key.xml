@@ -25,7 +25,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/settings_public_keys"
-            android:textColor="@android:color/black"
             android:textSize="@dimen/size_subtitle_text_medium" />
 
 
@@ -38,7 +37,6 @@
             android:background="@color/color_light_gray"
             android:padding="@dimen/padding_all_element_medium"
             android:text=" sd fsd fsd fsdf sdf sdf sdf sdf sdf sdf kjhf khsfkj hkjfhs kjfhsdkj hfkjsd hfkjsdhf ksjdhf ksdh @string/all_folder"
-            android:textColor="@android:color/black"
             android:textSize="@dimen/size_text_small" />
 
         <Button

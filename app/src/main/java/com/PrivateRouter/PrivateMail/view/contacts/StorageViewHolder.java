@@ -1,5 +1,6 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,6 +24,7 @@ public class StorageViewHolder  extends RecyclerView.ViewHolder {
 
 
     private StorageAdapter.OnStorageClick onStorageClick;
+    private ColorStateList oldColors;
 
 
     public StorageViewHolder(@NonNull View itemView) {
@@ -43,12 +45,15 @@ public class StorageViewHolder  extends RecyclerView.ViewHolder {
         this.position = position;
 
         tvStorage.setText(storages.getId());
+        if (oldColors == null)
+            oldColors = tvStorage.getTextColors();
+
         if (selected ) {
             tvStorage.setBackgroundColor(tvStorage.getContext().getResources().getColor(R.color.colorPrimary) );
             tvStorage.setTextColor(tvStorage.getContext().getResources().getColor(R.color.color_white));
         }
         else  {
-            tvStorage.setTextColor(tvStorage.getContext().getResources().getColor(R.color.color_black));
+            tvStorage.setTextColor(oldColors);
             tvStorage.setBackgroundColor(tvStorage.getContext().getResources().getColor(android.R.color.transparent) );
         }
     }

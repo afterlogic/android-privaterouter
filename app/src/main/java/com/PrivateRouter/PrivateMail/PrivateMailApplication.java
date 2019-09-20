@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.logic.SyncLogic;
@@ -12,6 +13,7 @@ import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.IdentitiesRepository;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.crashlytics.android.Crashlytics;
 
 import java.lang.reflect.InvocationTargetException;
@@ -51,6 +53,12 @@ public class PrivateMailApplication  extends Application {
         initHostManager();
 
         initIdentities();
+
+        if (SettingsRepository.getInstance().isNightMode(this)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
     }
 
     private void initIdentities() {

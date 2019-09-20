@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.logics.DownloadLogic;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.common.FragmentWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.settings.PGPKeyActivity;
 import com.PrivateRouter.PrivateMail.view.settings.PGPSettingsActivity;
@@ -179,6 +181,16 @@ public class AttachmentsViewHolder extends RecyclerView.ViewHolder{
         else {
             ivAttachmentDownload.setVisibility(View.VISIBLE);
             ivAttachmentRemove.setVisibility(View.INVISIBLE);
+        }
+
+        Context context = ivAttachmentDownload.getContext();
+        if (SettingsRepository.getInstance().isNightMode(context)) {
+            DrawableCompat.setTint(ivAttachmentDownload.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
+            ivAttachmentRemove.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_cross_circled_white_16dp) );
+        }
+        else {
+            DrawableCompat.setTint(ivAttachmentDownload.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
+            ivAttachmentRemove.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_cross_circled_transp_16dp) );
         }
     }
 

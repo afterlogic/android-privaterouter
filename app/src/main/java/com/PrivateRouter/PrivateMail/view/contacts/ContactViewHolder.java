@@ -45,16 +45,6 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     private boolean programChange = false;
     private boolean selectionMode;
 
-    /*
-    @SuppressWarnings("unused")
-    @OnClick(R.id.cl_background)
-    public void bgImageClick() {
-        programChange = true;
-        cbSelected.setChecked(!cbSelected.isChecked());
-        programChange = false;
-    }
-*/
-
 
     public ContactViewHolder(@NonNull View itemView) {
         super(itemView);

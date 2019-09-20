@@ -97,4 +97,15 @@ public class SettingsRepository {
         editor.putLong("LastSyncDate", value);
         editor.apply();
     }
+
+
+    public boolean isNightMode(Context context) {
+        return context.getSharedPreferences(PREF_NAME, PREF_MOD).getBoolean("NightMode", false);
+    }
+
+    public void setNightMode(Context context, boolean nightMode) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, PREF_MOD).edit();
+        editor.putBoolean("NightMode", nightMode);
+        editor.apply();
+    }
 }

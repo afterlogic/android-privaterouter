@@ -2,7 +2,7 @@ package com.PrivateRouter.PrivateMail.view.components;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,8 +82,7 @@ public class SettingSwitch  extends FrameLayout implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
-        if (!(getContext() instanceof AppCompatActivity))
-            return;
+
 
     }
 }

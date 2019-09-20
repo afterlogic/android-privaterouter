@@ -15,7 +15,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Sender7238957934759843 589346 58934958 34985 7438975 984375 9834759 345 4"
-        android:textColor="@android:color/black"
         android:textSize="@dimen/size_subtitle_text_medium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/cb_selected"

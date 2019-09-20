@@ -20,7 +20,6 @@
         android:paddingBottom="0dp"
         android:text="SDfsdfsdf"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="@color/color_black"
         android:textSize="@dimen/size_text_medium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/cb_select"

@@ -218,6 +218,7 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
             cvAttachmentsDivider.setVisibility(View.GONE);
         }
 
+
         wvMessage.setBackgroundColor(Color.TRANSPARENT);
         MessageUtils.setMessageBody(messageText, wvMessage);
 

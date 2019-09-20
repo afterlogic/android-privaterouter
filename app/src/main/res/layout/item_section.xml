@@ -21,7 +21,6 @@
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:text="SDfsdfsdf"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="@color/color_black"
         android:textSize="@dimen/size_text_medium" />
 
 

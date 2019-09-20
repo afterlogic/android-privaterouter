@@ -1,6 +1,7 @@
 package com.PrivateRouter.PrivateMail.view.folders_list;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Folder;
 import com.PrivateRouter.PrivateMail.model.FolderType;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.common.FolderDrawable;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
@@ -33,6 +35,7 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_counter)
     TextView tvCounter;
 
+    ColorStateList oldColors;
 
     Folder folder;
     private FolderAdapter.OnFolderClick onFolderClick;
@@ -68,13 +71,22 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
         else
             llBackground.setOnClickListener(view -> bgViewClick());
 
+        if (oldColors == null)
+            oldColors = tvTitle.getTextColors();
+
+
         if (folder.getFullName().toLowerCase().equals( currentFolder.toLowerCase() )) {
             llBackground.setBackgroundColor( context.getResources().getColor(R.color.colorPrimary));
             tvTitle.setTextColor( context.getResources().getColor(R.color.color_white));
             ivIcon.setColorFilter(context.getResources().getColor(R.color.color_white));
         }
         else {
-            tvTitle.setTextColor( context.getResources().getColor(R.color.color_black));
+            tvTitle.setTextColor( oldColors );
+            if (SettingsRepository.getInstance().isNightMode(context) )
+                ivIcon.setColorFilter(context.getResources().getColor(R.color.color_white));
+            else
+                ivIcon.setColorFilter(context.getResources().getColor(R.color.color_black));
+
 
             TypedValue outValue = new TypedValue();
             context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);

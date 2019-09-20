@@ -10,5 +10,4 @@
     android:gravity="center_vertical"
     android:textSize="@dimen/size_subtitle_text_medium"
     android:capitalize="words"
-    android:textColor="@color/color_black"
     android:orientation="vertical"></TextView>
