@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
@@ -19,7 +18,6 @@ import com.PrivateRouter.PrivateMail.network.logics.LoginLogic;
 import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.components.HostEditText;
-import com.PrivateRouter.PrivateMail.view.components.HostTextWatcher;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
@@ -72,7 +70,6 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     private void initInputFields() {
-        initHostInputCorrector();
 
         etHost.setText(HostManager.getHost());
         etPassword.setText("");
@@ -83,9 +80,6 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
         etEmail.setText(email);
     }
 
-    private void initHostInputCorrector() {
-        etHost.addTextChangedListener(new HostTextWatcher(etHost));
-    }
 
 
     private void checkLogged() {
