@@ -233,5 +233,6 @@
     <string name="edit_group_title">Edit group</string>
     <string name="mail_view_verify_success">Verified successfully</string>
     <string name="settings_dark_theme">Dark theme</string>
+    <string name="mail_list_no_messages">No messages</string>
 
 </resources>

@@ -26,6 +26,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_ADD_MORE_BAR = 1;
+    private static final int TYPE_EMPTY = 2;
 
     private boolean selectedMode = false;
     private MailListModeMediator mailListModeMediator;
@@ -53,6 +54,9 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         }
         else if (viewType == TYPE_ADD_MORE_BAR) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_show_bar, parent, false);
+            mailViewHolder = new MailViewBarHolder(view);
+        }else if (viewType == TYPE_EMPTY) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_empty, parent, false);
             mailViewHolder = new MailViewBarHolder(view);
         }
         return mailViewHolder;
@@ -87,7 +91,14 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
             case TYPE_ADD_MORE_BAR:
                 bindBarItem(holder, position);
                 break;
+            case TYPE_EMPTY:
+                bindEmptyBarItem(holder, position);
+                break;
         }
+    }
+
+    private void bindEmptyBarItem(MailViewHolder holder, int position) {
+        ((MailViewBarHolder)holder).bind(mailListModeMediator);
     }
 
     private void bindBarItem(MailViewHolder holder, int position) {
@@ -133,8 +144,6 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
             selectedMessageUids.remove(message.getUid());
 
         selectedMessageUids.put(message.getUid(), value);
-
-
 
         if (value) {
             if (!selectedMessages.contains(message))
@@ -222,6 +231,9 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     @Override
     public int getItemCount() {
         int count = super.getItemCount();
+        if (count == 0) {
+            count++;
+        }
         if (hasShowMoreBar())
             count++;
 
@@ -240,7 +252,8 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-
+        if (super.getItemCount() == 0 && position == 0 )
+            return TYPE_EMPTY;
         if (position == getItemCount()-1 && hasShowMoreBar() )
             return TYPE_ADD_MORE_BAR;
         else
