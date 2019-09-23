@@ -43,7 +43,7 @@ public class DateUtils {
         else if (date.after(yesterdayStart))
             str = context.getString(R.string.all_yesterday) +" "+ simpleDateFormat.format(date);
         else if (date.after(currentYearStart))
-            str = new SimpleDateFormat("dd MMMM", Locale.US).format(date);
+            str = new SimpleDateFormat("MMM dd", Locale.US).format(date);
         else
             str = new SimpleDateFormat("dd MMMM yyyy", Locale.US).format(date);
 

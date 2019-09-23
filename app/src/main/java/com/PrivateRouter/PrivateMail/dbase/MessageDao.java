@@ -49,6 +49,30 @@ public interface MessageDao {
 
 
 
+
+    @Query("SELECT COUNT (uid) FROM messages WHERE parentUid = 0 and Folder =:folder " +
+            "and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen ) " +
+            "  ORDER BY uid DESC")
+    long getAllFactoryCount(String folder, boolean starredOnly, boolean unreadOnly);
+
+    @Query("SELECT COUNT(uid) FROM messages WHERE Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
+            "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
+            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
+            " ORDER BY uid DESC")
+    long getAllFilterFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly);
+
+    @Query("SELECT COUNT (uid) FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
+            "(fromemails  LIKE :filter) " +
+            " ORDER BY uid DESC")
+    long getAllFilterEmailFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly);
+
+
+
+
+
+
     @Query("SELECT * FROM messages WHERE parentUid = :parentUid and Folder =:folder ORDER BY uid DESC")
     List<Message> getAllThreadsMessages(String folder, int parentUid);
 

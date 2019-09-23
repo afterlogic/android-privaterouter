@@ -1,22 +1,16 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
-import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.util.DiffUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.model.Message;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +28,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     private HashMap<Integer, Boolean> expandedMessageUids = new HashMap<>();
     private HashMap<Integer, Boolean> selectedMessageUids = new HashMap<>();
     private boolean flatMode;
+    private boolean loading;
 
     protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator) {
         super(diffUtilCallback);
@@ -57,7 +52,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
             mailViewHolder = new MailViewBarHolder(view);
         }else if (viewType == TYPE_EMPTY) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_empty, parent, false);
-            mailViewHolder = new MailViewBarHolder(view);
+            mailViewHolder = new MailViewHolder(view);
         }
         return mailViewHolder;
     }
@@ -98,7 +93,6 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
     private void bindEmptyBarItem(MailViewHolder holder, int position) {
-        ((MailViewBarHolder)holder).bind(mailListModeMediator);
     }
 
     private void bindBarItem(MailViewHolder holder, int position) {
@@ -209,6 +203,18 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         flatMode = true;
     }
 
+    public boolean isShowEmptyMessage() {
+        return showMessage;
+    }
+
+    public void setShowEmptyMessage(boolean emptyMessages) {
+        this.showMessage = emptyMessages;
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
 
     public interface OnMessageClick{
         void onMessageClick(Message message, int position);
@@ -217,10 +223,14 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     @Nullable
     protected Message getItem(int position) {
-        if (hasShowMoreBar() && position == getItemCount()-1 )
+        if (isShowEmptyMessage() && position == 0 )
             return null;
-        else
+        else if (hasShowMoreBar() && position == getItemCount()-1 )
+            return null;
+        else if (position < super.getItemCount() )
             return super.getItem(position);
+        else
+            return null;
     }
 
 
@@ -231,7 +241,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     @Override
     public int getItemCount() {
         int count = super.getItemCount();
-        if (count == 0) {
+        if (isShowEmptyMessage()) {
             count++;
         }
         if (hasShowMoreBar())
@@ -241,6 +251,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
     boolean showMoreBar = false;
+    private boolean showMessage = false;
     public void setShowMoreBar(boolean val) {
         showMoreBar = val;
     }
@@ -252,7 +263,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (super.getItemCount() == 0 && position == 0 )
+        if (isShowEmptyMessage() && position == 0 )
             return TYPE_EMPTY;
         if (position == getItemCount()-1 && hasShowMoreBar() )
             return TYPE_ADD_MORE_BAR;

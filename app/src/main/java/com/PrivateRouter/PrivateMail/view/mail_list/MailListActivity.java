@@ -28,6 +28,7 @@ import android.view.Window;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
+import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
 import com.PrivateRouter.PrivateMail.model.FolderType;
@@ -92,24 +93,21 @@ public class MailListActivity extends AppCompatActivity
 
     SearchView searchView;
 
+    private MailListAdapter mailListAdapter;
 
-    String currentFolder = "Inbox";
-    MailListAdapter mailListAdapter;
+    private LoadMessagePoolLogic loadMessageLogic;
 
-    LoadMessagePoolLogic loadMessageLogic;
+    private LiveData<PagedList<Message>> pagedListLiveData;
+    private MailListModeMediator mailListModeMediator;
 
-    LiveData<PagedList<Message>> pagedListLiveData;
-
-
+    private String currentFolder = "Inbox";
     private boolean firstUpdate = true;
     private boolean requestOnResume;
-
-    private MailListModeMediator mailListModeMediator;
     private Menu menu;
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
-    private static boolean lastNightMode;
+    private boolean nightMode;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -197,7 +195,7 @@ public class MailListActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         paused = true;
-        lastNightMode = SettingsRepository.getInstance().isNightMode(this);
+        nightMode = SettingsRepository.getInstance().isNightMode(this);
         if (loadMessageLogic!=null) {
             loadMessageLogic.cancel(true);
             loadMessageLogic = null;
@@ -209,9 +207,9 @@ public class MailListActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         paused = false;
-        boolean newMode = SettingsRepository.getInstance().isNightMode(this);
-        if (lastNightMode != newMode) {
-            lastNightMode = newMode;
+        boolean newNightMode = SettingsRepository.getInstance().isNightMode(this);
+        if (nightMode != newNightMode) {
+            nightMode = newNightMode;
             recreate();
             return;
         }
@@ -219,7 +217,7 @@ public class MailListActivity extends AppCompatActivity
             requestOnResume = false;
             requestMessages();
         }
-        if (mailListAdapter!=null) {
+        if (mailListAdapter!=null && !unreadOnly) {
             mailListAdapter.notifyDataSetChanged();
         }
     }
@@ -257,11 +255,13 @@ public class MailListActivity extends AppCompatActivity
             } else {
                 factory = database.messageDao().getAllFilterFactory(performFolder, "%" + filter + "%", starredOnly, unreadOnly);
             }
-
         }
 
+        updateRvList(needFlatMode, factory);
+    }
 
 
+    private void updateRvList(boolean needFlatMode,  DataSource.Factory<Integer, Message> factory) {
 
 
         int messagePerMessage = 10;
@@ -289,8 +289,10 @@ public class MailListActivity extends AppCompatActivity
             if (!paused) {
 
                 mailListAdapter.submitList(messagePagedList);
+
                 updateShowMoreBarVisible();
-                if (firstUpdate) {
+
+                if (firstUpdate ) {
                     requestMessages();
                     firstUpdate = false;
                 }
@@ -305,7 +307,7 @@ public class MailListActivity extends AppCompatActivity
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int totalItem = linearLayoutManager.getItemCount();
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
 
@@ -317,10 +319,20 @@ public class MailListActivity extends AppCompatActivity
     }
 
 
+    public void updateShowEmptyVisible(boolean value) {
+        if (mailListAdapter!=null) {
+            mailListAdapter.setShowEmptyMessage(value);
+            mailListAdapter.notifyDataSetChanged();
+
+        }
+    }
+
     private void updateShowMoreBarVisible() {
         updateShowMoreBarVisible(true);
     }
     private void updateShowMoreBarVisible(boolean update) {
+        if (mailListAdapter==null)
+            return;
 
         int loadedCount = mailListAdapter.getItemMessageCount();
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
@@ -329,9 +341,11 @@ public class MailListActivity extends AppCompatActivity
         Folder folder = account.getFolders().getFolder(currentFolder);
         if (folder==null)
             return;
-        int totalCount = folder.getMeta().getCount();
+        int totalMessageCount = folder.getMeta().getCount();
+        int totalUnreadMessageCount = folder.getMeta().getUnreadCount();
+        long totalCount = unreadOnly ? totalUnreadMessageCount : totalMessageCount;
 
-        if (loadedCount < totalCount-1 && loadedCount>0 && !unreadOnly) {
+        if (loadedCount < totalCount-1 && loadedCount>0 ) {
             mailListAdapter.setShowMoreBar(true);
         }
         else if (loadedCount == totalCount) {
@@ -599,6 +613,11 @@ public class MailListActivity extends AppCompatActivity
             moveScrollToTop();
         }
 
+        if (pagedListLiveData!=null && pagedListLiveData.getValue().isEmpty()) {
+            updateShowEmptyVisible(true);
+        }
+
+
         SettingsRepository.getInstance().setLastSyncDate(this, new Date().getTime() );
 
         RequestViewUtils.hideRequest();
@@ -619,6 +638,9 @@ public class MailListActivity extends AppCompatActivity
         RequestViewUtils.hideRequest();
         RequestViewUtils.showError(this, errorType, serverCode);
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
+
+        if (mailListAdapter!=null)
+            mailListAdapter.setLoading(false);
     }
 
     @Override
@@ -635,8 +657,12 @@ public class MailListActivity extends AppCompatActivity
             return;
         }
 
+        if (mailListAdapter!=null)
+            mailListAdapter.setLoading(true);
+
         slMain.setRefreshing(true);
 
+        updateShowEmptyVisible(false);
         updateShowMoreBarVisible();
 
         LoadMoreMessageLogic.clearTemp();
@@ -758,5 +784,30 @@ public class MailListActivity extends AppCompatActivity
             }
         });
         loadMoreMessageLogic.execute();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean("unreadOnly", unreadOnly);
+        savedInstanceState.putString("currentFolder", currentFolder);
+        savedInstanceState.putString("startSearchWord", startSearchWord);
+        savedInstanceState.putBoolean("firstUpdate", firstUpdate);
+        savedInstanceState.putBoolean("requestOnResume", requestOnResume);
+        savedInstanceState.putBoolean("nightMode", nightMode);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        unreadOnly  = savedInstanceState.getBoolean("unreadOnly");
+        currentFolder = savedInstanceState.getString("currentFolder");
+        startSearchWord = savedInstanceState.getString("startSearchWord");
+        firstUpdate  = savedInstanceState.getBoolean("firstUpdate");
+        requestOnResume  = savedInstanceState.getBoolean("requestOnResume");
+        nightMode  = savedInstanceState.getBoolean("nightMode");
+
+        setTitle( currentFolder );
+        initList(startSearchWord );
     }
 }

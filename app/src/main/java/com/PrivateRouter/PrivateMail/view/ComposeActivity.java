@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -181,6 +183,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         updateBottomMenuTitle();
 
         intiUI();
+
+
+        prepareNightTheme();
 
         bind();
 
@@ -482,6 +487,20 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         MessageUtils.setMessageBody(message, etComposeText);
 
         initAttachmentList();
+
+    }
+
+    private void prepareNightTheme() {
+        if (SettingsRepository.getInstance().isNightMode(this)) {
+            ibAddRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
+            ibAddBccRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
+            ibAddCcRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
+        }
+        else  {
+            ibAddRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
+            ibAddBccRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
+            ibAddCcRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
+        }
     }
 
     private void initFromField() {
