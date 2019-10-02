@@ -86,7 +86,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         ArrayList<String> folders = new ArrayList<>();
-        for (Folder folder: account.getFolders().getCollection()) {
+        for (Folder folder: account.getFoldersWithSubFolder()) {
             folders.add(folder.getFullNameRaw() );
         }
 
@@ -96,8 +96,8 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         if (response!=null && response.getFolderMeta()!=null  ) {
 
             newFolderMeta = response.getFolderMeta();
-            for (Folder folder : account.getFolders().getCollection() ) {
-                FolderMeta newFolderMeta = this.newFolderMeta.get(folder.getName());
+            for (Folder folder : account.getFoldersWithSubFolder() ) {
+                FolderMeta newFolderMeta = this.newFolderMeta.get(folder.getFullName());
                 folder.setMeta(newFolderMeta);
             }
 
@@ -116,7 +116,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         ArrayList<FolderToUpdate> arrayList = new ArrayList<FolderToUpdate>();
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
-        for ( Folder folder:   account.getFolders().getCollection()) {
+        for ( Folder folder:   account.getFoldersWithSubFolder()) {
             if ( isCancelled() ) return null;
 
             String folderName = folder.getFullNameRaw();

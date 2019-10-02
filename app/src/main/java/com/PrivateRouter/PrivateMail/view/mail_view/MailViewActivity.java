@@ -114,7 +114,7 @@ public class MailViewActivity extends AppCompatActivity {
     private void onSelectPage(int position) {
         message = mailListAdapter.getMessage(position);
 
-        if ( !message.isSeen() ) {
+        if (message!=null && !message.isSeen() ) {
             sendSeenRequest();
         }
     }

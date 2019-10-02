@@ -29,6 +29,8 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     private HashMap<Integer, Boolean> selectedMessageUids = new HashMap<>();
     private boolean flatMode;
     private boolean loading;
+    private boolean showMoreBar = false;
+    private boolean showMessage = false;
 
     protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator) {
         super(diffUtilCallback);
@@ -250,8 +252,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         return count;
     }
 
-    boolean showMoreBar = false;
-    private boolean showMessage = false;
+
     public void setShowMoreBar(boolean val) {
         showMoreBar = val;
     }

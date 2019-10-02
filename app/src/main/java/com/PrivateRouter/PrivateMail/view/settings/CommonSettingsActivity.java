@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 public class CommonSettingsActivity extends AppCompatActivity {
 
 
+    public static final String THEME_CHANGE = "THEME_CHANGE";
     @BindView(R.id.sv_time_format)
     SettingTextView svTimeFormat;
 
@@ -66,9 +67,17 @@ public class CommonSettingsActivity extends AppCompatActivity {
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+                sendBroadcast();
                 updateConfig();
             }
         });
+    }
+
+    private void sendBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction(THEME_CHANGE);
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        sendBroadcast(intent);
     }
 
     private void updateConfig() {

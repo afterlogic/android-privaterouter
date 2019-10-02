@@ -12,7 +12,7 @@ public class HostManager {
     public static String getHost() {
         Context context = PrivateMailApplication.getContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences("host", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("host", BuildConfig.API_ENDPOINT);
+        return sharedPreferences.getString("host", "");
     }
 
     public static void setHost(String host) {

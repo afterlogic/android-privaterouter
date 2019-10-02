@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.webkit.URLUtil;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     @BindView(R.id.et_host)
     HostEditText etHost;
 
+
     @BindView(R.id.et_email)
     EditText etEmail;
 
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     public void btLoginClick() {
         String login = etEmail.getText().toString();
         String pass = etPassword.getText().toString();
-        String host = etHost.getText().toString();
+        String host = etHost.getFullText();
 
         if (checkFieldsDataCorrect()) {
             RequestViewUtils.showRequest(this);
@@ -70,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     private void initInputFields() {
+
 
         etHost.setText(HostManager.getHost());
         etPassword.setText("");
@@ -114,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     private boolean checkFieldsDataCorrect() {
-        String host = etHost.getText().toString();
+        String host = etHost.getFullText();
 
 
         if (etEmail.getText().toString().isEmpty()) {

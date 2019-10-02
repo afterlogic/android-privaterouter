@@ -3,6 +3,7 @@ package com.PrivateRouter.PrivateMail.view.components;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
@@ -13,13 +14,18 @@ import android.text.TextWatcher;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 
+import org.jetbrains.annotations.NotNull;
+
 public class HostEditText extends AppCompatEditText {
-    private boolean isNeedNoChangeSomeCharacters = true;
-    private String charactersNoChange;
+    float mOriginalLeftPadding = -1;
+    private Paint prefixTextPaint = new Paint();
+    private Paint textPaint = new Paint();
+    private boolean handleChanges = true;
     private final String HTTP_PREFIX = "http://";
     private final String HTTPS_PREFIX = "https://";
 
@@ -28,7 +34,6 @@ public class HostEditText extends AppCompatEditText {
         super(context);
         init();
     }
-
 
     public HostEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,8 +45,17 @@ public class HostEditText extends AppCompatEditText {
         init();
     }
 
-
     private void init() {
+        if (1==1)
+            return;
+
+        textPaint = new Paint( getPaint() );
+        textPaint.setColor(getContext().getResources().getColor(R.color.color_white));
+
+        prefixTextPaint = new Paint( getPaint() );
+        prefixTextPaint.setColor(getContext().getResources().getColor(R.color.color_dark_gray));
+
+
         addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -55,33 +69,14 @@ public class HostEditText extends AppCompatEditText {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (isNeedNoChangeSomeCharacters) {
-
-                    if (TextUtils.isEmpty(charactersNoChange)) {
-                        String text = s.toString().toLowerCase();
-                        if (text.startsWith(HTTP_PREFIX) )
-                            setCharactersNoChangeInitial(HTTP_PREFIX);
-                        else if (text.startsWith(HTTPS_PREFIX) )
-                            setCharactersNoChangeInitial(HTTPS_PREFIX);
-                    }
-                    else if (charactersNoChange != null) {
-                        if (!getText().toString().startsWith(charactersNoChange)) {
-                            removeTextChangedListener(this);
-                            if (charactersNoChange.length() > s.length()) {
-                                setText(charactersNoChange);
-                            } else {
-                                setText(charactersNoChange + getText());
-                            }
-                            setSelection(getText().toString().length());
-                            addTextChangedListener(this);
-                        }
-                        else {
-                            removeTextChangedListener(this);
-                            setText(getText());
-                            setSelection(getText().toString().length());
-                            addTextChangedListener(this);
-                        }
-                    }
+                if (!handleChanges)
+                    return;
+                if (TextUtils.isEmpty((CharSequence) getTag())) {
+                    String text = s.toString().toLowerCase();
+                    if (text.startsWith(HTTP_PREFIX) )
+                        setPrefix(HTTP_PREFIX);
+                    else if (text.startsWith(HTTPS_PREFIX) )
+                        setPrefix(HTTPS_PREFIX);
                 }
 
             }
@@ -89,67 +84,81 @@ public class HostEditText extends AppCompatEditText {
     }
 
     @Override
-    protected void onSelectionChanged(int selStart, int selEnd) {
-        if (isNeedNoChangeSomeCharacters && charactersNoChange != null) {
-            if (length() > charactersNoChange.length() && selStart < charactersNoChange.length()) {
-                setSelection(charactersNoChange.length(),selEnd);
+    protected void onMeasure(int widthMeasureSpec,
+                             int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+  //      calculatePrefix();
+    }
+/*
+    private void calculatePrefix() {
+        if (mOriginalLeftPadding == -1) {
+            String prefix = (String) getTag();
+            float[] widths = new float[prefix.length()];
+            getPaint().getTextWidths(prefix, widths);
+            float textWidth = 0;
+            for (float w : widths) {
+                textWidth += w;
             }
+            mOriginalLeftPadding = getCompoundPaddingLeft();
+            setPadding((int) (textWidth + mOriginalLeftPadding),
+                    getPaddingRight(), getPaddingTop(),
+                    getPaddingBottom());
         }
     }
-
-
+*/
+    //@Override
+    public int getHorizontalOffsetForDrawables() {
+        return 110;
+    }
+/*
     @Override
-    public void setText(CharSequence text, BufferType type) {
+    protected void onDraw(Canvas canvas) {
 
-        if (isNeedNoChangeSomeCharacters) {
+        String prefix =   (String) getTag();
+        canvas.drawText(prefix, getCompoundPaddingLeft(),
+                getLineBounds(0, null), getPrefixPaint());
 
-            if (TextUtils.isEmpty(charactersNoChange)) {
-                super.setText(text, type);
-                String textToCheck = text.toString();
-                if (textToCheck.startsWith(HTTP_PREFIX)) {
-                    setCharactersNoChangeInitial(HTTP_PREFIX);
-                    setText(text, type);
-                }
-                else if (textToCheck.startsWith(HTTPS_PREFIX)) {
-                    setCharactersNoChangeInitial(HTTPS_PREFIX);
-                    setText(text, type);
-                }
 
-            }
-            else {
+        canvas.drawText(getText().toString(), getCompoundPaddingLeft() + getPrefixWidth(),
+                getLineBounds(0, null), getTextPaint());
 
-                Context context = getContext();
-                int colorBlockedColor = context.getResources().getColor(R.color.color_dark_gray);
-                int colorText = getCurrentTextColor();
-
-                Spannable spannable = new SpannableString(text);
-                spannable.setSpan(new ForegroundColorSpan(colorText), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                if (charactersNoChange != null)
-                    spannable.setSpan(new ForegroundColorSpan(colorBlockedColor), 0, charactersNoChange.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-                super.setText(spannable, type);
-                if (isNeedNoChangeSomeCharacters && charactersNoChange != null) {
-                    if (!getText().toString().trim().startsWith(charactersNoChange)) {
-                        setText(charactersNoChange + getText());
-                    }
-                }
-            }
-        }
-        else {
-            super.setText(text, type);
-        }
+    }
+*/
+    private Paint getTextPaint() {
+        return textPaint;
     }
 
-    public void setCharactersNoChangeInitial(String charactersNoChange) {
-        isNeedNoChangeSomeCharacters = true;
-        this.charactersNoChange = charactersNoChange;
-
-        if (!getText().toString().trim().startsWith(charactersNoChange)) {
-            setText(getText());
-        }
+    private Paint getPrefixPaint() {
+        return prefixTextPaint;
     }
 
+    private float getPrefixWidth() {
+        String prefix = (String) getTag();
+        float[] widths = new float[prefix.length()];
+        getPaint().getTextWidths(prefix, widths);
+        float textWidth = 0;
+        for (float w : widths) {
+            textWidth += w;
+        }
+        return textWidth;
+    }
+
+    private void setPrefix(@NotNull String prefix) {
+        handleChanges = false;
+
+        Log.d("setPrefix", "setPrefix="+prefix);
+        this.setTag(prefix);
+
+        String text = getText().toString();
+        text = text.substring(prefix.length());
+
+        setText( text );
 
 
+        handleChanges = true;
+    }
+
+    public String getFullText() {
+        return (String)getTag() + getText();
+    }
 }
-
