@@ -21,31 +21,6 @@ public class MessagesRepository {
 
     private static final String TAG = "MessagesRepository";
 
-    public void clear(Runnable runnable) {
-
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
-                database.clearAllTables();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-
-                if (runnable!=null)
-                    runnable.run();
-            }
-        } ;
-        asyncTask.execute();
-
-    }
-
-    public interface CallbackGetMessages{
-        void getMessages(ArrayList<Message> message );
-    }
     public static volatile MessagesRepository instance = null;
 
     @NonNull
@@ -60,38 +35,5 @@ public class MessagesRepository {
             }
         }
         return repository;
-    }
-
-    public void update(String folder, ArrayList<Message> collection) {
-
-    }
-
-    public void update(Message message) {
-
-    }
-
-    public void getAllMessages(String folder, CallbackGetMessages callbackGetMessages) {
-        /*
-        AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
-        database.messageDao().getAll().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSingleObserver<List<Message>>() {
-
-                    @Override
-                    public void onSuccess(List<Message> messages) {
-                        if (callbackGetMessages!=null)
-                            callbackGetMessages.getMessages( messages.get(folder));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, e.getLocalizedMessage());
-                    }
-                });
-
-
-*/
-
     }
 }

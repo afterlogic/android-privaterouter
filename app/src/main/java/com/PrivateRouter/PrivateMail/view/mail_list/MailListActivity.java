@@ -5,7 +5,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.paging.DataSource;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -13,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.app.AppCompatActivity;
@@ -49,12 +51,14 @@ import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.folders_list.FoldersListActivity;
 import com.PrivateRouter.PrivateMail.view.mail_view.MailViewList;
+import com.PrivateRouter.PrivateMail.view.settings.CommonSettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.mail_view.MailViewActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.SoftKeyboard;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +70,7 @@ import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public class MailListActivity extends AppCompatActivity
         implements  CallRequestResult<Boolean>,
-                    SwipeRefreshLayout.OnRefreshListener, MailListAdapter.OnMessageClick {
+        SwipeRefreshLayout.OnRefreshListener, MailListAdapter.OnMessageClick {
 
     public static final int LOGOUT = 20;
     public static final int OPEN_CONTACT = 1001;
@@ -99,7 +103,7 @@ public class MailListActivity extends AppCompatActivity
 
     private LiveData<PagedList<Message>> pagedListLiveData;
     private MailListModeMediator mailListModeMediator;
-
+    private DataSource.Factory<Integer, Message> factory;
     private String currentFolder = "Inbox";
     private boolean firstUpdate = true;
     private boolean requestOnResume;
@@ -107,7 +111,7 @@ public class MailListActivity extends AppCompatActivity
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
-    private boolean nightMode;
+    private ArrayList<Integer> additionalMessagesUid = new ArrayList<>();
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -131,18 +135,26 @@ public class MailListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-
+        Log.v("MailListLifeCycle","onCreate");
 
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
+        initBroadcastReceiver();
         initModeSubject();
         openNormalMode();
         initUI();
 
         PrivateMailApplication.getInstance().getIdentitiesRepository().init();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("MailListLifeCycle", "onStart");
 
 
         initList(startSearchWord );
@@ -150,8 +162,18 @@ public class MailListActivity extends AppCompatActivity
         initUpdateTimer();
 
         SoftKeyboard.hideKeyboard(this);
+    }
+    BroadcastReceiver broadcastReceiver;
 
-
+    private void initBroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.v("MailListLifeCycle","recreate");
+                recreate();
+            }
+        };
+        registerReceiver(broadcastReceiver,  new IntentFilter(CommonSettingsActivity.THEME_CHANGE));
     }
 
     private void initModeSubject() {
@@ -186,6 +208,7 @@ public class MailListActivity extends AppCompatActivity
     @Override
     protected  void onStop() {
         super.onStop();
+        Log.v("MailListLifeCycle","onStop");
         PrivateMailApplication.getInstance().getSyncLogic().pause();
 
         if (loadMessageLogic!=null)
@@ -194,8 +217,9 @@ public class MailListActivity extends AppCompatActivity
 
     protected void onPause() {
         super.onPause();
+        Log.v("MailListLifeCycle","onPause");
         paused = true;
-        nightMode = SettingsRepository.getInstance().isNightMode(this);
+
         if (loadMessageLogic!=null) {
             loadMessageLogic.cancel(true);
             loadMessageLogic = null;
@@ -207,17 +231,15 @@ public class MailListActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         paused = false;
-        boolean newNightMode = SettingsRepository.getInstance().isNightMode(this);
-        if (nightMode != newNightMode) {
-            nightMode = newNightMode;
-            recreate();
-            return;
-        }
+
+        //String str = mailListAdapter==null? "null": String.valueOf(mailListAdapter.getItemCount());
+        //Log.v("MailListLifeCycle","onResume requestOnResume="+requestOnResume+ "  adapter=" +str);
+
         if (requestOnResume) {
             requestOnResume = false;
             requestMessages();
         }
-        if (mailListAdapter!=null && !unreadOnly) {
+        if (mailListAdapter!=null ) {
             mailListAdapter.notifyDataSetChanged();
         }
     }
@@ -229,13 +251,15 @@ public class MailListActivity extends AppCompatActivity
     private void initList(String filter) {
 
         Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
+        Log.d("MailListLifeCycle", "initList currentFolder=" + currentFolder + " filter = " + filter );
 
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
-        DataSource.Factory<Integer, Message> factory;
+
         boolean needFlatMode = false;
         boolean starredOnly = false;
+
 
         String performFolder = currentFolder;
         if (currentFolder.equals( FolderType.VIRTUAL_STARRED_NAME )) {
@@ -245,8 +269,10 @@ public class MailListActivity extends AppCompatActivity
             starredOnly = true;
         }
 
-        if (TextUtils.isEmpty(filter))
-            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly);
+        if (TextUtils.isEmpty(filter)) {
+
+            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly, additionalMessagesUid );
+        }
         else {
             needFlatMode = true;
             if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
@@ -278,7 +304,6 @@ public class MailListActivity extends AppCompatActivity
         pagedListLiveData = new LivePagedListBuilder<>(factory, config)
                 .build();
 
-
         mailListAdapter = new MailListAdapter( new MessageDiffUtilCallback(), mailListModeMediator);
         if (needFlatMode)
             mailListAdapter.useFlatMode();
@@ -290,19 +315,23 @@ public class MailListActivity extends AppCompatActivity
 
                 mailListAdapter.submitList(messagePagedList);
 
-                updateShowMoreBarVisible();
+                if ( !isLoading() ) {
+                    updateBarsVisible();
+                }
+
 
                 if (firstUpdate ) {
                     requestMessages();
                     firstUpdate = false;
                 }
+
             }
         });
 
 
         mailListAdapter.setOnMessageClick(this);
         rvMailList.setAdapter(mailListAdapter);
-
+/*
         rvMailList.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -312,27 +341,35 @@ public class MailListActivity extends AppCompatActivity
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
 
                 if ( lastVisibleItem == totalItem - 1) {
-                    updateShowMoreBarVisible(false);
+                    updateShowMoreBarVisible();
                 }
             }
         });
+
+ */
     }
 
 
-    public void updateShowEmptyVisible(boolean value) {
+    private void hideBars() {
         if (mailListAdapter!=null) {
-            mailListAdapter.setShowEmptyMessage(value);
+            setShowEmptyVisible(false);
+            mailListAdapter.setShowMoreBar(false);
             mailListAdapter.notifyDataSetChanged();
 
         }
     }
-
-    private void updateShowMoreBarVisible() {
-        updateShowMoreBarVisible(true);
+    public void setShowEmptyVisible(boolean value) {
+        if (mailListAdapter!=null) {
+            Log.w("bars", "setShowEmptyVisible="+value);
+            mailListAdapter.setShowEmptyMessage(value);
+        }
     }
-    private void updateShowMoreBarVisible(boolean update) {
+
+
+    private void updateShowMoreBarVisible( ) {
         if (mailListAdapter==null)
             return;
+        Log.d( "MAIN_MENU", "updateShowMoreBarVisible");
 
         int loadedCount = mailListAdapter.getItemMessageCount();
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
@@ -345,16 +382,17 @@ public class MailListActivity extends AppCompatActivity
         int totalUnreadMessageCount = folder.getMeta().getUnreadCount();
         long totalCount = unreadOnly ? totalUnreadMessageCount : totalMessageCount;
 
-        if (loadedCount < totalCount-1 && loadedCount>0 ) {
+        if (loadedCount < totalCount    ) {
             mailListAdapter.setShowMoreBar(true);
         }
         else if (loadedCount == totalCount) {
             mailListAdapter.setShowMoreBar(false);
         }
 
-        if (update) {
+        if (mailListAdapter!=null) {
             mailListAdapter.notifyDataSetChanged();
         }
+
     }
 
     private void initUI() {
@@ -561,10 +599,9 @@ public class MailListActivity extends AppCompatActivity
 
         LoggedUserRepository.getInstance().logout(this);
 
-        MessagesRepository.getInstance().clear(() -> {
-
+        Runnable runnable = () -> {
             PrivateMailApplication.getInstance().getIdentitiesRepository().clear();
-            RequestViewUtils.showRequest(this);
+            RequestViewUtils.showRequest(MailListActivity.this);
             CallLogout callLogout = new CallLogout(new CallRequestResult() {
                 @Override
                 public void onSuccess(Object result) {
@@ -580,8 +617,18 @@ public class MailListActivity extends AppCompatActivity
                 }
             });
             callLogout.start();
+        };
 
+        AsyncDbaseOperation asyncDbaseOperation = new AsyncDbaseOperation();
+        asyncDbaseOperation.setRunnableOperation(() -> {
+            AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
+            database.clearAllTables();
         });
+
+        asyncDbaseOperation.setOnFinishCallback(runnable::run);
+
+        asyncDbaseOperation.execute();
+
 
 
 
@@ -613,9 +660,17 @@ public class MailListActivity extends AppCompatActivity
             moveScrollToTop();
         }
 
-        if (pagedListLiveData!=null && pagedListLiveData.getValue().isEmpty()) {
-            updateShowEmptyVisible(true);
-        }
+        onFinishLoadMessage();
+
+    }
+
+    private void onFinishLoadMessage() {
+        updateBarsVisible();
+
+
+        if (mailListAdapter!=null)
+            mailListAdapter.notifyDataSetChanged();
+
 
 
         SettingsRepository.getInstance().setLastSyncDate(this, new Date().getTime() );
@@ -623,6 +678,14 @@ public class MailListActivity extends AppCompatActivity
         RequestViewUtils.hideRequest();
 
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
+    }
+
+    private void updateBarsVisible() {
+        if ( pagedListLiveData!=null ) {
+            setShowEmptyVisible( pagedListLiveData.getValue().isEmpty() );
+        }
+
+        updateShowMoreBarVisible();
     }
 
     private void moveScrollToTop() {
@@ -645,12 +708,27 @@ public class MailListActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
+        clearAdditionalMessage();
+
         requestMessages(true);
+    }
+
+    private void clearAdditionalMessage() {
+        boolean hasAdditional = additionalMessagesUid.isEmpty();
+        additionalMessagesUid.clear();
+        if (hasAdditional) {
+            initList(startSearchWord);
+        }
+    }
+
+    private boolean isLoading() {
+        return slMain.isRefreshing();
     }
 
     private void requestMessages(   ) {
         requestMessages(false);
     }
+
     private void requestMessages(  boolean forceCurrent ) {
 
         if (loadMessageLogic!=null) {
@@ -662,8 +740,7 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
-        updateShowEmptyVisible(false);
-        updateShowMoreBarVisible();
+        hideBars();
 
         LoadMoreMessageLogic.clearTemp();
 
@@ -676,24 +753,38 @@ public class MailListActivity extends AppCompatActivity
 
 
     private void initUpdateTimer() {
-        PrivateMailApplication.getInstance().getSyncLogic().setRequestMessagesRunnable(this::requestMessages);
+        PrivateMailApplication.getInstance().getSyncLogic().setRequestMessagesRunnable(this::syncTimerCall);
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
+    }
+    private  void syncTimerCall() {
+        clearAdditionalMessage();
+        requestMessages();
     }
 
     @Override
     public void onMessageClick(Message message, int position) {
         Intent intent;
         if (message!=null) {
+            if (unreadOnly) {
+                if (!additionalMessagesUid.contains(message.getUid()))
+                    additionalMessagesUid.add(message.getUid());
+                //initList(startSearchWord);
+            }
+
+
+
             if (!message.isThreadMessage()) {
                 MailViewList mailViewList = new MailViewList() {
                     @Override
                     public Message getMessage(int index) {
-                        return mailListAdapter.getMessage(index);
+                        Message  mes = mailListAdapter.getMessage(index);
+                        return mes;
                     }
 
                     @Override
                     public int getItemCount() {
-                        return mailListAdapter.getItemMessageCount();
+                        int count = mailListAdapter.getItemMessageCount();
+                        return count ;
                     }
                 };
                 intent = MailViewActivity.makeIntent(this, mailViewList, position, currentFolder);
@@ -754,7 +845,7 @@ public class MailListActivity extends AppCompatActivity
 
     public void onLoadThread () {
         if (loadMessageLogic!=null)
-        loadMessageLogic.cancel(true);
+            loadMessageLogic.cancel(true);
         loadMessageLogic = null;
         //loadMessageLogic.pauseMyTask();
     }
@@ -770,10 +861,14 @@ public class MailListActivity extends AppCompatActivity
 
     public void onLoadMoreClick() {
         slMain.setRefreshing(true);
+
+        hideBars();
+
         LoadMoreMessageLogic loadMoreMessageLogic = new LoadMoreMessageLogic(currentFolder, new LoadMoreMessageLogic.LoadMoreCallback() {
             @Override
             public void onSuccess() {
                 slMain.setRefreshing(false);
+                onFinishLoadMessage();
             }
 
             @Override
@@ -794,18 +889,30 @@ public class MailListActivity extends AppCompatActivity
         savedInstanceState.putString("startSearchWord", startSearchWord);
         savedInstanceState.putBoolean("firstUpdate", firstUpdate);
         savedInstanceState.putBoolean("requestOnResume", requestOnResume);
-        savedInstanceState.putBoolean("nightMode", nightMode);
+        savedInstanceState.putIntegerArrayList("additionalMessagesUid", additionalMessagesUid );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v("MailListLifeCycle","onDestroy");
+        if(broadcastReceiver!=null)
+        {
+            unregisterReceiver(broadcastReceiver);
+            broadcastReceiver = null;
+        }
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v("MailListLifeCycle","onRestoreInstanceState");
         super.onRestoreInstanceState(savedInstanceState);
         unreadOnly  = savedInstanceState.getBoolean("unreadOnly");
         currentFolder = savedInstanceState.getString("currentFolder");
         startSearchWord = savedInstanceState.getString("startSearchWord");
         firstUpdate  = savedInstanceState.getBoolean("firstUpdate");
         requestOnResume  = savedInstanceState.getBoolean("requestOnResume");
-        nightMode  = savedInstanceState.getBoolean("nightMode");
+        additionalMessagesUid = savedInstanceState.getIntegerArrayList("additionalMessagesUid");
 
         setTitle( currentFolder );
         initList(startSearchWord );
