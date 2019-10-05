@@ -24,10 +24,10 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface MessageDao {
 
 
-    @Query("SELECT * FROM messages WHERE (uid IN (:additionalMessagesUid)) or" +
+    @Query("SELECT * FROM messages WHERE " +
             "(parentUid = 0 and Folder =:folder  and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen )  )" +
             "  ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFactory(String folder, boolean starredOnly, boolean unreadOnly,  List<Integer> additionalMessagesUid);
+    DataSource.Factory<Integer, Message> getAllFactory(String folder, boolean starredOnly, boolean unreadOnly);
 
     @Query("SELECT * FROM messages WHERE Folder =:folder and " +
             "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +

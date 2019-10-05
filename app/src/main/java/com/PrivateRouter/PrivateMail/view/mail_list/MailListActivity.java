@@ -101,7 +101,7 @@ public class MailListActivity extends AppCompatActivity
 
     private LoadMessagePoolLogic loadMessageLogic;
 
-    private LiveData<PagedList<Message>> pagedListLiveData;
+
     private MailListModeMediator mailListModeMediator;
     private DataSource.Factory<Integer, Message> factory;
     private String currentFolder = "Inbox";
@@ -111,7 +111,6 @@ public class MailListActivity extends AppCompatActivity
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
-    private ArrayList<Integer> additionalMessagesUid = new ArrayList<>();
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -271,7 +270,7 @@ public class MailListActivity extends AppCompatActivity
 
         if (TextUtils.isEmpty(filter)) {
 
-            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly, additionalMessagesUid );
+            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly );
         }
         else {
             needFlatMode = true;
@@ -289,44 +288,35 @@ public class MailListActivity extends AppCompatActivity
 
     private void updateRvList(boolean needFlatMode,  DataSource.Factory<Integer, Message> factory) {
 
-
-        int messagePerMessage = 10;
-        PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(true)
-                .setPageSize(messagePerMessage)
-                .setInitialLoadSizeHint(messagePerMessage*3)
-                .setPrefetchDistance(messagePerMessage)
-                .build();
-
-        if (pagedListLiveData!=null)
-            pagedListLiveData.removeObservers(this);
-
-        pagedListLiveData = new LivePagedListBuilder<>(factory, config)
-                .build();
+        MessagesRepository.getInstance().updateMessageList(this, factory);
 
         mailListAdapter = new MailListAdapter( new MessageDiffUtilCallback(), mailListModeMediator);
         if (needFlatMode)
             mailListAdapter.useFlatMode();
 
+        MessagesRepository.getInstance().addCallback(new MessagesRepository.OnUpdateCallback() {
+            @Override
+            public void onListUpdated(PagedList<Message> messagePagedList) {
 
-        pagedListLiveData.observe(this, (PagedList<Message> messagePagedList) -> {
+                if (!paused) {
 
-            if (!paused) {
+                    mailListAdapter.submitList(messagePagedList);
 
-                mailListAdapter.submitList(messagePagedList);
+                    if ( !isLoading() ) {
+                        updateBarsVisible();
+                    }
 
-                if ( !isLoading() ) {
-                    updateBarsVisible();
+
+                    if (firstUpdate ) {
+                        requestMessages();
+                        firstUpdate = false;
+                    }
+
                 }
-
-
-                if (firstUpdate ) {
-                    requestMessages();
-                    firstUpdate = false;
-                }
-
             }
         });
+
+
 
 
         mailListAdapter.setOnMessageClick(this);
@@ -681,9 +671,8 @@ public class MailListActivity extends AppCompatActivity
     }
 
     private void updateBarsVisible() {
-        if ( pagedListLiveData!=null ) {
-            setShowEmptyVisible( pagedListLiveData.getValue().isEmpty() );
-        }
+        //tODO
+        //setShowEmptyVisible( pagedListLiveData.getValue().isEmpty() );
 
         updateShowMoreBarVisible();
     }
@@ -708,17 +697,8 @@ public class MailListActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        clearAdditionalMessage();
 
         requestMessages(true);
-    }
-
-    private void clearAdditionalMessage() {
-        boolean hasAdditional = additionalMessagesUid.isEmpty();
-        additionalMessagesUid.clear();
-        if (hasAdditional) {
-            initList(startSearchWord);
-        }
     }
 
     private boolean isLoading() {
@@ -757,7 +737,6 @@ public class MailListActivity extends AppCompatActivity
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
     }
     private  void syncTimerCall() {
-        clearAdditionalMessage();
         requestMessages();
     }
 
@@ -765,44 +744,8 @@ public class MailListActivity extends AppCompatActivity
     public void onMessageClick(Message message, int position) {
         Intent intent;
         if (message!=null) {
-            if (unreadOnly) {
-                if (!additionalMessagesUid.contains(message.getUid()))
-                    additionalMessagesUid.add(message.getUid());
-                //initList(startSearchWord);
-            }
 
-
-
-            if (!message.isThreadMessage()) {
-                MailViewList mailViewList = new MailViewList() {
-                    @Override
-                    public Message getMessage(int index) {
-                        Message  mes = mailListAdapter.getMessage(index);
-                        return mes;
-                    }
-
-                    @Override
-                    public int getItemCount() {
-                        int count = mailListAdapter.getItemMessageCount();
-                        return count ;
-                    }
-                };
-                intent = MailViewActivity.makeIntent(this, mailViewList, position, currentFolder);
-            }
-            else {
-                MailViewList mailViewList = new MailViewList() {
-                    @Override
-                    public Message getMessage(int index) {
-                        return message;
-                    }
-
-                    @Override
-                    public int getItemCount() {
-                        return 1;
-                    }
-                };
-                intent = MailViewActivity.makeIntent(this, mailViewList, position, currentFolder);
-            }
+            intent = MailViewActivity.makeIntent(this, message.isThreadMessage(), position, currentFolder);
             startActivity(intent);
         }
     }
@@ -889,7 +832,6 @@ public class MailListActivity extends AppCompatActivity
         savedInstanceState.putString("startSearchWord", startSearchWord);
         savedInstanceState.putBoolean("firstUpdate", firstUpdate);
         savedInstanceState.putBoolean("requestOnResume", requestOnResume);
-        savedInstanceState.putIntegerArrayList("additionalMessagesUid", additionalMessagesUid );
     }
 
     @Override
@@ -912,7 +854,6 @@ public class MailListActivity extends AppCompatActivity
         startSearchWord = savedInstanceState.getString("startSearchWord");
         firstUpdate  = savedInstanceState.getBoolean("firstUpdate");
         requestOnResume  = savedInstanceState.getBoolean("requestOnResume");
-        additionalMessagesUid = savedInstanceState.getIntegerArrayList("additionalMessagesUid");
 
         setTitle( currentFolder );
         initList(startSearchWord );

@@ -27,6 +27,7 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CalSetMessagesSeen;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.MessagesRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
@@ -50,17 +51,16 @@ public class MailViewActivity extends AppCompatActivity {
 
     private Message message;
     private PagerAdapter pagerAdapter;
-    private MailViewList mailListAdapter;
-    private static MailViewList tmpMailListAdapter;
     private String folderName;
+    private boolean blockScrollMessage;
 
     @NonNull
-    public static Intent makeIntent(@NonNull Activity activity, MailViewList _mailListAdapter, int position, String folder) {
-        tmpMailListAdapter = _mailListAdapter;
+    public static Intent makeIntent(@NonNull Activity activity, boolean blockScrollMessage, int position, String folder) {
 
         Intent intent = new Intent(activity, MailViewActivity.class);
         intent.putExtra("position", position);
         intent.putExtra("folder", folder);
+        intent.putExtra("blockScrollMessage", blockScrollMessage);
         return intent;
     }
 
@@ -71,12 +71,12 @@ public class MailViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mail_view);
         ButterKnife.bind(this);
 
-        mailListAdapter = tmpMailListAdapter;
 
         int startPage = 0;
         if (getIntent()!=null && getIntent().getSerializableExtra("position")!=null) {
             startPage = getIntent().getIntExtra("position", 0);
             folderName = getIntent().getStringExtra("folder");
+            blockScrollMessage =   getIntent().getBooleanExtra("blockScrollMessage", false);
         }
 
         setTitle("");
@@ -112,7 +112,7 @@ public class MailViewActivity extends AppCompatActivity {
     }
 
     private void onSelectPage(int position) {
-        message = mailListAdapter.getMessage(position);
+        message = MessagesRepository.getInstance().getMessage(position);
 
         if (message!=null && !message.isSeen() ) {
             sendSeenRequest();
@@ -307,15 +307,16 @@ public class MailViewActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Message message = mailListAdapter.getMessage(position);
+            Message message = MessagesRepository.getInstance().getMessage(position);
             return MailViewFragment.newInstance(message);
         }
 
         @Override
         public int getCount() {
-            if (mailListAdapter!=null)
-                return mailListAdapter.getItemCount();
-            return 0;
+            if (blockScrollMessage)
+                return 1;
+            else
+                return MessagesRepository.getInstance().getSize();
         }
 
     }
