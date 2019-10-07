@@ -31,6 +31,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallUpdateGroup;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
@@ -427,12 +428,18 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void blockFieldsInput() {
+        int color;
+        if (SettingsRepository.getInstance().isNightMode(this))
+            color = Color.WHITE;
+        else
+            color = Color.BLACK;
+
         for (EditText et : etList) {
             et.setFocusable(false);
             et.setEnabled(false);
             et.setCursorVisible(false);
             et.setKeyListener(null);
-            et.setTextColor(Color.BLACK);
+            et.setTextColor(color);
         }
     }
 

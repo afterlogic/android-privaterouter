@@ -15,6 +15,7 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
@@ -28,6 +29,7 @@ public class HostEditText extends AppCompatEditText {
     private boolean handleChanges = true;
     private final String HTTP_PREFIX = "http://";
     private final String HTTPS_PREFIX = "https://";
+    private int shiftX;
 
 
     public HostEditText(Context context) {
@@ -46,8 +48,7 @@ public class HostEditText extends AppCompatEditText {
     }
 
     private void init() {
-        if (1==1)
-            return;
+
 
         textPaint = new Paint( getPaint() );
         textPaint.setColor(getContext().getResources().getColor(R.color.color_white));
@@ -55,6 +56,14 @@ public class HostEditText extends AppCompatEditText {
         prefixTextPaint = new Paint( getPaint() );
         prefixTextPaint.setColor(getContext().getResources().getColor(R.color.color_dark_gray));
 
+        setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && getText().toString().isEmpty()) {
+                    clearPrefix();
+                }
+            }
+        });
 
         addTextChangedListener(new TextWatcher() {
             @Override
@@ -86,8 +95,13 @@ public class HostEditText extends AppCompatEditText {
     @Override
     protected void onMeasure(int widthMeasureSpec,
                              int heightMeasureSpec) {
+        shiftX = (int) getPrefixWidth();
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-  //      calculatePrefix();
+
+         shiftX = 0;
+
+        //      calculatePrefix();
     }
 /*
     private void calculatePrefix() {
@@ -106,24 +120,36 @@ public class HostEditText extends AppCompatEditText {
         }
     }
 */
-    //@Override
-    public int getHorizontalOffsetForDrawables() {
-        return 110;
+    @Override
+    public int getCompoundPaddingLeft() {
+        return shiftX;
     }
-/*
+    @Override
+    public int getPaddingStart() {
+        return shiftX;
+    }
     @Override
     protected void onDraw(Canvas canvas) {
 
         String prefix =   (String) getTag();
-        canvas.drawText(prefix, getCompoundPaddingLeft(),
+        canvas.drawText(prefix, 0,
                 getLineBounds(0, null), getPrefixPaint());
 
 
-        canvas.drawText(getText().toString(), getCompoundPaddingLeft() + getPrefixWidth(),
-                getLineBounds(0, null), getTextPaint());
+      //  updateLeftPadding();
+
+        shiftX = (int) getPrefixWidth();
+
+        super.onDraw(canvas);
+
+    //    shiftX = 0;
+
+        //setPadding(0 ,getPaddingRight(), getPaddingTop(), getPaddingBottom());
+        //canvas.drawText(getText().toString(), getCompoundPaddingLeft() + getPrefixWidth(),
+          //      getLineBounds(0, null), getTextPaint());
 
     }
-*/
+
     private Paint getTextPaint() {
         return textPaint;
     }
@@ -143,6 +169,11 @@ public class HostEditText extends AppCompatEditText {
         return textWidth;
     }
 
+    private void clearPrefix() {
+        setTag("");
+        //updateLeftPadding();
+    }
+
     private void setPrefix(@NotNull String prefix) {
         handleChanges = false;
 
@@ -154,8 +185,18 @@ public class HostEditText extends AppCompatEditText {
 
         setText( text );
 
+        //updateLeftPadding();
 
         handleChanges = true;
+    }
+
+    private void updateLeftPadding() {
+        float textWidth = getPrefixWidth();
+        //mOriginalLeftPadding = getCompoundPaddingLeft();
+        setPadding((int) (textWidth ),
+                getPaddingRight(), getPaddingTop(),
+                getPaddingBottom());
+
     }
 
     public String getFullText() {
