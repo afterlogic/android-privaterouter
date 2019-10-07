@@ -22,46 +22,54 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface MessageDao {
+    @Query("SELECT * FROM messages " +
+            "WHERE ( uid IN (:uidsList)) " +
+            "ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getMessageFactoryByList(List<Integer> uidsList);
 
 
-    @Query("SELECT * FROM messages WHERE " +
-            "(parentUid = 0 and Folder =:folder  and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen )  )" +
+    @Query("SELECT * FROM messages " +
+            "WHERE (parentUid = 0 and Folder =:folder  and " +
+            "(((not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen )  )  or (uid IN (:additionalMailsUids)) ) )" +
             "  ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFactory(String folder, boolean starredOnly, boolean unreadOnly);
+    DataSource.Factory<Integer, Message> getAllMessagesFactory(String folder, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
-    @Query("SELECT COUNT (uid) FROM messages WHERE parentUid = 0 and Folder =:folder " +
-            "and (not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen ) ")
-    long getAllFactoryCount(String folder, boolean starredOnly, boolean unreadOnly);
+    @Query("SELECT COUNT (uid) FROM messages " +
+            "WHERE parentUid = 0 and Folder =:folder and " +
+            "(((not :starredOnly or isFlagged ) and (not :unreadOnly or not isSeen )) or (uid IN (:additionalMailsUids)) ) ")
+    long getAllFactoryCount(String folder, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
+
 
     @Query("SELECT * FROM messages WHERE Folder =:folder and " +
-            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
+            "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
-            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
+            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter)))" +
+            " or (uid IN (:additionalMailsUids)) )"+
             " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
-
-    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
-            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
-            "(fromemails  LIKE :filter) " +
-            " ORDER BY uid DESC")
-    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly);
-
-
-
+    DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
     @Query("SELECT COUNT(uid) FROM messages WHERE Folder =:folder and " +
-            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
+            "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
-            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter))" +
+            "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter)))" +
+            " or (uid IN (:additionalMailsUids)) )"+
             " ORDER BY uid DESC")
-    long getAllFilterFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly);
+    long getAllFilterFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
+
+
+    @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
+            "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
+            "(fromemails  LIKE :filter) ) " +
+            " or (uid IN (:additionalMailsUids)) )"+
+            " ORDER BY uid DESC")
+    DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
     @Query("SELECT COUNT (uid) FROM messages WHERE parentUid = 0 and Folder =:folder and " +
-            "(not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
-            "(fromemails  LIKE :filter) " +
+            "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
+            "(fromemails  LIKE :filter) )" +
+            " or (uid IN (:additionalMailsUids)) )"+
             " ORDER BY uid DESC")
-    long getAllFilterEmailFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly);
-
+    long getAllFilterEmailFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
 
     @Query("SELECT * FROM messages WHERE parentUid = :parentUid and Folder =:folder ORDER BY uid DESC")
@@ -173,6 +181,7 @@ public interface MessageDao {
 
     @Query("DELETE FROM temp_message_ids")
     void removeTempMessagesIds();
+
 
 
 }

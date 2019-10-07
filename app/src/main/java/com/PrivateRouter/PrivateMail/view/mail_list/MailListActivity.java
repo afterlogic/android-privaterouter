@@ -1,9 +1,7 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
 import android.app.Activity;
-import android.arch.lifecycle.LiveData;
 import android.arch.paging.DataSource;
-import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -36,7 +34,6 @@ import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
-import com.PrivateRouter.PrivateMail.network.logics.LoadMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessagePoolLogic;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMoreMessageLogic;
 import com.PrivateRouter.PrivateMail.network.logics.MoveMessageLogic;
@@ -51,7 +48,6 @@ import com.PrivateRouter.PrivateMail.view.LoginActivity;
 import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.folders_list.FoldersListActivity;
-import com.PrivateRouter.PrivateMail.view.mail_view.MailViewList;
 import com.PrivateRouter.PrivateMail.view.settings.CommonSettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.mail_view.MailViewActivity;
@@ -104,7 +100,6 @@ public class MailListActivity extends AppCompatActivity
 
 
     private MailListModeMediator mailListModeMediator;
-    private DataSource.Factory<Integer, Message> factory;
     private String currentFolder = "Inbox";
     private boolean firstUpdate = true;
     private boolean requestOnResume;
@@ -112,7 +107,8 @@ public class MailListActivity extends AppCompatActivity
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
-    private String currentFilder;
+    private String currentFilter;
+    private ArrayList<Integer> additionalMails = new ArrayList();
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -250,39 +246,11 @@ public class MailListActivity extends AppCompatActivity
     }
 
     private void initList(String filter) {
+        currentFilter = filter;
+        MessagesFactory messagesFactory = new MessagesFactory(currentFolder, filter, unreadOnly, additionalMails);
+        messagesFactory.setOnEndCallback(this::updateRvList);
+        messagesFactory.execute();
 
-        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
-        Log.d("bars", "initList currentFolder=" + currentFolder + " filter = " + filter );
-
-        currentFilder = filter;
-        AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
-
-        boolean needFlatMode = false;
-        boolean starredOnly = false;
-
-
-        String performFolder = currentFolder;
-        if (currentFolder.equals( FolderType.VIRTUAL_STARRED_NAME )) {
-            Account account = LoggedUserRepository.getInstance().getActiveAccount();
-            performFolder = account.getFolders().getFolderName(FolderType.Inbox);
-            needFlatMode = true;
-            starredOnly = true;
-        }
-
-        if (TextUtils.isEmpty(filter)) {
-            factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly );
-        }
-        else {
-            needFlatMode = true;
-            if (filter.startsWith(EMAIL_SEARCH_PREFIX) && filter.length() > EMAIL_SEARCH_PREFIX.length()) {
-                String value = filter.substring(EMAIL_SEARCH_PREFIX.length() + 1);
-                factory = database.messageDao().getAllFilterEmailFactory(performFolder, "%" + value + "%", starredOnly, unreadOnly);
-            } else {
-                factory = database.messageDao().getAllFilterFactory(performFolder, "%" + filter + "%", starredOnly, unreadOnly);
-            }
-        }
-
-        updateRvList(needFlatMode, factory);
     }
 
 
@@ -302,8 +270,6 @@ public class MailListActivity extends AppCompatActivity
                 if (!paused) {
 
                     mailListAdapter.submitList(messagePagedList);
-
-                    //updateBarsVisible();
 
                     if (firstUpdate ) {
                         requestMessages();
@@ -658,7 +624,7 @@ public class MailListActivity extends AppCompatActivity
     }
 
     private void updateBarsVisible() {
-        AsyncDbaseGetMessageCount asyncDbaseGetMessageCount = new AsyncDbaseGetMessageCount(currentFolder, currentFilder, unreadOnly );
+        AsyncDbaseGetMessageCount asyncDbaseGetMessageCount = new AsyncDbaseGetMessageCount(currentFolder, currentFilter, unreadOnly, additionalMails );
         asyncDbaseGetMessageCount.setOnEndCallback(new AsyncDbaseGetMessageCount.OnEndCallback() {
             @Override
             public void onDone(long messageCount) {
@@ -720,6 +686,9 @@ public class MailListActivity extends AppCompatActivity
 
         slMain.setRefreshing(true);
 
+
+        additionalMails.clear();
+
         hideBars();
 
         LoadMoreMessageLogic.clearTemp();
@@ -744,6 +713,8 @@ public class MailListActivity extends AppCompatActivity
     public void onMessageClick(Message message, int position) {
         Intent intent;
         if (message!=null) {
+            if (unreadOnly && !additionalMails.contains(message.getUid()))
+                additionalMails.add(message.getUid());
 
             intent = MailViewActivity.makeIntent(this, message.isThreadMessage(), position, currentFolder);
             startActivity(intent);
@@ -767,7 +738,7 @@ public class MailListActivity extends AppCompatActivity
     }
 
     private void onChangeFolder(String newFolder) {
-
+        additionalMails.clear();
         searchView.setQuery("", false);
         requestOnResume = false;
         firstUpdate = true;
@@ -832,6 +803,7 @@ public class MailListActivity extends AppCompatActivity
         savedInstanceState.putString("startSearchWord", startSearchWord);
         savedInstanceState.putBoolean("firstUpdate", firstUpdate);
         savedInstanceState.putBoolean("requestOnResume", requestOnResume);
+        savedInstanceState.putIntegerArrayList("additionalMails", additionalMails );
     }
 
     @Override
@@ -854,6 +826,7 @@ public class MailListActivity extends AppCompatActivity
         startSearchWord = savedInstanceState.getString("startSearchWord");
         firstUpdate  = savedInstanceState.getBoolean("firstUpdate");
         requestOnResume  = savedInstanceState.getBoolean("requestOnResume");
+        additionalMails = savedInstanceState.getIntegerArrayList("additionalMails");
 
         setTitle( currentFolder );
         initList(startSearchWord );

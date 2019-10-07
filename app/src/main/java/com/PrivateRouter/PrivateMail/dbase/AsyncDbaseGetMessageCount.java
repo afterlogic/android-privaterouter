@@ -9,10 +9,13 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 
+import java.util.ArrayList;
+
 public class AsyncDbaseGetMessageCount extends AsyncTask<Void, Void, Long> {
     private final String filter;
     private final boolean unreadOnly;
     private String currentFolder;
+    private final ArrayList<Integer> additionalMails;
 
     public OnEndCallback getOnEndCallback() {
         return onEndCallback;
@@ -28,10 +31,11 @@ public class AsyncDbaseGetMessageCount extends AsyncTask<Void, Void, Long> {
     private OnEndCallback onEndCallback;
 
 
-    public AsyncDbaseGetMessageCount(String currentFolder, String filter, boolean unreadOnly) {
+    public AsyncDbaseGetMessageCount(String currentFolder, String filter, boolean unreadOnly, ArrayList<Integer> additionalMails) {
         this.currentFolder = currentFolder;
         this.filter = filter;
         this.unreadOnly = unreadOnly;
+        this.additionalMails = additionalMails;
     }
     @Override
     protected Long doInBackground(Void... voids) {
@@ -50,14 +54,14 @@ public class AsyncDbaseGetMessageCount extends AsyncTask<Void, Void, Long> {
 
         long messageCount;
         if (TextUtils.isEmpty(filter)) {
-            messageCount = database.messageDao().getAllFactoryCount(performFolder, starredOnly, unreadOnly );
+            messageCount = database.messageDao().getAllFactoryCount(performFolder, starredOnly, unreadOnly, additionalMails  );
         }
         else {
             if (filter.startsWith(MailListActivity.EMAIL_SEARCH_PREFIX) && filter.length() > MailListActivity.EMAIL_SEARCH_PREFIX.length()) {
                 String value = filter.substring(MailListActivity.EMAIL_SEARCH_PREFIX.length() + 1);
-                messageCount = database.messageDao().getAllFilterEmailFactoryCount(performFolder, "%" + value + "%", starredOnly, unreadOnly);
+                messageCount = database.messageDao().getAllFilterEmailFactoryCount(performFolder, "%" + value + "%", starredOnly, unreadOnly, additionalMails );
             } else {
-                messageCount = database.messageDao().getAllFilterFactoryCount(performFolder, "%" + filter + "%", starredOnly, unreadOnly);
+                messageCount = database.messageDao().getAllFilterFactoryCount(performFolder, "%" + filter + "%", starredOnly, unreadOnly, additionalMails );
             }
         }
         return  messageCount;

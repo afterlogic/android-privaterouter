@@ -276,7 +276,7 @@ public class MessageViewHolder extends MailViewHolder {
             rvThreads.setVisibility(View.GONE);
             ivThreadsIcon.setVisibility(View.GONE);
         }
- 
+
     }
 
     private void updateThreads() {
