@@ -65,6 +65,7 @@ public class MessagesRepository {
         liveData = new LivePagedListBuilder<>(factory, config)
                 .build();
 
+
         liveData.observe(lifecycleOwner, new Observer<PagedList<Message>>() {
             @Override
             public void onChanged(@Nullable PagedList<Message> messages) {

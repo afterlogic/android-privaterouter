@@ -20,14 +20,14 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
     private final LoadMoreCallback loadMoreCallback;
     private int errorCode;
     private ErrorType errorType;
-
+    private boolean haveNewValue = false;
+    private String folder;
 
     public interface  LoadMoreCallback {
-        void onSuccess();
+        void onSuccess(boolean hasNewMessages);
         void onFail(ErrorType errorType, int errorCode);
     }
 
-    String folder;
 
     public LoadMoreMessageLogic(String folder, LoadMoreCallback loadMoreCallback) {
         this.folder = folder;
@@ -52,7 +52,7 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
         loadMessageLogic.setSaveToTempCache(true);
         LoadMessageLogic.LoadMessageAnswer answer = loadMessageLogic.load();
         if (answer.success) {
-
+            haveNewValue = answer.haveNewValue;
             return true;
         }
         else {
@@ -83,7 +83,7 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
         if ( isCancelled()) return;
 
         if (result) {
-            loadMoreCallback.onSuccess();
+            loadMoreCallback.onSuccess( haveNewValue );
         }
         else {
             loadMoreCallback.onFail(errorType, errorCode);

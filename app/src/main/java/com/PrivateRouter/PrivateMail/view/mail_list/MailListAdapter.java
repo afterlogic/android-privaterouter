@@ -237,9 +237,6 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
 
-    public  int getItemMessageCount() {
-        return super.getItemCount();
-    }
 
     @Override
     public int getItemCount() {

@@ -30,6 +30,7 @@ import android.view.Window;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
+import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseGetMessageCount;
 import com.PrivateRouter.PrivateMail.dbase.AsyncDbaseOperation;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Folder;
@@ -111,6 +112,7 @@ public class MailListActivity extends AppCompatActivity
     private boolean paused = false;
     private String startSearchWord;
     private boolean unreadOnly = false;
+    private String currentFilder;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, String defaultFolder ) {
@@ -250,11 +252,10 @@ public class MailListActivity extends AppCompatActivity
     private void initList(String filter) {
 
         Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
-        Log.d("MailListLifeCycle", "initList currentFolder=" + currentFolder + " filter = " + filter );
+        Log.d("bars", "initList currentFolder=" + currentFolder + " filter = " + filter );
 
-
+        currentFilder = filter;
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
-
 
         boolean needFlatMode = false;
         boolean starredOnly = false;
@@ -269,7 +270,6 @@ public class MailListActivity extends AppCompatActivity
         }
 
         if (TextUtils.isEmpty(filter)) {
-
             factory = database.messageDao().getAllFactory(performFolder, starredOnly, unreadOnly );
         }
         else {
@@ -298,14 +298,12 @@ public class MailListActivity extends AppCompatActivity
             @Override
             public void onListUpdated(PagedList<Message> messagePagedList) {
 
+                Log.d("bars", "onListUpdated paused=" +paused );
                 if (!paused) {
 
                     mailListAdapter.submitList(messagePagedList);
 
-                    if ( !isLoading() ) {
-                        updateBarsVisible();
-                    }
-
+                    //updateBarsVisible();
 
                     if (firstUpdate ) {
                         requestMessages();
@@ -341,27 +339,25 @@ public class MailListActivity extends AppCompatActivity
 
 
     private void hideBars() {
+
         if (mailListAdapter!=null) {
-            setShowEmptyVisible(false);
+            Log.w("bars", "hideBars");
+            mailListAdapter.setShowEmptyMessage(false);
             mailListAdapter.setShowMoreBar(false);
             mailListAdapter.notifyDataSetChanged();
 
         }
     }
-    public void setShowEmptyVisible(boolean value) {
-        if (mailListAdapter!=null) {
-            Log.w("bars", "setShowEmptyVisible="+value);
-            mailListAdapter.setShowEmptyMessage(value);
-        }
-    }
 
 
-    private void updateShowMoreBarVisible( ) {
-        if (mailListAdapter==null)
-            return;
-        Log.d( "MAIN_MENU", "updateShowMoreBarVisible");
 
-        int loadedCount = mailListAdapter.getItemMessageCount();
+    private void updateShowMoreBarVisible(long messageCount) {
+
+        Log.d( "bars", "updateShowMoreBarVisible");
+            int fromAdapter = MessagesRepository.getInstance().getSize();
+        long loadedCount = messageCount;//
+        Log.d( "bars", "updateShowMoreBarVisible messageCount ="+messageCount + " fromAdapter="+fromAdapter);
+
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         if (account==null)
             return;
@@ -375,13 +371,10 @@ public class MailListActivity extends AppCompatActivity
         if (loadedCount < totalCount    ) {
             mailListAdapter.setShowMoreBar(true);
         }
+        /*
         else if (loadedCount == totalCount) {
             mailListAdapter.setShowMoreBar(false);
-        }
-
-        if (mailListAdapter!=null) {
-            mailListAdapter.notifyDataSetChanged();
-        }
+        }*/
 
     }
 
@@ -650,31 +643,38 @@ public class MailListActivity extends AppCompatActivity
             moveScrollToTop();
         }
 
-        onFinishLoadMessage();
-
-    }
-
-    private void onFinishLoadMessage() {
-        updateBarsVisible();
-
-
-        if (mailListAdapter!=null)
-            mailListAdapter.notifyDataSetChanged();
-
+        onFinishLoadMessage(hasNew);
 
 
         SettingsRepository.getInstance().setLastSyncDate(this, new Date().getTime() );
-
-        RequestViewUtils.hideRequest();
-
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
     }
 
-    private void updateBarsVisible() {
-        //tODO
-        //setShowEmptyVisible( pagedListLiveData.getValue().isEmpty() );
+    private void onFinishLoadMessage( boolean hasNewMessages) {
+        //if (!hasNewMessages)
+        updateBarsVisible();
 
-        updateShowMoreBarVisible();
+        RequestViewUtils.hideRequest();
+    }
+
+    private void updateBarsVisible() {
+        AsyncDbaseGetMessageCount asyncDbaseGetMessageCount = new AsyncDbaseGetMessageCount(currentFolder, currentFilder, unreadOnly );
+        asyncDbaseGetMessageCount.setOnEndCallback(new AsyncDbaseGetMessageCount.OnEndCallback() {
+            @Override
+            public void onDone(long messageCount) {
+                mailListAdapter.setShowEmptyMessage(messageCount==0);
+                updateShowMoreBarVisible(messageCount);
+                mailListAdapter.notifyDataSetChanged();
+            }
+        });
+        asyncDbaseGetMessageCount.execute();
+
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+
+            }
+        });
+
     }
 
     private void moveScrollToTop() {
@@ -809,9 +809,9 @@ public class MailListActivity extends AppCompatActivity
 
         LoadMoreMessageLogic loadMoreMessageLogic = new LoadMoreMessageLogic(currentFolder, new LoadMoreMessageLogic.LoadMoreCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess( boolean hasNewMessages) {
                 slMain.setRefreshing(false);
-                onFinishLoadMessage();
+                onFinishLoadMessage(hasNewMessages);
             }
 
             @Override
