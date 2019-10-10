@@ -157,6 +157,7 @@ public class MailListActivity extends AppCompatActivity
 
         initList(startSearchWord );
 
+
         initUpdateTimer();
 
         SoftKeyboard.hideKeyboard(this);
@@ -466,6 +467,7 @@ public class MailListActivity extends AppCompatActivity
         if (!TextUtils.isEmpty(startSearchWord)) {
             searchView.setQuery(startSearchWord, false);
             searchView.setIconified(false);
+            startSearchWord = "";
         }
     }
 
@@ -801,7 +803,6 @@ public class MailListActivity extends AppCompatActivity
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putBoolean("unreadOnly", unreadOnly);
         savedInstanceState.putString("currentFolder", currentFolder);
-        savedInstanceState.putString("startSearchWord", startSearchWord);
         savedInstanceState.putBoolean("firstUpdate", firstUpdate);
         savedInstanceState.putBoolean("requestOnResume", requestOnResume);
         savedInstanceState.putIntegerArrayList("additionalMails", additionalMails );
@@ -824,12 +825,11 @@ public class MailListActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         unreadOnly  = savedInstanceState.getBoolean("unreadOnly");
         currentFolder = savedInstanceState.getString("currentFolder");
-        startSearchWord = savedInstanceState.getString("startSearchWord");
         firstUpdate  = savedInstanceState.getBoolean("firstUpdate");
         requestOnResume  = savedInstanceState.getBoolean("requestOnResume");
         additionalMails = savedInstanceState.getIntegerArrayList("additionalMails");
 
         setTitle( currentFolder );
-        initList(startSearchWord );
+        initList(  );
     }
 }
