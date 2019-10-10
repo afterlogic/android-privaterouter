@@ -3,6 +3,9 @@ package com.PrivateRouter.PrivateMail.view.mail_view;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.requests.CallSetEmailSafety;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.EncryptDialogFragment;
 import com.PrivateRouter.PrivateMail.view.common.FragmentWithRequestPermission;
 import com.PrivateRouter.PrivateMail.view.utils.DateUtils;
@@ -38,6 +42,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public  class MailViewFragment extends FragmentWithRequestPermission implements  AttachmentsAdapter.OnAttachmentClick,
         EncryptCallback, DecryptCallback {
@@ -69,6 +75,9 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
 
     @BindView(R.id.tv_date)
     TextView tvDate;
+
+    @BindView(R.id.tv_hide_details)
+    TextView tvHideDetails;
 
     @BindView(R.id.cl_full_info)
     ViewGroup clFullInfo;
@@ -129,10 +138,28 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
             return false;
         });
 
+        initUI();
         showShortInfo();
         bind();
 
         return view;
+    }
+
+    private void initUI() {
+
+/*
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL);
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
+        attachmentsList.addItemDecoration(dividerItemDecoration);
+*/
+
+        if (SettingsRepository.getInstance().isNightMode(getActivity() ) ) {
+            tvHideDetails.setTextColor( getActivity().getResources().getColor(R.color.color_white));
+        }
+        else {
+            tvHideDetails.setTextColor( getActivity().getResources().getColor(R.color.colorPrimary));
+        }
+
     }
 
 

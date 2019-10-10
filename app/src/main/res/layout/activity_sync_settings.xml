@@ -18,9 +18,9 @@
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/divider_thickness"
+        android:background="@color/divider_color"
         android:layout_marginLeft="@dimen/margin_all_element_large"
-        android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"  />
@@ -36,10 +36,9 @@
     </com.PrivateRouter.PrivateMail.view.components.SettingTextView>
 
     <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_width="fill_parent"        android:layout_height="@dimen/divider_thickness"
+        android:background="@color/divider_color"
         android:layout_marginLeft="@dimen/margin_all_element_large"
-        android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"  />

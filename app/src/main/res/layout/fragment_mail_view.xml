@@ -79,10 +79,11 @@
         <View
             android:id="@+id/cv_subjectDivider"
             android:layout_width="fill_parent"
-            android:layout_height="1dp"
+
+            android:layout_height="@dimen/divider_thickness"
+            android:background="@color/divider_color"
             android:layout_marginStart="@dimen/margin_all_element_medium"
             android:layout_marginTop="@dimen/margin_all_element_large"
-            android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_subject" />
@@ -123,11 +124,11 @@
 
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:background="@color/divider_color"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
                 android:layout_marginTop="@dimen/margin_all_element_large"
-                android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_short_info_sender" />
@@ -250,10 +251,10 @@
             <View
                 android:id="@+id/from_top_divider"
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:background="@color/divider_color"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
-                android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_hide_details" />
@@ -262,11 +263,11 @@
             <View
                 android:id="@+id/cv_from_divider"
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:background="@color/divider_color"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
                 android:layout_marginTop="@dimen/margin_all_element_large"
-                android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_from" />
@@ -274,11 +275,11 @@
             <View
                 android:id="@+id/tv_to_divider"
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:background="@color/divider_color"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
                 android:layout_marginTop="@dimen/margin_all_element_large"
-                android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_to" />
@@ -286,11 +287,11 @@
             <View
                 android:id="@+id/tv_date_divider"
                 android:layout_width="fill_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/divider_thickness"
+                android:background="@color/divider_color"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/margin_all_element_medium"
                 android:layout_marginTop="@dimen/margin_all_element_medium"
-                android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_date_label" />
@@ -312,10 +313,10 @@
         <View
             android:id="@+id/cv_attachments_divider"
             android:layout_width="fill_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/divider_thickness"
+            android:background="@color/divider_color"
             android:layout_marginStart="@dimen/margin_all_element_medium"
             android:layout_marginTop="@dimen/margin_all_element_medium"
-            android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_attachments_list" />

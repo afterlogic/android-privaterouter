@@ -29,5 +29,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="fab_transition_y">65dp</dimen>
+    <dimen name="divider_thickness">1dp</dimen>
 
 </resources>

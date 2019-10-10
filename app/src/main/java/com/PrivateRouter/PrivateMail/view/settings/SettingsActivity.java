@@ -2,7 +2,10 @@ package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -32,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
+
 public class SettingsActivity extends AppCompatActivity {
 
 
@@ -51,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
         initSections();
         setTitle(R.string.all_settings);
     }
+
 
     private void initSections() {
         String common = getString(R.string.settings_common);
