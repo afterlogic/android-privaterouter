@@ -9,6 +9,7 @@ import android.util.Log;
 import com.PrivateRouter.PrivateMail.network.AfterLogicAPI;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.responses.GetMessageBaseResponse;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.PathUtils;
 
 import java.io.BufferedOutputStream;
@@ -133,7 +134,7 @@ public class DownloadLogic extends AsyncTask<Void, Void, Boolean> {
 
                     fileSizeDownloaded += read;
 
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                    Logger.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
                 }
 
                 outputStream.flush();

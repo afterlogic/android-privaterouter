@@ -49,6 +49,7 @@ import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.folders_list.FoldersListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.CommonSettingsActivity;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.mail_view.MailViewActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
@@ -132,7 +133,7 @@ public class MailListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-        Log.v("MailListLifeCycle","onCreate");
+        Logger.v("MailListLifeCycle","onCreate");
 
         if (getIntent()!=null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
@@ -151,7 +152,7 @@ public class MailListActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Log.v("MailListLifeCycle", "onStart");
+        Logger.v("MailListLifeCycle", "onStart");
 
 
         initList(startSearchWord );
@@ -166,7 +167,7 @@ public class MailListActivity extends AppCompatActivity
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.v("MailListLifeCycle","recreate");
+                Logger.v("MailListLifeCycle","recreate");
                 recreate();
             }
         };
@@ -205,7 +206,7 @@ public class MailListActivity extends AppCompatActivity
     @Override
     protected  void onStop() {
         super.onStop();
-        Log.v("MailListLifeCycle","onStop");
+        Logger.v("MailListLifeCycle","onStop");
         PrivateMailApplication.getInstance().getSyncLogic().pause();
 
         if (loadMessageLogic!=null)
@@ -214,7 +215,7 @@ public class MailListActivity extends AppCompatActivity
 
     protected void onPause() {
         super.onPause();
-        Log.v("MailListLifeCycle","onPause");
+        Logger.v("MailListLifeCycle","onPause");
         paused = true;
 
         if (loadMessageLogic!=null) {
@@ -230,7 +231,7 @@ public class MailListActivity extends AppCompatActivity
         paused = false;
 
         //String str = mailListAdapter==null? "null": String.valueOf(mailListAdapter.getItemCount());
-        //Log.v("MailListLifeCycle","onResume requestOnResume="+requestOnResume+ "  adapter=" +str);
+        //Logger.v("MailListLifeCycle","onResume requestOnResume="+requestOnResume+ "  adapter=" +str);
 
         if (requestOnResume) {
             requestOnResume = false;
@@ -266,7 +267,7 @@ public class MailListActivity extends AppCompatActivity
             @Override
             public void onListUpdated(PagedList<Message> messagePagedList) {
 
-                Log.d("bars", "onListUpdated paused=" +paused );
+                Logger.d("bars", "onListUpdated paused=" +paused );
                 if (!paused) {
 
                     mailListAdapter.submitList(messagePagedList);
@@ -307,7 +308,7 @@ public class MailListActivity extends AppCompatActivity
     private void hideBars() {
 
         if (mailListAdapter!=null) {
-            Log.w("bars", "hideBars");
+            Logger.v("bars", "hideBars");
             mailListAdapter.setShowEmptyMessage(false);
             mailListAdapter.setShowMoreBar(false);
             mailListAdapter.notifyDataSetChanged();
@@ -319,10 +320,10 @@ public class MailListActivity extends AppCompatActivity
 
     private void updateShowMoreBarVisible(long messageCount) {
 
-        Log.d( "bars", "updateShowMoreBarVisible");
+        Logger.d( "bars", "updateShowMoreBarVisible");
             int fromAdapter = MessagesRepository.getInstance().getSize();
         long loadedCount = messageCount;//
-        Log.d( "bars", "updateShowMoreBarVisible messageCount ="+messageCount + " fromAdapter="+fromAdapter);
+        Logger.d( "bars", "updateShowMoreBarVisible messageCount ="+messageCount + " fromAdapter="+fromAdapter);
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         if (account==null)
@@ -809,7 +810,7 @@ public class MailListActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.v("MailListLifeCycle","onDestroy");
+        Logger.v("MailListLifeCycle","onDestroy");
         if(broadcastReceiver!=null)
         {
             unregisterReceiver(broadcastReceiver);
@@ -819,7 +820,7 @@ public class MailListActivity extends AppCompatActivity
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.v("MailListLifeCycle","onRestoreInstanceState");
+        Logger.v("MailListLifeCycle","onRestoreInstanceState");
         super.onRestoreInstanceState(savedInstanceState);
         unreadOnly  = savedInstanceState.getBoolean("unreadOnly");
         currentFolder = savedInstanceState.getString("currentFolder");

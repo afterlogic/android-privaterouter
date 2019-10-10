@@ -8,6 +8,7 @@ import android.util.Log;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessagePoolLogic;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,7 +55,7 @@ public class ImportFileTask  extends AsyncTask<Void, Void, ArrayList<PGPKey>> {
         }
         catch (IOException e)
         {
-            Log.e("ImportFileTask", "File write failed: " + e.toString());
+            Logger.e("ImportFileTask", "File write failed: " + e.toString());
         }
 
         if (arrayList==null)

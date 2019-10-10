@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -177,7 +178,7 @@ public class HostEditText extends AppCompatEditText {
     private void setPrefix(@NotNull String prefix) {
         handleChanges = false;
 
-        Log.d("setPrefix", "setPrefix="+prefix);
+        Logger.d("setPrefix", "setPrefix="+prefix);
         this.setTag(prefix);
 
         String text = getText().toString();

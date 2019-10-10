@@ -15,6 +15,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallGetCTag;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetContacts;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetContactsInfo;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        Log.i(TAG, "start updating pool");
+        Logger.i(TAG, "start updating pool");
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         boolean success;
 

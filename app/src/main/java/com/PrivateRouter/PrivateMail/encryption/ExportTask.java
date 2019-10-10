@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.PathUtils;
 
 import java.io.File;
@@ -61,7 +62,7 @@ public class ExportTask extends AsyncTask<String, Void, Void> {
         }
         catch (IOException e)
         {
-            Log.e("Exception", "File write failed: " + e.toString());
+            Logger.e("Exception", "File write failed: " + e.toString());
         }
     }
 

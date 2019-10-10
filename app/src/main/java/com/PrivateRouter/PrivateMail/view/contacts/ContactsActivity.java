@@ -43,6 +43,7 @@ import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.utils.SoftKeyboard;
 
@@ -237,7 +238,7 @@ public class ContactsActivity extends AppCompatActivity
 
     private void initList(String filter) {
 
-        Log.d(TAG, "initList currentFolder=" + currentStorage + " filter = " + filter);
+        Logger.d(TAG, "initList currentFolder=" + currentStorage + " filter = " + filter);
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 

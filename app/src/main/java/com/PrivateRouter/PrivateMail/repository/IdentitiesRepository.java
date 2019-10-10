@@ -8,6 +8,7 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetGroups;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetIdentities;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class IdentitiesRepository  {
 
             @Override
             public void onFail(ErrorType errorType, int serverCode) {
-                Log.e("Identities", "Identities errorType ="+errorType + " serverError = "+serverCode);
+                Logger.e("Identities", "Identities errorType ="+errorType + " serverError = "+serverCode);
             }
         });
         callGetIdentities.start();

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,12 +31,12 @@ public class KeysRepository {
     private ArrayList<PGPKey> keys = null;
 
     private void load() {
-        Log.d(TAG, "load");
+        Logger.d(TAG, "load");
         try {
             Context context = PrivateMailApplication.getContext();
             File file = new File(context.getDir("data", MODE_PRIVATE), "map");
             if (!file.exists()) {
-                Log.d(TAG, "empty");
+                Logger.d(TAG, "empty");
                 keys = new ArrayList<>();
                 return;
             }
@@ -43,7 +44,7 @@ public class KeysRepository {
 
             keys = (ArrayList<PGPKey>) ois.readObject();
 
-            Log.d(TAG, "load complete keys.size="+keys.size());
+            Logger.d(TAG, "load complete keys.size="+keys.size());
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -60,7 +61,7 @@ public class KeysRepository {
             outputStream.flush();
             outputStream.close();
 
-            Log.d(TAG, "save");
+            Logger.d(TAG, "save");
 
         } catch (IOException e) {
             e.printStackTrace();

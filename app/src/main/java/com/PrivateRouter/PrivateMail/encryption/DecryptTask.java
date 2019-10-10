@@ -14,6 +14,7 @@ import com.PrivateRouter.PrivateMail.model.Email;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 
 import org.bouncycastle.openpgp.PGPException;
@@ -137,7 +138,7 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
                     .verifyWith(publicKeyRings).handleMissingPublicKeysWith(new MissingPublicKeyCallback() {
                         @Override
                         public PGPPublicKey onMissingPublicKeyEncountered(@NonNull Long keyId) {
-                            Log.d("2", "mis key");
+                            Logger.d("2", "mis key");
                             return null;
                         }
                     })  .build();

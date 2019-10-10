@@ -26,7 +26,7 @@ public class SpeedyLinearLayoutManager extends LinearLayoutManager {
     public int scrollVerticallyBy(int delta, RecyclerView.Recycler recycler, RecyclerView.State state)
     {
         int value = (int) Math.min(super.scrollVerticallyBy((int) (delta ), recycler, state)*0.7f, 1);
-        Log.d("123", "value="+value);
+        Logger.d("123", "value="+value);
         return value;
     }*/
 }

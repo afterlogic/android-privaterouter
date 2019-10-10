@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Message;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -252,7 +253,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
 
     public void setShowMoreBar(boolean val) {
-        Log.w("bars", "setShowMoreBar="+val);
+        Logger.v("bars", "setShowMoreBar="+val);
         showMoreBar = val;
     }
 

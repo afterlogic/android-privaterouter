@@ -15,6 +15,7 @@ import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.model.errors.OnErrorInterface;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetMessagesBodies;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetMessagesBase;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
     }
 
     public boolean process() {
-        Log.i(TAG, "start loading for folder "+folder);
+        Logger.i(TAG, "start loading for folder "+folder);
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         boolean success;
 
@@ -96,7 +97,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
 
 
-        Log.i(TAG, "complete loading for folder "+folder);
+        Logger.i(TAG, "complete loading for folder "+folder);
 
         return true;
     }
@@ -169,7 +170,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
     private boolean loadServerUidList() {
         long currentTime = System.currentTimeMillis();
-        Log.d(TAG, "loadServerUidList " +currentTime  );
+        Logger.d(TAG, "loadServerUidList " +currentTime  );
 
         CallGetMessagesBase callGetMessages = new CallGetMessagesBase();
         callGetMessages.setFolder(folder);
@@ -182,7 +183,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
         }
 
 
-        Log.v(TAG, "loadServerUidList complete in "+ (System.currentTimeMillis()-currentTime)+ " ms");
+        Logger.v(TAG, "loadServerUidList complete in "+ (System.currentTimeMillis()-currentTime)+ " ms");
         return serverList != null;
     }
 
@@ -207,19 +208,19 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
     private void loadCurrentsUids() {
         long currentTime = System.currentTimeMillis();
-        Log.v(TAG, "loadCurrentsUids " +currentTime  );
+        Logger.v(TAG, "loadCurrentsUids " +currentTime  );
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
         cachedList = database.messageDao().selectMessageBase(folder);
 
 
-        Log.v(TAG, "loadCurrentsUids complete in "+ (System.currentTimeMillis()-currentTime)+ " ms  size =" + cachedList .size() );
+        Logger.v(TAG, "loadCurrentsUids complete in "+ (System.currentTimeMillis()-currentTime)+ " ms  size =" + cachedList .size() );
     }
 
 
     private void addForLoading(MessageBase messageBase) {
         String str = (messageBase.getParentUid()==0)?"": " parentID = "+messageBase.getParentUid();
-        Log.v(TAG, "addForLoading "+ messageBase.getUid() + str);
+        Logger.v(TAG, "addForLoading "+ messageBase.getUid() + str);
 
         loadMessageAnswer.haveNewValue = true;
         if (messageBase.getParentUid()==0)
@@ -229,14 +230,14 @@ public class LoadMessageLogic   implements OnErrorInterface {
     }
 
     private void addForDelete(MessageBase messageBase) {
-        Log.v(TAG, "addForDelete "+messageBase.getUid());
+        Logger.v(TAG, "addForDelete "+messageBase.getUid());
         uidsForDelete.addElement(messageBase.getUid());
     }
 
 
     private void removeDeletedFromCache() {
 
-        Log.d(TAG, "removeDeletedFromCache cachesUidList "  );
+        Logger.d(TAG, "removeDeletedFromCache cachesUidList "  );
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
         MessageDao messageDao = database.messageDao();
 
@@ -244,10 +245,10 @@ public class LoadMessageLogic   implements OnErrorInterface {
             if (isCancelled()) return;
 
             messageDao.deletedFromList(folder, uids);
-            Log.v(TAG, "removeDeletedFromCache delete = "+ uids.size() );
+            Logger.v(TAG, "removeDeletedFromCache delete = "+ uids.size() );
         }
 
-        Log.v(TAG, "removeDeletedFromCache complete");
+        Logger.v(TAG, "removeDeletedFromCache complete");
     }
 
 
@@ -262,7 +263,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
     }
 
     private boolean loadMessagesBody(InternalLists<MessageBase> internalLists) {
-        Log.d(TAG, "loadMessagesBody "+folder);
+        Logger.d(TAG, "loadMessagesBody "+folder);
 
         boolean hasSkipped = false;
 
@@ -272,7 +273,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
             if (isCancelled()) return false;
 
-            Log.v(TAG, "loadMessagesBody folder= "+folder +" list=" + index);
+            Logger.v(TAG, "loadMessagesBody folder= "+folder +" list=" + index);
             ArrayList<Message> loadedMessage = loadMessagePatchBody(list);
             if (loadedMessage != null) {
                 performThreadStruct(loadedMessage, list);
@@ -281,14 +282,14 @@ public class LoadMessageLogic   implements OnErrorInterface {
                 addToDBase(loadedMessage);
             }
             else {
-                Log.i(TAG, "loadMessagesBody "+ index+ " failed");
+                Logger.i(TAG, "loadMessagesBody "+ index+ " failed");
                 if (hasSkipped)
                     return false;
                 hasSkipped = true;
             }
           //  index++;
         }
-        Log.d(TAG, "loadMessagesBody complete");
+        Logger.d(TAG, "loadMessagesBody complete");
         return !hasSkipped;
     }
 

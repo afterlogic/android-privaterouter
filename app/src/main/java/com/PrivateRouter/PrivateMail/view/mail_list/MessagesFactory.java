@@ -12,6 +12,7 @@ import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.network.logics.LoadMessageLogic;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +52,8 @@ public class MessagesFactory extends AsyncTask<Void, Void, DataSource.Factory<In
 
     @Override
     protected DataSource.Factory<Integer, Message>  doInBackground(Void... voids) {
-        Log.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
-        Log.d("bars", "initList currentFolder=" + currentFolder + " filter = " + filter );
+        Logger.d(LoadMessageLogic.TAG, "initList currentFolder=" + currentFolder + " filter = " + filter );
+        Logger.d("bars", "initList currentFolder=" + currentFolder + " filter = " + filter );
 
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();

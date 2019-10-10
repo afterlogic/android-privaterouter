@@ -17,6 +17,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallGetFoldersMeta;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        Log.i(TAG, "start updating pool");
+        Logger.i(TAG, "start updating pool");
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         boolean success;
 
@@ -64,7 +65,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
             if (!success  || isCancelled() ) return false;
         }
 
-        Log.i(TAG, "finish updating pool");
+        Logger.i(TAG, "finish updating pool");
         return !haveErrorLoadingFolder;
 
 
@@ -82,7 +83,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     private boolean updateFoldersMeta() {
         long currentTime = System.currentTimeMillis();
-        Log.d(TAG, "updateFoldersMeta " +currentTime  );
+        Logger.d(TAG, "updateFoldersMeta " +currentTime  );
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         ArrayList<String> folders = new ArrayList<>();
@@ -125,7 +126,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
                 String newHash = meta.getHash();
                 String oldHash = getFolderCurrentHash(folderName);
 
-                Log.v(TAG, "folder = " + folderName + " newHash = " + newHash + " currentHash=" + oldHash);
+                Logger.v(TAG, "folder = " + folderName + " newHash = " + newHash + " currentHash=" + oldHash);
 
                 boolean forceCurrentFolder = folderName.equals(currentFolderName) && forceCurrent;
 
@@ -149,12 +150,12 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     }
 
     private boolean updateFolder(final String folderName, final  String newHash) {
-        Log.i(TAG, "updateFolder "+folderName);
+        Logger.i(TAG, "updateFolder "+folderName);
         LoadMessageLogic loadMessageLogic = new LoadMessageLogic(folderName);
         LoadMessageLogic.LoadMessageAnswer answer = loadMessageLogic.load();
 
         if (answer.success) {
-            Log.i(TAG, "updateFolder "+folderName+ " success");
+            Logger.i(TAG, "updateFolder "+folderName+ " success");
             saveNewFolderHash(folderName, newHash);
 
             if (answer.haveNewValue && folderName.equals(currentFolderName) )
@@ -164,7 +165,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
         }
         else {
-            Log.i(TAG, "updateFolder "+folderName+ " fail");
+            Logger.i(TAG, "updateFolder "+folderName+ " fail");
             LoadMessagePoolLogic.this.onError(answer.errorType, answer.errorCode);
             haveErrorLoadingFolder = true;
             return false;

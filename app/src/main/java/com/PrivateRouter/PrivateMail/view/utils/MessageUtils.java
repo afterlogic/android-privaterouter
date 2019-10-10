@@ -52,7 +52,7 @@ public class MessageUtils {
     public static void setMessageBody(Message message, TextView textView) {
         if (!TextUtils.isEmpty(message.getPlain())) {
             String text = message.getPlain().trim();
-            Log.d("MessageUtils", "text");
+            Logger.d("MessageUtils", "text");
 
             int index = text.indexOf("Comment");
             int index2 =  text.indexOf("<br />", index+1);

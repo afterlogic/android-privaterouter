@@ -7,6 +7,7 @@ import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
 import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
+import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -119,9 +120,11 @@ public final class ApiFactory {
         };
         clientBuilder.addInterceptor(headerAuthorizationInterceptor);
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        clientBuilder.addInterceptor(interceptor);
+        if (Logger.useLog) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            clientBuilder.addInterceptor(interceptor);
+        }
 
         return clientBuilder.build();
     }
