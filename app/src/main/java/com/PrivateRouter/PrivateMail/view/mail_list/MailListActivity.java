@@ -45,6 +45,7 @@ import com.PrivateRouter.PrivateMail.repository.MessagesRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.folders_list.FoldersListActivity;
@@ -66,7 +67,7 @@ import butterknife.OnClick;
 
 import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
-public class MailListActivity extends AppCompatActivity
+public class MailListActivity extends RecreatingActivity
         implements  CallRequestResult<Boolean>,
         SwipeRefreshLayout.OnRefreshListener, MailListAdapter.OnMessageClick {
 
@@ -140,7 +141,6 @@ public class MailListActivity extends AppCompatActivity
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
-        initBroadcastReceiver();
         initModeSubject();
         openNormalMode();
         initUI();
@@ -162,18 +162,9 @@ public class MailListActivity extends AppCompatActivity
 
         SoftKeyboard.hideKeyboard(this);
     }
-    BroadcastReceiver broadcastReceiver;
 
-    private void initBroadcastReceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Logger.v("MailListLifeCycle","recreate");
-                recreate();
-            }
-        };
-        registerReceiver(broadcastReceiver,  new IntentFilter(CommonSettingsActivity.THEME_CHANGE));
-    }
+
+
 
     private void initModeSubject() {
         mailListModeMediator = new MailListModeMediator(this);
@@ -459,7 +450,7 @@ public class MailListActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String query) {
-
+                startSearchWord = query;
                 initList(query);
                 return true;
             }
@@ -467,7 +458,6 @@ public class MailListActivity extends AppCompatActivity
         if (!TextUtils.isEmpty(startSearchWord)) {
             searchView.setQuery(startSearchWord, false);
             searchView.setIconified(false);
-            startSearchWord = "";
         }
     }
 
@@ -808,16 +798,7 @@ public class MailListActivity extends AppCompatActivity
         savedInstanceState.putIntegerArrayList("additionalMails", additionalMails );
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Logger.v("MailListLifeCycle","onDestroy");
-        if(broadcastReceiver!=null)
-        {
-            unregisterReceiver(broadcastReceiver);
-            broadcastReceiver = null;
-        }
-    }
+
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {

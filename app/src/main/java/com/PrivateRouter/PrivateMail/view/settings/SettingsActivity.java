@@ -16,6 +16,7 @@ import com.PrivateRouter.PrivateMail.R;
 
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.common.StringAdapter;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
@@ -37,7 +38,7 @@ import butterknife.OnClick;
 
 import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends RecreatingActivity {
 
 
     @BindView(R.id.rv_sections)

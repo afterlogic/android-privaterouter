@@ -41,6 +41,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.common.CoolLayoutManager;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.Logger;
@@ -59,7 +60,7 @@ import butterknife.OnClick;
 import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.LOGOUT;
 
-public class ContactsActivity extends AppCompatActivity
+public class ContactsActivity extends RecreatingActivity
         implements CallRequestResult<Boolean>,
         SwipeRefreshLayout.OnRefreshListener, ContactsAdapter.OnContactClick {
 

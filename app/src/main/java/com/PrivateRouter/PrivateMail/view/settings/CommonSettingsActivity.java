@@ -18,6 +18,7 @@ import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.components.SettingSwitch;
 import com.PrivateRouter.PrivateMail.view.components.SettingTextView;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
@@ -28,7 +29,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CommonSettingsActivity extends AppCompatActivity {
+public class CommonSettingsActivity extends RecreatingActivity {
 
 
     public static final String THEME_CHANGE = "THEME_CHANGE";

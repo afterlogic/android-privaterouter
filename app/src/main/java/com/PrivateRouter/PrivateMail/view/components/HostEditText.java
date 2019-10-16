@@ -2,22 +2,14 @@ package com.PrivateRouter.PrivateMail.view.components;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
@@ -31,6 +23,7 @@ public class HostEditText extends AppCompatEditText {
     private final String HTTP_PREFIX = "http://";
     private final String HTTPS_PREFIX = "https://";
     private int shiftX;
+    private boolean disabled = true;
 
 
     public HostEditText(Context context) {
@@ -49,7 +42,8 @@ public class HostEditText extends AppCompatEditText {
     }
 
     private void init() {
-
+        if (disabled)
+            return;
 
         textPaint = new Paint( getPaint() );
         textPaint.setColor(getContext().getResources().getColor(R.color.color_white));
