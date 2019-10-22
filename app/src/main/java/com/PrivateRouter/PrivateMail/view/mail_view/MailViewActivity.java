@@ -30,6 +30,7 @@ import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.repository.MessagesRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.contacts.ContactsActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
 import com.PrivateRouter.PrivateMail.creator.ReplyMessageCreator;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 
 import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.LOGOUT;
 
-public class MailViewActivity extends AppCompatActivity {
+public class MailViewActivity extends RecreatingActivity {
 
     Menu menu;
 

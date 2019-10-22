@@ -53,6 +53,7 @@ import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.EmailValidator;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
@@ -68,7 +69,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactActivity extends AppCompatActivity implements ContactSettingsRepository.OnContactLoadCallback {
+public class ContactActivity extends RecreatingActivity implements ContactSettingsRepository.OnContactLoadCallback {
 
     private ContactSettings contactSettings;
     private Menu menu;

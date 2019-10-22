@@ -11,9 +11,14 @@ public class BaseResponse {
     private
     String module;
 
-    @SerializedName("ErrorType")
+    @SerializedName("ErrorCode")
     private
     int errorCode;
+
+    @SerializedName("ErrorMessage")
+    private
+    String errorMessage;
+
 
     @SerializedName("@Time")
     private
@@ -66,5 +71,13 @@ public class BaseResponse {
 
     public void setSubscriptionsResult(String subscriptionsResult) {
         SubscriptionsResult = subscriptionsResult;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

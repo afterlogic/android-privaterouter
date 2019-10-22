@@ -20,6 +20,7 @@ import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.components.HostEditText;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
+import com.PrivateRouter.PrivateMail.view.mail_view.MailViewActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import butterknife.BindView;
@@ -29,7 +30,7 @@ import butterknife.OnClick;
 public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLoginCallback {
 
     @BindView(R.id.et_host)
-    HostEditText etHost;
+    EditText etHost;
 
 
     @BindView(R.id.et_email)
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     public void btLoginClick() {
         String login = etEmail.getText().toString();
         String pass = etPassword.getText().toString();
-        String host = etHost.getFullText();
+        String host = etHost.getText().toString();
 
         if (checkFieldsDataCorrect()) {
             RequestViewUtils.showRequest(this);
@@ -111,13 +112,18 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType,  String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        final int needUpgradePlanCode = 108;
+        if (errorType == ErrorType.ERROR_REQUEST && serverCode == needUpgradePlanCode) {
+            startActivity(new Intent(this, UpgradePlanActivity.class) );
+        }
+        else
+            RequestViewUtils.showError(this, errorType, serverCode);
     }
 
     private boolean checkFieldsDataCorrect() {
-        String host = etHost.getFullText();
+        String host = etHost.getText().toString();
 
 
         if (etEmail.getText().toString().isEmpty()) {

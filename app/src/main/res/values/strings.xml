@@ -235,4 +235,9 @@
     <string name="settings_dark_theme">Dark theme</string>
     <string name="mail_list_no_messages">No messages</string>
 
+
+    <string name="upgrade_plan_title">Mobile apps are not allowed in your billing plan.\nPlease upgrade plan.</string>
+    <string name="upgrade_plan_upgrade_button">Upgrade Now</string>
+    <string name="upgrade_plan_back_button">Back to login</string>
+
 </resources>

@@ -33,6 +33,7 @@ import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.LoginActivity;
+import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.settings.SettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
@@ -44,7 +45,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupActivity extends AppCompatActivity {
+public class GroupActivity extends RecreatingActivity {
     public static final int OPEN_CONTACT = 113;
     public static final int UPDATED_GROUP = 114;
     private Menu menu;

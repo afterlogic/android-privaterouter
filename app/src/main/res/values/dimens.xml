@@ -6,6 +6,7 @@
     <dimen name="margin_all_element_small">4dp</dimen>
     <dimen name="margin_all_element_medium">8dp</dimen>
     <dimen name="margin_all_element_large">16dp</dimen>
+    <dimen name="margin_all_element_largest">48dp</dimen>
 
     <dimen name="padding_all_element_small">4dp</dimen>
     <dimen name="padding_all_element_medium">8dp</dimen>

@@ -3,7 +3,7 @@ package com.PrivateRouter.PrivateMail.view.utils;
 import android.util.Log;
 
 public class Logger {
-    public final static boolean useLog = false;
+    public final static boolean useLog = true;
 
     public static void v(String tag, String message) {
         if (useLog)

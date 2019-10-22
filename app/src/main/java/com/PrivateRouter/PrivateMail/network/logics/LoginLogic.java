@@ -25,7 +25,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
     public  interface OnLoginCallback {
         void onLogin();
-        void onFail(ErrorType failConnect, int errorCode);
+        void onFail(ErrorType failConnect, String errorString, int errorCode);
     }
     OnLoginCallback onLogin;
     String login;
@@ -49,8 +49,11 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
     public void onSuccess(LoginResponse result) {
         if (result==null || result.getResult() == null) {
             Context context = PrivateMailApplication.getContext();
-            Toast.makeText(context, context.getString(R.string.login_error), Toast.LENGTH_LONG).show();
-            RequestViewUtils.hideRequest();
+            String errorString = context.getString(R.string.login_error);
+            if (result!=null)
+                errorString = result.getErrorMessage();
+            if (onLogin!=null)
+                onLogin.onFail(ErrorType.SERVER_ERROR, errorString, result.getErrorCode());
             return;
         }
         String token = result.getResult().getAuthToken();
@@ -63,7 +66,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
     @Override
     public void onFail(ErrorType errorType, int serverCode) {
         if (onLogin!=null)
-            onLogin.onFail(ErrorType.FAIL_CONNECT, 0);
+            onLogin.onFail(errorType, "", serverCode);
     }
 
     private void loadAccounts() {
@@ -83,7 +86,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
             @Override
             public void onFail(ErrorType errorCode, int serverCode) {
                 if (onLogin!=null)
-                    onLogin.onFail(ErrorType.FAIL_CONNECT, 0);
+                    onLogin.onFail(ErrorType.FAIL_CONNECT, "", 0);
             }
         });
         callGetAccounts.start();
@@ -104,7 +107,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
                 onLogin.onLogin();
         }, (errorType, errorCode) -> {
             if (onLogin != null)
-                onLogin.onFail(ErrorType.FAIL_CONNECT, 0);
+                onLogin.onFail(ErrorType.FAIL_CONNECT, "",0);
         });
         loadFolderLogic.execute();
 
