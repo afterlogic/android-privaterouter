@@ -1,5 +1,7 @@
 package com.PrivateRouter.PrivateMail.network.responses;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 public class BaseResponse {
@@ -30,7 +32,7 @@ public class BaseResponse {
 
 
     public boolean isSuccess() {
-        return errorCode == 0;
+        return errorCode == 0 && TextUtils.isEmpty(errorMessage);
     }
 
     public int getAuthenticatedUserId() {

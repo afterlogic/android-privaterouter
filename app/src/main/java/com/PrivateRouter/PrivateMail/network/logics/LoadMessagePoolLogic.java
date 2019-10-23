@@ -37,6 +37,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private HashMap<String, FolderMeta> newFolderMeta;
     private boolean haveErrorLoadingFolder = false;
     private boolean forceCurrent = false;
+    private String errorString;
 
     public  LoadMessagePoolLogic(@NonNull String folder, @NonNull CallRequestResult<Boolean> callback) {
         this.callback = callback;
@@ -166,7 +167,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         }
         else {
             Logger.i(TAG, "updateFolder "+folderName+ " fail");
-            LoadMessagePoolLogic.this.onError(answer.errorType, answer.errorCode);
+            LoadMessagePoolLogic.this.onError(answer.errorType, answer.errorString, answer.errorCode);
             haveErrorLoadingFolder = true;
             return false;
         }
@@ -199,9 +200,10 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
 
     @Override
-    public void onError(ErrorType errorType, int errorCode) {
+    public void onError(ErrorType errorType, String errorString, int errorCode) {
         this.errorType = errorType;
         this.errorCode = errorCode;
+        this.errorString = errorString;
     }
 
     @Override
@@ -212,7 +214,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
             callback.onSuccess( haveNewInCurrentFolder );
         }
         else {
-            callback.onFail(errorType, errorCode);
+            callback.onFail(errorType, errorString, errorCode);
         }
 
     }

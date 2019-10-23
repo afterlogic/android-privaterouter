@@ -8,5 +8,5 @@ import java.util.ArrayList;
 public interface OnGroupsLoadCallback {
     void onGroupsLoad(ArrayList<Group> groups);
 
-    void onGroupsLoadFail(ErrorType errorType, int serverCode);
+    void onGroupsLoadFail(ErrorType errorType,String errorString,  int serverCode);
 }

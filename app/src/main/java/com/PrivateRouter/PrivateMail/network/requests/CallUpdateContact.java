@@ -40,12 +40,12 @@ public class CallUpdateContact extends CallRequest<String> implements Callback<U
                     callback.onSuccess(updateContactResponse.getResult().getUuid());
                 }
             } else if (callback != null) {
-                callback.onFail(ErrorType.ERROR_REQUEST, updateContactResponse.getErrorCode());
+                callback.onFail(ErrorType.ERROR_REQUEST, updateContactResponse.getErrorMessage(), updateContactResponse.getErrorCode());
 
             }
         } else {
             if (callback != null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
     }
 
@@ -53,7 +53,7 @@ public class CallUpdateContact extends CallRequest<String> implements Callback<U
     @Override
     public void onFailure(Call<UpdateContactResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

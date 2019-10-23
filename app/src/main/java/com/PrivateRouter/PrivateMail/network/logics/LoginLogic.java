@@ -64,9 +64,9 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
     }
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType, String errorString,  int serverCode) {
         if (onLogin!=null)
-            onLogin.onFail(errorType, "", serverCode);
+            onLogin.onFail(errorType, errorString, serverCode);
     }
 
     private void loadAccounts() {
@@ -84,9 +84,9 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
 
             @Override
-            public void onFail(ErrorType errorCode, int serverCode) {
+            public void onFail(ErrorType errorCode, String errorString,  int serverCode) {
                 if (onLogin!=null)
-                    onLogin.onFail(ErrorType.FAIL_CONNECT, "", 0);
+                    onLogin.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
             }
         });
         callGetAccounts.start();
@@ -105,9 +105,9 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
             if (onLogin!=null)
                 onLogin.onLogin();
-        }, (errorType, errorCode) -> {
+        }, (errorType, errorString, errorCode) -> {
             if (onLogin != null)
-                onLogin.onFail(ErrorType.FAIL_CONNECT, "",0);
+                onLogin.onFail(ErrorType.FAIL_CONNECT, errorString,0);
         });
         loadFolderLogic.execute();
 

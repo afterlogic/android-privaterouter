@@ -139,8 +139,8 @@ public class MailViewActivity extends RecreatingActivity {
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
-
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
+                RequestViewUtils.showError(MailViewActivity.this, errorType, errorString, serverCode);
             }
         });
         calSetMessagesSeen.setMessage(message);
@@ -275,9 +275,9 @@ public class MailViewActivity extends RecreatingActivity {
     }
 
 
-    private void onFailMove(ErrorType errorType, int serverCode) {
+    private void onFailMove(ErrorType errorType, String errorString,  int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
 

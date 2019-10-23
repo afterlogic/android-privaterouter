@@ -28,14 +28,18 @@ public class RequestViewUtils {
             progressDialog.dismiss();
     }
 
-    public static void showError(Context context, ErrorType errorType, int serverError) {
-
-        String[] strings = context.getResources().getStringArray(R.array.request_server_error);
-        String str = strings[errorType.ordinal()];
-        if (serverError>0) {
-            str = str + ". "+ context.getString(R.string.request_error_code)+": "+ serverError;
+    public static void showError(Context context, ErrorType errorType, String errorString,  int serverError) {
+        String str;
+        if (errorType == ErrorType.ERROR_REQUEST) {
+            str = errorString;
         }
-
+        else {
+            String[] strings = context.getResources().getStringArray(R.array.request_server_error);
+            str = strings[errorType.ordinal()];
+            if (serverError > 0) {
+                str = str + ". " + context.getString(R.string.request_error_code) + ": " + serverError;
+            }
+        }
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
 
     }

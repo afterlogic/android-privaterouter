@@ -84,20 +84,20 @@ public class CallGetMessagesBodies extends CallRequest<ArrayList<Message>>  impl
             }
             else {
                 if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, getMessageResponse.getErrorCode() );
+                    callback.onFail(ErrorType.ERROR_REQUEST, getMessageResponse.getErrorMessage(), getMessageResponse.getErrorCode() );
             }
 
         }
         else {
             if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code() );
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
         }
     }
 
     @Override
     public void onFailure(Call<GetMessagesBodiesResponse> call, Throwable t) {
         if (callback!=null)
-            callback.onFail(ApiError.fromThrowable(t), 0);
+            callback.onFail(ApiError.fromThrowable(t), "",0);
     }
 
     public void cancel() {

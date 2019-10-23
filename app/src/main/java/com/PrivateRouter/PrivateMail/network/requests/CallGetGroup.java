@@ -40,11 +40,11 @@ public class CallGetGroup extends CallRequest<Group> implements Callback<GetGrou
                     callback.onSuccess(getGroupResponse.getResult());
                 }
             } else if (callback != null) {
-                callback.onFail(ErrorType.ERROR_REQUEST, getGroupResponse.getErrorCode());
+                callback.onFail(ErrorType.ERROR_REQUEST, getGroupResponse.getErrorMessage(), getGroupResponse.getErrorCode());
             }
         } else {
             if (callback != null) {
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
             }
         }
     }
@@ -52,7 +52,7 @@ public class CallGetGroup extends CallRequest<Group> implements Callback<GetGrou
     @Override
     public void onFailure(Call<GetGroupResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

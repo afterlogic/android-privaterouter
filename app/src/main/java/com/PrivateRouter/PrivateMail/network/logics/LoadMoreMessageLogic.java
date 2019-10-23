@@ -22,10 +22,11 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
     private ErrorType errorType;
     private boolean haveNewValue = false;
     private String folder;
+    private String errorString;
 
     public interface  LoadMoreCallback {
         void onSuccess(boolean hasNewMessages);
-        void onFail(ErrorType errorType, int errorCode);
+        void onFail(ErrorType errorType, String errorString, int errorCode);
     }
 
 
@@ -58,6 +59,7 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
         else {
             this.errorType = answer.errorType;
             this.errorCode = answer.errorCode;
+            this.errorString = answer.errorString;
             return false;
         }
     }
@@ -86,7 +88,7 @@ public class LoadMoreMessageLogic extends AsyncTask<Void, Integer, Boolean>   {
             loadMoreCallback.onSuccess( haveNewValue );
         }
         else {
-            loadMoreCallback.onFail(errorType, errorCode);
+            loadMoreCallback.onFail(errorType, errorString, errorCode);
         }
 
     }

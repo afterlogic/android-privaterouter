@@ -13,6 +13,7 @@ import com.PrivateRouter.PrivateMail.view.utils.Logger;
 public class RecreatingActivity extends AppCompatActivity {
 
     private BroadcastReceiver broadcastReceiver;
+    protected boolean recreateAfterResume = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +21,20 @@ public class RecreatingActivity extends AppCompatActivity {
         initBroadcastReceiver();
     }
 
+    protected void onResume() {
+        super.onResume();
+        if (recreateAfterResume) {
+            recreateAfterResume = false;
+            recreate();
+        }
+
+    }
+
     private void initBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                recreate();
+                recreateAfterResume = true;
             }
         };
         registerReceiver(broadcastReceiver,  new IntentFilter(CommonSettingsActivity.THEME_CHANGE));

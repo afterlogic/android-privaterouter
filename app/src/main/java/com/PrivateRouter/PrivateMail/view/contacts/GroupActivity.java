@@ -251,9 +251,9 @@ public class GroupActivity extends RecreatingActivity {
             }
 
             @Override
-            public void onFail(ErrorType errorCode, int serverCode) {
+            public void onFail(ErrorType errorCode, String errorString, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(GroupActivity.this, errorCode, serverCode);
+                RequestViewUtils.showError(GroupActivity.this, errorCode, errorString, serverCode);
             }
         });
         callLogout.start();
@@ -294,9 +294,9 @@ public class GroupActivity extends RecreatingActivity {
                 }
 
                 @Override
-                public void onFail(ErrorType errorType, int serverCode) {
+                public void onFail(ErrorType errorType, String errorString,  int serverCode) {
                     RequestViewUtils.hideRequest();
-                    RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+                    RequestViewUtils.showError(GroupActivity.this, errorType, errorString, serverCode);
                 }
             });
             callCreateGroup.start();
@@ -314,9 +314,9 @@ public class GroupActivity extends RecreatingActivity {
                 }
 
                 @Override
-                public void onFail(ErrorType errorType, int serverCode) {
+                public void onFail(ErrorType errorType, String errorString, int serverCode) {
                     RequestViewUtils.hideRequest();
-                    RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+                    RequestViewUtils.showError(GroupActivity.this, errorType, errorString, serverCode);
                 }
             });
             callUpdateGroup.start();
@@ -403,9 +403,9 @@ public class GroupActivity extends RecreatingActivity {
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(GroupActivity.this, errorType, serverCode);
+                RequestViewUtils.showError(GroupActivity.this, errorType, errorString, serverCode);
             }
         });
         callDeleteGroup.start();

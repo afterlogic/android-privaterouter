@@ -160,8 +160,8 @@ public class ContactsActivity extends RecreatingActivity
             }
 
             @Override
-            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
-                RequestViewUtils.showError(getApplicationContext(), errorType, serverCode);
+            public void onGroupsLoadFail(ErrorType errorType, String errorString, int serverCode) {
+                RequestViewUtils.showError(getApplicationContext(), errorType, errorString, serverCode);
                 finish();
             }
 
@@ -595,11 +595,11 @@ public class ContactsActivity extends RecreatingActivity
     }
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
         loadContactLogic = null;
         slMain.setRefreshing(false);
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        RequestViewUtils.showError(this, errorType,errorString, serverCode);
     }
 
     @Override
@@ -612,9 +612,9 @@ public class ContactsActivity extends RecreatingActivity
             }
 
             @Override
-            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+            public void onGroupsLoadFail(ErrorType errorType, String errorString, int serverCode) {
                 slMain.setRefreshing(false);
-                RequestViewUtils.showError(getApplicationContext(), errorType, serverCode);
+                RequestViewUtils.showError(getApplicationContext(), errorType,  errorString, serverCode);
             }
 
         }, true);

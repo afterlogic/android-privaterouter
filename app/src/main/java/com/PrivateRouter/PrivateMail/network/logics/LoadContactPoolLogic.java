@@ -37,6 +37,7 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private Boolean haveNew = false;
     private ErrorType errorType = ErrorType.UNKNOWN;
     private int errorCode;
+    private String errorString;
     private int newCTag;
     private int oldCTag;
 
@@ -99,7 +100,7 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
             callback.onSuccess( haveNew );
         }
         else {
-            callback.onFail(errorType, errorCode);
+            callback.onFail(errorType, errorString, errorCode);
         }
 
     }
@@ -229,8 +230,9 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
 
     @Override
-    public void onError(ErrorType errorType, int errorCode) {
+    public void onError(ErrorType errorType, String errorString, int errorCode) {
         this.errorType = errorType;
         this.errorCode = errorCode;
+        this.errorString = errorString;
     }
 }

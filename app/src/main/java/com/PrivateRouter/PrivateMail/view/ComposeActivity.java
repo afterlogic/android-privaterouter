@@ -322,9 +322,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
+            public void onFail(ErrorType errorType,String errorString,  int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(ComposeActivity.this, errorType, serverCode);
+                RequestViewUtils.showError(ComposeActivity.this, errorType, errorString, serverCode);
             }
         });
         callSaveMessage.setMessage(this, message);
@@ -700,9 +700,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
 
@@ -817,7 +817,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         }
 
         @Override
-        public void onFail(ErrorType errorType, int serverCode) {
+        public void onFail(ErrorType errorType,String errorString, int serverCode) {
             pbLoadingAttachments.setVisibility(View.GONE);
             Toast.makeText(ComposeActivity.this, getString(R.string.compose_upload_failed), Toast.LENGTH_SHORT).show();
         }

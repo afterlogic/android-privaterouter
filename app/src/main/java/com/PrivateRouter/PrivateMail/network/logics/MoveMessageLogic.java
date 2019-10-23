@@ -86,7 +86,7 @@ public class MoveMessageLogic extends AsyncTask<Void, Void, Boolean> {
         catch (Exception ex) {
             ex.printStackTrace();
             if (onFailCallback != null)
-                onFailCallback.onError(ErrorType.DB_ERROR, 0);
+                onFailCallback.onError(ErrorType.DB_ERROR, ex.getMessage(), 0);
         }
         return false;
     }

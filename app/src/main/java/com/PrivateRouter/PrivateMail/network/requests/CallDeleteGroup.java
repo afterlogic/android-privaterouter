@@ -40,11 +40,11 @@ public class CallDeleteGroup extends CallRequest<Boolean> implements Callback<De
                     callback.onSuccess(deleteGroupResponse.getResult());
                 }
             } else if (callback != null) {
-                callback.onFail(ErrorType.ERROR_REQUEST, deleteGroupResponse.getErrorCode());
+                callback.onFail(ErrorType.ERROR_REQUEST, deleteGroupResponse.getErrorMessage(),  deleteGroupResponse.getErrorCode());
             }
         } else {
             if (callback != null) {
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
             }
         }
     }
@@ -52,7 +52,7 @@ public class CallDeleteGroup extends CallRequest<Boolean> implements Callback<De
     @Override
     public void onFailure(Call<DeleteGroupResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

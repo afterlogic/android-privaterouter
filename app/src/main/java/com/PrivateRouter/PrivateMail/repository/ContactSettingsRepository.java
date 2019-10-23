@@ -51,8 +51,8 @@ public class ContactSettingsRepository {
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
-                callback.onFail(errorType, serverCode);
+            public void onFail(ErrorType errorType, String errorString,  int serverCode) {
+                callback.onFail(errorType,errorString, serverCode);
             }
         });
         callGetSettings.start();
@@ -86,6 +86,6 @@ public class ContactSettingsRepository {
     public interface OnContactLoadCallback {
         void onContactsLoad(ContactSettings contactSettings);
 
-        void onFail(ErrorType errorType, int serverCode);
+        void onFail(ErrorType errorType, String errorString,  int serverCode);
     }
 }

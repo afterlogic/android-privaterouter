@@ -41,19 +41,19 @@ public class CallCreateContact extends CallRequest<String> implements Callback<C
                 }
             } else {
                 if (callback != null) {
-                    callback.onFail(ErrorType.ERROR_REQUEST, createContactResponse.getErrorCode());
+                    callback.onFail(ErrorType.ERROR_REQUEST, createContactResponse.getErrorMessage(), createContactResponse.getErrorCode());
                 }
             }
         } else {
             if (callback != null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
     }
 
     @Override
     public void onFailure(Call<CreateContactResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

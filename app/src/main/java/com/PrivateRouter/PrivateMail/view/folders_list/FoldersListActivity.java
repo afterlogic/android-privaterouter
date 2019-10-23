@@ -143,10 +143,10 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
 
             bindUI();
 
-        }, (errorType, errorCode) -> {
+        }, (errorType, errorString, errorCode) -> {
             slMain.setRefreshing(false);
             RequestViewUtils.hideRequest();
-            RequestViewUtils.showError(FoldersListActivity.this, errorType, errorCode);
+            RequestViewUtils.showError(FoldersListActivity.this, errorType, errorString, errorCode);
         });
         loadFolderLogic.execute();
 

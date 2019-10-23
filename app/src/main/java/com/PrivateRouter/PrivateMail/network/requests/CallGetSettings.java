@@ -33,12 +33,12 @@ public class CallGetSettings extends CallRequest<ContactSettings> implements Cal
             }
             else {
                 if(callback != null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, getSettingsResponse.getErrorCode());
+                    callback.onFail(ErrorType.ERROR_REQUEST, getSettingsResponse.getErrorMessage(), getSettingsResponse.getErrorCode());
             }
         }
         else{
             if (callback != null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
 
     }
@@ -46,7 +46,7 @@ public class CallGetSettings extends CallRequest<ContactSettings> implements Cal
     @Override
     public void onFailure(Call<GetSettingsResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
 
     }
 }

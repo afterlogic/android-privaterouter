@@ -41,19 +41,19 @@ public class CallCreateGroup extends CallRequest<String> implements Callback<Cre
                 }
             } else {
                 if (callback != null) {
-                    callback.onFail(ErrorType.ERROR_REQUEST, createGroupResponse.getErrorCode());
+                    callback.onFail(ErrorType.ERROR_REQUEST, createGroupResponse.getErrorMessage(), createGroupResponse.getErrorCode());
                 }
             }
         } else {
             if (callback != null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
     }
 
     @Override
     public void onFailure(Call<CreateGroupResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

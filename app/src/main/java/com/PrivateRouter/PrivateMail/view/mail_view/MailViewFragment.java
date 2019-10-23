@@ -278,9 +278,9 @@ public  class MailViewFragment extends FragmentWithRequestPermission implements 
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(getActivity(), errorType, serverCode);
+                RequestViewUtils.showError(getActivity(), errorType, errorString, serverCode);
             }
         });
         callSetEmailSafety.setEmail( message.getFrom().getFirstEmail() );

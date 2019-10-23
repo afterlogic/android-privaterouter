@@ -114,9 +114,9 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
 
     @Override
-    public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
+    public void onGroupsLoadFail(ErrorType errorType, String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
+        RequestViewUtils.showError(this.getApplicationContext(), errorType, errorString, serverCode);
     }
 
 

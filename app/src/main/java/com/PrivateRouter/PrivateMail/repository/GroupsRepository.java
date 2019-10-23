@@ -52,9 +52,9 @@ public class GroupsRepository {
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
                 if (onLoadGroups!=null)
-                    onLoadGroups.onGroupsLoadFail(errorType, serverCode);
+                    onLoadGroups.onGroupsLoadFail(errorType, errorString, serverCode);
             }
         });
         callGetGroups.start();

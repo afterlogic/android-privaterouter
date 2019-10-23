@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
             startActivity(new Intent(this, UpgradePlanActivity.class) );
         }
         else
-            RequestViewUtils.showError(this, errorType, serverCode);
+            RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
     private boolean checkFieldsDataCorrect() {

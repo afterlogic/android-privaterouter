@@ -24,25 +24,27 @@ public class CallExecutor<T> {
                 T body = response.body();
 
                 int errorCode = ErrorCodes.UNKNOWN;
+                String errorString = "";
                 if (body != null && body instanceof BaseResponse) {
                     errorCode = ((BaseResponse)body).getErrorCode();
+                    errorString = ((BaseResponse)body).getErrorMessage();
                 }
 
                 if (errorCode==0) {
                     return body;
                 }
                 else if (onFailCallback != null)
-                    onFailCallback.onError(ErrorType.ERROR_REQUEST, errorCode);
+                    onFailCallback.onError(ErrorType.ERROR_REQUEST, errorString, errorCode);
 
             }
             else if (onFailCallback != null)
-                onFailCallback.onError(ErrorType.SERVER_ERROR, response.code());
+                onFailCallback.onError(ErrorType.SERVER_ERROR, "", response.code());
 
 
         } catch (IOException e) {
             e.printStackTrace();
             if (onFailCallback != null)
-                onFailCallback.onError(ErrorType.FAIL_CONNECT, 0);
+                onFailCallback.onError(ErrorType.FAIL_CONNECT, "", 0);
         }
         return null;
     }

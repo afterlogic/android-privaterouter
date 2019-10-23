@@ -67,20 +67,20 @@ public class CallGetMessages extends CallRequest<MessageCollection>  implements 
             }
             else {
                 if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, getMessagesResponse.getErrorCode() );
+                    callback.onFail(ErrorType.ERROR_REQUEST, getMessagesResponse.getErrorMessage(), getMessagesResponse.getErrorCode() );
             }
 
         }
         else {
             if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code() );
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
         }
     }
 
     @Override
     public void onFailure(Call<GetMessagesResponse> call, Throwable t) {
         if (callback!=null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     public void cancel() {

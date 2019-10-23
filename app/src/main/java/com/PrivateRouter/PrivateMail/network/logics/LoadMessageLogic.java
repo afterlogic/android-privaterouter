@@ -58,6 +58,7 @@ public class LoadMessageLogic   implements OnErrorInterface {
     }
 
     public class LoadMessageAnswer {
+        String errorString;
         boolean success;
         boolean haveNewValue;
         ErrorType errorType = ErrorType.UNKNOWN;
@@ -360,9 +361,10 @@ public class LoadMessageLogic   implements OnErrorInterface {
 
 
     @Override
-    public void onError(ErrorType errorType, int errorCode) {
+    public void onError(ErrorType errorType, String errorString, int errorCode) {
         this.loadMessageAnswer.errorType = errorType;
         this.loadMessageAnswer.errorCode = errorCode;
+        this.loadMessageAnswer.errorString = errorString;
         this.loadMessageAnswer.success = false;
     }
 }

@@ -40,18 +40,18 @@ public class CallUpdateGroup extends CallRequest<Boolean> implements Callback<Up
                     callback.onSuccess(updateGroupResponse.getResult());
                 }
             } else if (callback != null) {
-                callback.onFail(ErrorType.ERROR_REQUEST, updateGroupResponse.getErrorCode());
+                callback.onFail(ErrorType.ERROR_REQUEST, updateGroupResponse.getErrorMessage(),  updateGroupResponse.getErrorCode());
             }
         } else {
             if (callback != null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code());
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
     }
 
     @Override
     public void onFailure(Call<UpdateGroupResponse> call, Throwable t) {
         if (callback != null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class Parameter {

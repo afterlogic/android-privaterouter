@@ -60,20 +60,20 @@ public class CallMoveMessages extends CallRequest<BaseResponse> implements Callb
             }
             else {
                 if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, baseResponse.getErrorCode() );
+                    callback.onFail(ErrorType.ERROR_REQUEST, baseResponse.getErrorMessage(), baseResponse.getErrorCode() );
             }
 
         }
         else {
             if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code() );
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
         }
     }
 
     @Override
     public void onFailure(Call<BaseResponse> call, Throwable t) {
         if (callback!=null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
 

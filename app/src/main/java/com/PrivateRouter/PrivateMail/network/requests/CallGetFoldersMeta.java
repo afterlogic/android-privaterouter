@@ -59,13 +59,13 @@ public class CallGetFoldersMeta extends CallRequest<HashMap<String, FolderMeta> 
             }
             else {
                 if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, getAccountResponse.getErrorCode() );
+                    callback.onFail(ErrorType.ERROR_REQUEST, getAccountResponse.getErrorMessage(), getAccountResponse.getErrorCode() );
             }
 
         }
         else {
             if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code() );
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
         }
     }
 
@@ -74,7 +74,7 @@ public class CallGetFoldersMeta extends CallRequest<HashMap<String, FolderMeta> 
     @Override
     public void onFailure(Call<GetFoldersMetaResponse> call, Throwable t) {
         if (callback!=null)
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class GetRelevantParameters {

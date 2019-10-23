@@ -67,7 +67,7 @@ public class LoadFolderLogic  extends AsyncTask<Void, Void, Boolean>  {
                 onSuccessCallback.onLoad(folderCollection);
         }
         else {
-            onFailCallback.onError(ErrorType.FAIL_CONNECT, 0);
+            onFailCallback.onError(ErrorType.FAIL_CONNECT, "", 0);
         }
 
     }

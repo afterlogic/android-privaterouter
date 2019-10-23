@@ -472,9 +472,9 @@ public class ContactActivity extends RecreatingActivity implements ContactSettin
 
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this.getApplicationContext(), errorType, serverCode);
+        RequestViewUtils.showError(this.getApplicationContext(), errorType, errorString, serverCode);
         finish();
     }
 
@@ -557,9 +557,9 @@ public class ContactActivity extends RecreatingActivity implements ContactSettin
                 }
 
                 @Override
-                public void onFail(ErrorType errorType, int serverCode) {
+                public void onFail(ErrorType errorType, String errorString, int serverCode) {
                     RequestViewUtils.hideRequest();
-                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                    RequestViewUtils.showError(ContactActivity.this, errorType, errorString, serverCode);
                 }
             });
 
@@ -574,9 +574,9 @@ public class ContactActivity extends RecreatingActivity implements ContactSettin
                 }
 
                 @Override
-                public void onFail(ErrorType errorType, int serverCode) {
+                public void onFail(ErrorType errorType, String errorString, int serverCode) {
                     RequestViewUtils.hideRequest();
-                    RequestViewUtils.showError(ContactActivity.this, errorType, serverCode);
+                    RequestViewUtils.showError(ContactActivity.this, errorType, errorString, serverCode);
                 }
             });
             callUpdateContact.start();
@@ -853,9 +853,9 @@ public class ContactActivity extends RecreatingActivity implements ContactSettin
             }
 
             @Override
-            public void onFail(ErrorType errorCode, int serverCode) {
+            public void onFail(ErrorType errorCode, String errorString, int serverCode) {
                 RequestViewUtils.hideRequest();
-                RequestViewUtils.showError(ContactActivity.this, errorCode, serverCode);
+                RequestViewUtils.showError(ContactActivity.this, errorCode, errorString, serverCode);
             }
         });
         callLogout.start();
@@ -999,8 +999,8 @@ public class ContactActivity extends RecreatingActivity implements ContactSettin
             }
 
             @Override
-            public void onGroupsLoadFail(ErrorType errorType, int serverCode) {
-
+            public void onGroupsLoadFail(ErrorType errorType, String errorString, int serverCode) {
+                RequestViewUtils.showError(ContactActivity.this, errorType, errorString, serverCode);
             }
         }, false);
 

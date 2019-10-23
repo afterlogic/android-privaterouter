@@ -50,13 +50,13 @@ public class CallLogin extends CallRequest<LoginResponse>  implements Callback<L
             }
             else {
                 if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, loginResponse.getErrorCode() );
+                    callback.onFail(ErrorType.ERROR_REQUEST, loginResponse.getErrorMessage(), loginResponse.getErrorCode() );
             }
 
         }
         else {
             if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, response.code() );
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
         }
     }
 
@@ -64,7 +64,7 @@ public class CallLogin extends CallRequest<LoginResponse>  implements Callback<L
     @Override
     public void onFailure(Call<LoginResponse> call, Throwable t) {
         if (callback!=null) {
-            callback.onFail(ErrorType.FAIL_CONNECT, 0);
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
         }
     }
 

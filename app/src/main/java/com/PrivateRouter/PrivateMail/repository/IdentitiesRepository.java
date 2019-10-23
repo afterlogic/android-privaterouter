@@ -43,7 +43,7 @@ public class IdentitiesRepository  {
             }
 
             @Override
-            public void onFail(ErrorType errorType, int serverCode) {
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
                 Logger.e("Identities", "Identities errorType ="+errorType + " serverError = "+serverCode);
             }
         });

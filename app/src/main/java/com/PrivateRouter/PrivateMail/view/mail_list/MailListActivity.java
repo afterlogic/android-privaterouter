@@ -530,9 +530,9 @@ public class MailListActivity extends RecreatingActivity
     }
 
 
-    private void onFailMove(ErrorType errorType, int serverCode) {
+    private void onFailMove(ErrorType errorType, String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
     private void logout() {
@@ -553,9 +553,9 @@ public class MailListActivity extends RecreatingActivity
                 }
 
                 @Override
-                public void onFail(ErrorType errorCode, int serverCode) {
+                public void onFail(ErrorType errorCode, String errorString, int serverCode) {
                     RequestViewUtils.hideRequest();
-                    RequestViewUtils.showError(MailListActivity.this, errorCode, serverCode);
+                    RequestViewUtils.showError(MailListActivity.this, errorCode, errorString, serverCode);
                 }
             });
             callLogout.start();
@@ -643,11 +643,11 @@ public class MailListActivity extends RecreatingActivity
     }
 
     @Override
-    public void onFail(ErrorType errorType, int serverCode) {
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
         loadMessageLogic = null;
         slMain.setRefreshing(false);
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType, serverCode);
+        RequestViewUtils.showError(this, errorType, errorString, serverCode);
         PrivateMailApplication.getInstance().getSyncLogic().updateTimer();
 
         if (mailListAdapter!=null)
@@ -779,9 +779,9 @@ public class MailListActivity extends RecreatingActivity
             }
 
             @Override
-            public void onFail(ErrorType errorType, int errorCode) {
+            public void onFail(ErrorType errorType, String errorString, int errorCode) {
                 slMain.setRefreshing(false);
-                RequestViewUtils.showError(MailListActivity.this, errorType, errorCode);
+                RequestViewUtils.showError(MailListActivity.this, errorType, errorString, errorCode);
 
             }
         });
