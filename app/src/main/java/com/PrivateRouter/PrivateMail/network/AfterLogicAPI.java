@@ -5,6 +5,7 @@ import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.DeleteGroupResponse;
+import com.PrivateRouter.PrivateMail.network.responses.DiscoverUrlResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
@@ -35,10 +36,16 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 public interface AfterLogicAPI {
+
+    @GET("/pm/autodiscover.php")
+    Call<DiscoverUrlResponse> discoverHostname(@Query("domain") String domain);
+
+
     @POST("?/Api/" )
     @FormUrlEncoded
     Call<LoginResponse> login(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
 import android.webkit.URLUtil;
 import android.widget.EditText;
@@ -39,6 +41,8 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     @BindView(R.id.et_password)
     EditText etPassword;
 
+    @BindView(R.id.til_host)
+    TextInputLayout tilHost;
 
     @SuppressWarnings("unused")
     @OnClick(R.id.bt_login)
@@ -50,10 +54,8 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
         if (checkFieldsDataCorrect()) {
             RequestViewUtils.showRequest(this);
 
-            HostManager.setHost(host);
-
             LoginLogic loginLogic = new LoginLogic(this);
-            loginLogic.login(login, pass, this);
+            loginLogic.login(login, pass, host, this);
         }
     }
 
@@ -74,8 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
 
     private void initInputFields() {
 
-
-        etHost.setText(HostManager.getHost());
         etPassword.setText("");
 
         SharedPreferences sharedPreferences = getSharedPreferences("userEmail", Context.MODE_PRIVATE);
@@ -83,7 +83,6 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
 
         etEmail.setText(email);
     }
-
 
 
     private void checkLogged() {
@@ -112,13 +111,19 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     @Override
-    public void onFail(ErrorType errorType,  String errorString, int serverCode) {
+    public void requestHost() {
+        RequestViewUtils.hideRequest();
+        tilHost.setVisibility(View.VISIBLE);
+        tilHost.setError(getText(R.string.host_required));
+    }
+
+    @Override
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
         RequestViewUtils.hideRequest();
         final int needUpgradePlanCode = 108;
         if (errorType == ErrorType.ERROR_REQUEST && serverCode == needUpgradePlanCode) {
-            startActivity(new Intent(this, UpgradePlanActivity.class) );
-        }
-        else
+            startActivity(new Intent(this, UpgradePlanActivity.class));
+        } else
             RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
@@ -136,7 +141,7 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
             etEmail.requestFocus();
             return false;
 
-        } else if (host.isEmpty()) {
+        } else if (tilHost.getVisibility() == View.VISIBLE && host.isEmpty()) {
             etHost.setError(getString(R.string.all_host_is_empty));
             etHost.requestFocus();
             return false;
@@ -146,19 +151,20 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
             etPassword.requestFocus();
             return false;
 
-        } else if (!URLUtil.isValidUrl(host)) {
+        } else if (tilHost.getVisibility() == View.VISIBLE && !URLUtil.isValidUrl(host)) {
             etHost.setError(getString(R.string.all_host_is_incorrect));
             etHost.requestFocus();
             return false;
         }
 
+        if (tilHost.getVisibility() == View.VISIBLE) {
+            char hostLastCharacter = host.charAt(host.length() - 1);
 
-        char hostLastCharacter = host.charAt(host.length() - 1);
-
-        if (!Character.toString(hostLastCharacter).equals("/")) {
-            StringBuilder stringBuilder = new StringBuilder(host);
-            stringBuilder.append("/");
-            etHost.setText(stringBuilder);
+            if (!Character.toString(hostLastCharacter).equals("/")) {
+                StringBuilder stringBuilder = new StringBuilder(host);
+                stringBuilder.append("/");
+                etHost.setText(stringBuilder);
+            }
         }
         return true;
     }

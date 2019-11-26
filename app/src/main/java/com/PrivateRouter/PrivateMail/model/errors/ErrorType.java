@@ -6,5 +6,6 @@ public enum ErrorType {
     ERROR_REQUEST,
     TIMEOUT,
     DB_ERROR,
+    REQUEST_HOST,
     UNKNOWN
 }

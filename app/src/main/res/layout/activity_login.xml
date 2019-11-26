@@ -17,6 +17,7 @@
             android:layout_width="232dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="72dp"
+            android:paddingBottom="80dp"
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,9 +29,9 @@
             style="@style/WhiteEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
             android:paddingStart="@dimen/padding_all_element_medium"
             android:paddingEnd="@dimen/padding_all_element_medium"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_login_logo">
@@ -41,8 +42,8 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/white"
                 android:hint="@string/all_host"
-                android:tag=""
                 android:inputType="textEmailAddress"
+                android:tag=""
                 android:textColor="@android:color/white" />
             <!--android:text="mobilepgp@afterlogic.com"-->
             <!--android:text="test1@afterlogic.com"-->

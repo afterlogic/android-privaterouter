@@ -18,15 +18,20 @@ import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFolderResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
+import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 public class LoginLogic implements CallRequestResult<LoginResponse> {
 
-    public  interface OnLoginCallback {
+    public interface OnLoginCallback {
         void onLogin();
+
         void onFail(ErrorType failConnect, String errorString, int errorCode);
+
+        void requestHost();
     }
+
     OnLoginCallback onLogin;
     String login;
     Context context;
@@ -35,38 +40,44 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
         this.context = context;
     }
 
-    public void login(String login, String pass, OnLoginCallback onLoginCallback) {
+    public void login(String login, String pass, String host, OnLoginCallback onLoginCallback) {
         this.onLogin = onLoginCallback;
         this.login = login;
-
         CallLogin callLogin = new CallLogin(this);
         callLogin.setLogin(login);
         callLogin.setPassword(pass);
+        callLogin.setHost(host);
         callLogin.start();
     }
 
+
     @Override
     public void onSuccess(LoginResponse result) {
-        if (result==null || result.getResult() == null) {
+        if (result == null || result.getResult() == null) {
             Context context = PrivateMailApplication.getContext();
             String errorString = context.getString(R.string.login_error);
-            if (result!=null)
+            if (result != null)
                 errorString = result.getErrorMessage();
-            if (onLogin!=null)
+            if (onLogin != null)
                 onLogin.onFail(ErrorType.SERVER_ERROR, errorString, result.getErrorCode());
             return;
         }
         String token = result.getResult().getAuthToken();
-        ApiFactory.setToken( token );
+        ApiFactory.setToken(token);
         LoggedUserRepository.getInstance().setAuthToken(token);
 
         loadAccounts();
     }
 
     @Override
-    public void onFail(ErrorType errorType, String errorString,  int serverCode) {
-        if (onLogin!=null)
+    public void onFail(ErrorType errorType, String errorString, int serverCode) {
+        if (onLogin != null) {
+            if (errorType == ErrorType.REQUEST_HOST) {
+                onLogin.requestHost();
+                return;
+            }
             onLogin.onFail(errorType, errorString, serverCode);
+        }
     }
 
     private void loadAccounts() {
@@ -74,9 +85,9 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
             @Override
             public void onSuccess(GetAccountResponse result) {
                 User user = new User();
-                user.setAccounts(result.getResult() );
+                user.setAccounts(result.getResult());
                 LoggedUserRepository.getInstance().setUser(user);
-                LoggedUserRepository.getInstance().setLogin( login );
+                LoggedUserRepository.getInstance().setLogin(login);
 
                 PrivateMailApplication.getInstance().getIdentitiesRepository().init();
                 loadFolders();
@@ -84,8 +95,8 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
 
             @Override
-            public void onFail(ErrorType errorCode, String errorString,  int serverCode) {
-                if (onLogin!=null)
+            public void onFail(ErrorType errorCode, String errorString, int serverCode) {
+                if (onLogin != null)
                     onLogin.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
             }
         });
@@ -94,26 +105,24 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
     }
 
 
-
     private void loadFolders() {
 
         LoadFolderLogic loadFolderLogic = new LoadFolderLogic(folderCollection -> {
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
-            account.setFolders( folderCollection );
+            account.setFolders(folderCollection);
 
-            LoggedUserRepository.getInstance().save( context );
+            LoggedUserRepository.getInstance().save(context);
 
-            if (onLogin!=null)
+            if (onLogin != null)
                 onLogin.onLogin();
         }, (errorType, errorString, errorCode) -> {
             if (onLogin != null)
-                onLogin.onFail(ErrorType.FAIL_CONNECT, errorString,0);
+                onLogin.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
         });
         loadFolderLogic.execute();
 
 
     }
-
 
 
 }
