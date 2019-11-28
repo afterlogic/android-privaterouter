@@ -26,14 +26,13 @@ import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
 
-
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PGPKeyGenerateDialogFragment extends DialogFragment  {
+public class PGPKeyGenerateDialogFragment extends DialogFragment {
 
     @BindView(R.id.sp_strength)
     Spinner spStrength;
@@ -42,7 +41,7 @@ public class PGPKeyGenerateDialogFragment extends DialogFragment  {
     EditText etEncryptPassword;
 
     @BindView(R.id.sp_mail)
-    Spinner spMail;
+    EditText spMail;
 
     private Runnable onGenerateRunnable;
 
@@ -65,18 +64,11 @@ public class PGPKeyGenerateDialogFragment extends DialogFragment  {
     private void initMail() {
         Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
 
-        ArrayList<String> mails = new ArrayList<>();
-        mails.add( account.getEmail() );
-        Context context = getActivity();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, mails);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spMail.setAdapter(adapter);
-        spMail.setSelection(0);
+        spMail.setText(account.getEmail());
     }
 
     private void initStrength() {
-        String[] data = {"1024", "2048", "3072", "4096", "8192", };
+        String[] data = {"1024", "2048", "3072", "4096", "8192",};
         Context context = getActivity();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, data);
@@ -95,32 +87,32 @@ public class PGPKeyGenerateDialogFragment extends DialogFragment  {
         getResources().getValue(R.dimen.dialog_relative_width, outValue, true);
         float relativeWidth = outValue.getFloat();
 
-        int width = (int)(Utils.getDeviceMetrics(getActivity()).widthPixels * relativeWidth);
-        getDialog().getWindow().setLayout(  width,  ViewGroup.LayoutParams.WRAP_CONTENT);
+        int width = (int) (Utils.getDeviceMetrics(getActivity()).widthPixels * relativeWidth);
+        getDialog().getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @SuppressWarnings("unused")
     @OnClick(R.id.bt_generate)
     public void btGenerateClick() {
 
-        String mail = spMail.getSelectedItem().toString();
+        String mail = spMail.getText().toString();
 
 
-        String userId = EmailUtils.encapsulationEmail( mail );
+        String userId = EmailUtils.encapsulationEmail(mail);
         String strength = (String) spStrength.getSelectedItem();
-        String pass = etEncryptPassword.getText().toString();;
+        String pass = etEncryptPassword.getText().toString();
+        ;
 
         KeysRepository repository = PrivateMailApplication.getInstance().getKeysRepository();
-        if (repository.getKey(userId, "")!=null) {
+        if (repository.getKey(userId, "") != null) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(getString(R.string.app_name))
-                    .setMessage(getActivity().getString(R.string.generate_dialog_have_key) )
+                    .setMessage(getActivity().getString(R.string.generate_dialog_have_key))
                     .setPositiveButton(R.string.all_ok, (dialog, which) -> {
                         dialog.dismiss();
                     })
                     .show();
-        }
-        else {
+        } else {
 
             RequestViewUtils.showRequest(getActivity());
             GenerateTask generateTask = new GenerateTask(userId, strength, pass);
@@ -133,12 +125,11 @@ public class PGPKeyGenerateDialogFragment extends DialogFragment  {
     private void onComplete() {
         RequestViewUtils.hideRequest();
 
-        if (onGenerateRunnable!=null)
+        if (onGenerateRunnable != null)
             onGenerateRunnable.run();
 
         dismiss();
     }
-
 
 
     @SuppressWarnings("unused")
@@ -146,8 +137,6 @@ public class PGPKeyGenerateDialogFragment extends DialogFragment  {
     public void btCloseClick() {
         dismiss();
     }
-
-
 
 
     public Runnable getOnGenerateRunnable() {

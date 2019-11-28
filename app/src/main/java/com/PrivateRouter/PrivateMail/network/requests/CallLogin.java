@@ -39,10 +39,10 @@ public class CallLogin extends CallRequest<LoginResponse> implements Callback<Lo
     @Override
     public void start() {
         if (loginParameter.Host.isEmpty()) {
-            int dogIndex = loginParameter.Login.indexOf('@');
-            String domain = loginParameter.Login.substring(dogIndex + 1);
+
+            String email = loginParameter.Login;
             HostManager.setHost("https://torguard.tv/");
-            ApiFactory.getService().discoverHostname(domain).enqueue(new Callback<DiscoverUrlResponse>() {
+            ApiFactory.getService().discoverHostname(email).enqueue(new Callback<DiscoverUrlResponse>() {
                 @Override
                 public void onResponse(Call<DiscoverUrlResponse> _call, Response<DiscoverUrlResponse> response) {
                     if (response.body() != null) {
@@ -53,14 +53,14 @@ public class CallLogin extends CallRequest<LoginResponse> implements Callback<Lo
                         }
                     }
                     if (callback != null) {
-                        callback.onFail(REQUEST_HOST,null,0);
+                        callback.onFail(REQUEST_HOST, null, 0);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<DiscoverUrlResponse> call, Throwable t) {
                     if (callback != null) {
-                        callback.onFail(REQUEST_HOST,null,0);
+                        callback.onFail(REQUEST_HOST, null, 0);
                     }
                 }
             });

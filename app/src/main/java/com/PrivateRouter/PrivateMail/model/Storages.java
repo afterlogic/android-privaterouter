@@ -1,10 +1,8 @@
 package com.PrivateRouter.PrivateMail.model;
 
 public enum Storages {
-    ALL("all"),
     PERSONAL("personal"),
-    TEAM("team"),
-    SHARED("shared");
+    TEAM("team");
 
     private final String id;
 

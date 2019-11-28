@@ -43,7 +43,7 @@ import retrofit2.http.Url;
 public interface AfterLogicAPI {
 
     @GET("/pm/autodiscover.php")
-    Call<DiscoverUrlResponse> discoverHostname(@Query("domain") String domain);
+    Call<DiscoverUrlResponse> discoverHostname(@Query("email") String email);
 
 
     @POST("?/Api/" )

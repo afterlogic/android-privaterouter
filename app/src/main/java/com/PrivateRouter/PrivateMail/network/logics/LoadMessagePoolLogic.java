@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 
-public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> implements OnErrorInterface  {
+public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> implements OnErrorInterface {
 
     private static final String TAG = "LoadMessagePoolLogic";
     private ErrorType errorType = ErrorType.UNKNOWN;
@@ -39,7 +39,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private boolean forceCurrent = false;
     private String errorString;
 
-    public  LoadMessagePoolLogic(@NonNull String folder, @NonNull CallRequestResult<Boolean> callback) {
+    public LoadMessagePoolLogic(@NonNull String folder, @NonNull CallRequestResult<Boolean> callback) {
         this.callback = callback;
         this.currentFolderName = folder;
     }
@@ -52,18 +52,18 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         boolean success;
 
         success = updateFoldersMeta();
-        if (!success  || isCancelled() ) return false;
+        if (!success || isCancelled()) return false;
 
 
         ArrayList<FolderToUpdate> updateList = getFolderListNeedBeUpdated();
-        if ( updateList==null || isCancelled() ) return false;
+        if (updateList == null || isCancelled()) return false;
 
         sortCurrentFolderToTop(updateList);
 
 
         for (FolderToUpdate folderToUpdate : updateList) {
             success = updateFolder(folderToUpdate.folderName, folderToUpdate.hash);
-            if (!success  || isCancelled() ) return false;
+            if (!success || isCancelled()) return false;
         }
 
         Logger.i(TAG, "finish updating pool");
@@ -74,9 +74,9 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     private void sortCurrentFolderToTop(ArrayList<FolderToUpdate> updateList) {
         Collections.sort(updateList, (folderToUpdate1, folderToUpdate2) -> {
-            if( folderToUpdate1.folderName.equalsIgnoreCase(currentFolderName) && !folderToUpdate2.folderName.equalsIgnoreCase(currentFolderName) )
+            if (folderToUpdate1.folderName.equalsIgnoreCase(currentFolderName) && !folderToUpdate2.folderName.equalsIgnoreCase(currentFolderName))
                 return -1;
-            else if ( !folderToUpdate1.folderName.equalsIgnoreCase(currentFolderName) && folderToUpdate2.folderName.equalsIgnoreCase(currentFolderName) )
+            else if (!folderToUpdate1.folderName.equalsIgnoreCase(currentFolderName) && folderToUpdate2.folderName.equalsIgnoreCase(currentFolderName))
                 return 1;
             else return Integer.compare(folderToUpdate1.folderType, folderToUpdate2.folderType);
         });
@@ -84,21 +84,25 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     private boolean updateFoldersMeta() {
         long currentTime = System.currentTimeMillis();
-        Logger.d(TAG, "updateFoldersMeta " +currentTime  );
+        Logger.d(TAG, "updateFoldersMeta " + currentTime);
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
         ArrayList<String> folders = new ArrayList<>();
-        for (Folder folder: account.getFoldersWithSubFolder()) {
-            folders.add(folder.getFullNameRaw() );
+        if (account != null) {
+            for (Folder folder : account.getFoldersWithSubFolder()) {
+                folders.add(folder.getFullNameRaw());
+            }
+        } else {
+            return false;
         }
 
 
-        CallGetFoldersMeta callGetFoldersMeta = new CallGetFoldersMeta(null, folders );
+        CallGetFoldersMeta callGetFoldersMeta = new CallGetFoldersMeta(null, folders);
         GetFoldersMetaResponse response = callGetFoldersMeta.startSync(this);
-        if (response!=null && response.getFolderMeta()!=null  ) {
+        if (response != null && response.getFolderMeta() != null) {
 
             newFolderMeta = response.getFolderMeta();
-            for (Folder folder : account.getFoldersWithSubFolder() ) {
+            for (Folder folder : account.getFoldersWithSubFolder()) {
                 FolderMeta newFolderMeta = this.newFolderMeta.get(folder.getFullName());
                 folder.setMeta(newFolderMeta);
             }
@@ -107,8 +111,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
             LoggedUserRepository.getInstance().save(context);
 
             return true;
-        }
-        else
+        } else
             return false;
 
     }
@@ -118,12 +121,12 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         ArrayList<FolderToUpdate> arrayList = new ArrayList<FolderToUpdate>();
 
         Account account = LoggedUserRepository.getInstance().getActiveAccount();
-        for ( Folder folder:   account.getFoldersWithSubFolder()) {
-            if ( isCancelled() ) return null;
+        for (Folder folder : account.getFoldersWithSubFolder()) {
+            if (isCancelled()) return null;
 
             String folderName = folder.getFullNameRaw();
             FolderMeta meta = newFolderMeta.get(folderName);
-            if (meta!=null) {
+            if (meta != null) {
                 String newHash = meta.getHash();
                 String oldHash = getFolderCurrentHash(folderName);
 
@@ -131,10 +134,10 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
                 boolean forceCurrentFolder = folderName.equals(currentFolderName) && forceCurrent;
 
-                if (!newHash.equals(oldHash) || forceCurrentFolder ) {
+                if (!newHash.equals(oldHash) || forceCurrentFolder) {
 
                     if (folder.getType() == FolderType.Inbox.getId() || folder.getType() == FolderType.Drafts.getId() ||
-                            folder.getType() == FolderType.Sent.getId() || folderName.equals(currentFolderName) ) {
+                            folder.getType() == FolderType.Sent.getId() || folderName.equals(currentFolderName)) {
 
                         FolderToUpdate folderToUpdate = new FolderToUpdate();
                         folderToUpdate.folderName = folderName;
@@ -150,31 +153,28 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         return arrayList;
     }
 
-    private boolean updateFolder(final String folderName, final  String newHash) {
-        Logger.i(TAG, "updateFolder "+folderName);
+    private boolean updateFolder(final String folderName, final String newHash) {
+        Logger.i(TAG, "updateFolder " + folderName);
         LoadMessageLogic loadMessageLogic = new LoadMessageLogic(folderName);
         LoadMessageLogic.LoadMessageAnswer answer = loadMessageLogic.load();
 
         if (answer.success) {
-            Logger.i(TAG, "updateFolder "+folderName+ " success");
+            Logger.i(TAG, "updateFolder " + folderName + " success");
             saveNewFolderHash(folderName, newHash);
 
-            if (answer.haveNewValue && folderName.equals(currentFolderName) )
+            if (answer.haveNewValue && folderName.equals(currentFolderName))
                 haveNewInCurrentFolder = true;
 
             return true;
 
-        }
-        else {
-            Logger.i(TAG, "updateFolder "+folderName+ " fail");
+        } else {
+            Logger.i(TAG, "updateFolder " + folderName + " fail");
             LoadMessagePoolLogic.this.onError(answer.errorType, answer.errorString, answer.errorCode);
             haveErrorLoadingFolder = true;
             return false;
         }
 
     }
-
-
 
 
     private void saveNewFolderHash(String folder, String hash) {
@@ -192,7 +192,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         FolderHash folderHash = database.messageDao().getFolderHash(folder);
 
         String hash = "";
-        if (folderHash!=null ) {
+        if (folderHash != null) {
             hash = folderHash.getFolderHash();
         }
         return hash;
@@ -208,12 +208,11 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
 
     @Override
     protected void onPostExecute(Boolean result) {
-        if ( isCancelled()) return;
+        if (isCancelled()) return;
 
         if (result) {
-            callback.onSuccess( haveNewInCurrentFolder );
-        }
-        else {
+            callback.onSuccess(haveNewInCurrentFolder);
+        } else {
             callback.onFail(errorType, errorString, errorCode);
         }
 
@@ -233,7 +232,7 @@ public class LoadMessagePoolLogic extends AsyncTask<Void, Integer, Boolean> impl
             this.hash = hash;
         }
 
-        public void run(){
+        public void run() {
 
 
         }
