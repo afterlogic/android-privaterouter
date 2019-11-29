@@ -37,6 +37,7 @@ import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.logics.LoadContactPoolLogic;
+import com.PrivateRouter.PrivateMail.network.requests.CallGetStorage;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
@@ -62,7 +63,7 @@ import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.LOGO
 
 public class ContactsActivity extends RecreatingActivity
         implements CallRequestResult<Boolean>,
-        SwipeRefreshLayout.OnRefreshListener, ContactsAdapter.OnContactClick {
+        SwipeRefreshLayout.OnRefreshListener, ContactsAdapter.OnContactClick, StoragesCallback {
 
 
     private boolean fabOpen;
@@ -72,9 +73,10 @@ public class ContactsActivity extends RecreatingActivity
     private static final int VIEW_GROUP = 12;
     private MenuItem viewGroupItem;
 
+
     enum VIEW_MODE {
         GROUP,
-        STORADGE
+        STORADGE;
     }
 
     VIEW_MODE viewMode = VIEW_MODE.STORADGE;
@@ -103,22 +105,56 @@ public class ContactsActivity extends RecreatingActivity
     public static final String CHOOSE_PARAM = "ChoseMode";
 
     Group currentGroup;
-    String currentStorage = Storages.PERSONAL.getId();
-    ContactsAdapter contactsAdapter;
 
+    Storages currentStorage;
+    ContactsAdapter contactsAdapter;
     LoadContactPoolLogic loadContactLogic;
 
     LiveData<PagedList<Contact>> pagedListLiveData;
+    String currentStorageName;
 
+
+    @Override
+    public void onStorages(List<Storages> storages) {
+        if (storages.isEmpty()) {
+            return;
+        }
+        Storages storage = null;
+        if (currentStorageName != null) {
+            for (Storages storage1 : storages) {
+                if (storage1.getName().equals(currentStorageName)) {
+                    storage = storage1;
+                    break;
+                }
+            }
+            if (storage == null) {
+                storage = storages.get(0);
+                currentStorageName = storage.getName();
+            }
+        } else {
+
+            storage = storages.get(0);
+            currentStorageName = storage.getName();
+        }
+        switchStorage(storage);
+    }
+
+    private void loadStorage(String name) {
+        if (name != null) {
+            currentStorageName = name;
+        }
+
+        new CallGetStorage(this).execute();
+    }
 
     private boolean firstUpdate = true;
-    private boolean requestOnResume;
+    private boolean requestOnResume = true;
 
 
     private ContactsListModeMediator contactsListModeMediator;
     private Menu menu;
     boolean chooseMode;
-    public  static  final int SELECT_GROUP = 100;
+    public static final int SELECT_GROUP = 100;
 
     @NonNull
     public static Intent makeIntent(@NonNull Activity activity, boolean chooseMode) {
@@ -147,6 +183,7 @@ public class ContactsActivity extends RecreatingActivity
         contactsListModeMediator.setSelectionMode(chooseMode);
 
         SoftKeyboard.hideKeyboard(this);
+        loadStorage(null);
     }
 
     private void initGroups() {
@@ -170,27 +207,25 @@ public class ContactsActivity extends RecreatingActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CONTACT ) {
-            if (  resultCode == RESULT_OK) {
+        if (requestCode == CONTACT) {
+            if (resultCode == RESULT_OK) {
                 requestContacts();
-            }
-            else {
+            } else {
 
             }
-        }
-        else if (requestCode == SELECT_GROUP ) {
-            if (  resultCode == RESULT_OK) {
+        } else if (requestCode == SELECT_GROUP) {
+            if (resultCode == RESULT_OK) {
                 boolean viewGroupMode = data.getBooleanExtra("viewGroupMode", false);
 
                 if (viewGroupMode) {
                     Group group = (Group) data.getSerializableExtra("SelectedGroup");
-                    switchGroup( group );
+                    switchGroup(group);
+                } else {
+                    String name = data.getStringExtra("SelectedStorage");
+                    loadStorage(name);
                 }
-                else
-                    switchStorage( data.getStringExtra("SelectedStorage") );
             }
-        }
-        else if (requestCode == VIEW_GROUP && resultCode == RESULT_OK) {
+        } else if (requestCode == VIEW_GROUP && resultCode == RESULT_OK) {
             Group updatedGroup = (Group) data.getSerializableExtra("group");
             currentGroup = updatedGroup;
             updateTitle();
@@ -238,24 +273,25 @@ public class ContactsActivity extends RecreatingActivity
     }
 
     private void initList(String filter) {
-
+        if (currentStorage == null) {
+            return;
+        }
         Logger.d(TAG, "initList currentFolder=" + currentStorage + " filter = " + filter);
 
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
         DataSource.Factory<Integer, Contact> factory;
 
-        if (viewMode==VIEW_MODE.STORADGE) {
+        if (viewMode == VIEW_MODE.STORADGE) {
             if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllContactsInStorage(currentStorage);
+                factory = database.messageDao().getAllContactsInStorage(currentStorage.getName());
             else
-                factory = database.messageDao().getAllFiltredContactsInStorage(currentStorage, "%" + filter + "%");
-        }
-        else {
+                factory = database.messageDao().getAllFiltredContactsInStorage(currentStorage.getName(), "%" + filter + "%");
+        } else {
             if (TextUtils.isEmpty(filter))
-                factory = database.messageDao().getAllContactsInGroup("%"+currentGroup.getUUID()+"%");
+                factory = database.messageDao().getAllContactsInGroup("%" + currentGroup.getUUID() + "%");
             else
-                factory = database.messageDao().getAllFiltredContactsInGroup("%"+currentGroup.getUUID()+"%", "%" + filter + "%");
+                factory = database.messageDao().getAllFiltredContactsInGroup("%" + currentGroup.getUUID() + "%", "%" + filter + "%");
         }
 
 
@@ -299,7 +335,7 @@ public class ContactsActivity extends RecreatingActivity
 
         rvContacts.setHasFixedSize(true);
         CoolLayoutManager layoutManager = new CoolLayoutManager(this);
-        rvContacts.setLayoutManager(layoutManager );
+        rvContacts.setLayoutManager(layoutManager);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvContacts.getContext(), layoutManager.getOrientation());
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.divider));
@@ -327,12 +363,15 @@ public class ContactsActivity extends RecreatingActivity
         toolbar.setNavigationOnClickListener(v -> {
             if (chooseMode) {
                 finish();
-            }
-            else {
+            } else {
                 if (contactsListModeMediator.isSelectionMode())
                     contactsListModeMediator.closeSelectionMode();
                 else {
-                    Intent intent = GroupsListActivity.makeIntent(this, currentGroup, currentStorage, viewMode);
+                    String name = null;
+                    if (currentStorage != null) {
+                        name = currentStorage.getName();
+                    }
+                    Intent intent = GroupsListActivity.makeIntent(this, currentGroup, name, viewMode);
                     startActivityForResult(intent, SELECT_GROUP);
                 }
             }
@@ -365,7 +404,7 @@ public class ContactsActivity extends RecreatingActivity
         actionMail.setVisible(!chooseMode);
         actionSettings.setVisible(!chooseMode);
         actionLogout.setVisible(!chooseMode);
-        viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
+        viewGroupItem.setVisible(viewMode == VIEW_MODE.GROUP);
 
 
         sendItem.setVisible(false);
@@ -399,7 +438,7 @@ public class ContactsActivity extends RecreatingActivity
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                viewGroupItem.setVisible( viewMode == VIEW_MODE.GROUP );
+                viewGroupItem.setVisible(viewMode == VIEW_MODE.GROUP);
 
                 if (chooseMode) {
                     int size = contactsListModeMediator.getSelectionList().size();
@@ -460,7 +499,7 @@ public class ContactsActivity extends RecreatingActivity
 
     private void openGroupScreen() {
         Intent intent = GroupActivity.makeIntent(this, GroupActivity.Mode.VIEW, currentGroup);
-        startActivityForResult(intent, VIEW_GROUP );
+        startActivityForResult(intent, VIEW_GROUP);
     }
 
     private void showEmptyEmailAlert() {
@@ -582,10 +621,15 @@ public class ContactsActivity extends RecreatingActivity
     public void onSuccess(Boolean hasNew) {
         loadContactLogic = null;
         slMain.setRefreshing(false);
+        if (hasNew) {
+            if (contactsAdapter != null) {
+                contactsAdapter.notifyDataSetChanged();
+            } else {
+                loadStorage(null);
+            }
 
-        contactsAdapter.notifyDataSetChanged();
-        RequestViewUtils.hideRequest();
-
+            RequestViewUtils.hideRequest();
+        }
     }
 
     private void moveScrollToTop() {
@@ -599,7 +643,7 @@ public class ContactsActivity extends RecreatingActivity
         loadContactLogic = null;
         slMain.setRefreshing(false);
         RequestViewUtils.hideRequest();
-        RequestViewUtils.showError(this, errorType,errorString, serverCode);
+        RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
 
     @Override
@@ -614,7 +658,7 @@ public class ContactsActivity extends RecreatingActivity
             @Override
             public void onGroupsLoadFail(ErrorType errorType, String errorString, int serverCode) {
                 slMain.setRefreshing(false);
-                RequestViewUtils.showError(getApplicationContext(), errorType,  errorString, serverCode);
+                RequestViewUtils.showError(getApplicationContext(), errorType, errorString, serverCode);
             }
 
         }, true);
@@ -629,8 +673,7 @@ public class ContactsActivity extends RecreatingActivity
 
         slMain.setRefreshing(true);
 
-        currentStorage = "personal";//todo remove after backend update
-        loadContactLogic = new LoadContactPoolLogic(currentStorage, this);
+        loadContactLogic = new LoadContactPoolLogic(this);
         loadContactLogic.execute();
 
     }
@@ -672,11 +715,17 @@ public class ContactsActivity extends RecreatingActivity
         setTitle("Contacts");
 
         String subTitle;
-        if (viewMode == VIEW_MODE.GROUP)
+        if (viewMode == VIEW_MODE.GROUP) {
+            if(currentGroup==null){
+                return;
+            }
             subTitle = currentGroup.getName();
-        else
-            subTitle = currentStorage;
-
+        } else {
+            if(currentStorage==null){
+                return;
+            }
+            subTitle = currentStorage.getName();
+        }
         Objects.requireNonNull(getSupportActionBar()).setSubtitle(subTitle);
     }
 
@@ -690,7 +739,7 @@ public class ContactsActivity extends RecreatingActivity
         updateMenu();
     }
 
-    private void switchStorage(String storage) {
+    private void switchStorage(Storages storage) {
         viewMode = VIEW_MODE.STORADGE;
         currentStorage = storage;
 

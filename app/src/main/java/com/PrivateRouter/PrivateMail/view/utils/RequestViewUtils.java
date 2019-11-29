@@ -18,26 +18,30 @@ public class RequestViewUtils {
     }
 
     public static void setMessage(String string) {
-        if (progressDialog!=null)
+        if (progressDialog != null)
             progressDialog.setMessage(string);
     }
 
 
     public static void hideRequest() {
-        if (progressDialog!=null)
+        if (progressDialog != null)
             progressDialog.dismiss();
     }
 
-    public static void showError(Context context, ErrorType errorType, String errorString,  int serverError) {
-        String str;
+    public static void showError(Context context, ErrorType errorType, String errorString, int serverError) {
+        String str="";
         if (errorType == ErrorType.ERROR_REQUEST) {
             str = errorString;
-        }
-        else {
-            String[] strings = context.getResources().getStringArray(R.array.request_server_error);
-            str = strings[errorType.ordinal()];
-            if (serverError > 0) {
-                str = str + ". " + context.getString(R.string.request_error_code) + ": " + serverError;
+        } else {
+            try {
+                String[] strings = context.getResources().getStringArray(R.array.request_server_error);
+                str = strings[errorType.ordinal()];
+                if (serverError > 0) {
+                    str = str + ". " + context.getString(R.string.request_error_code) + ": " + serverError;
+                }
+
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();

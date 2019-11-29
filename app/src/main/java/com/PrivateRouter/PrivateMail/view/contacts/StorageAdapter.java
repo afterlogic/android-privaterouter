@@ -12,14 +12,15 @@ import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Storages;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StorageAdapter extends RecyclerView.Adapter<StorageViewHolder> {
 
     private final String selectStorage;
     private OnStorageClick onStorageClick;
-    private Storages[] storages;
+    private List<Storages> storages;
 
-    StorageAdapter(Storages[] storages, String currentStorage){
+    StorageAdapter(List<Storages> storages, String currentStorage){
         this.storages = storages;
         this.selectStorage = currentStorage;
     }
@@ -35,14 +36,14 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull StorageViewHolder groupsViewHolder, int i) {
-        Storages storage = storages[i];
+        Storages storage = storages.get(i);
         boolean selected = !TextUtils.isEmpty(selectStorage ) && (storage.getId().equals(selectStorage));
         groupsViewHolder.bind(storage, i, selected );
     }
 
     @Override
     public int getItemCount() {
-        return storages.length;
+        return storages.size();
     }
 
     public OnStorageClick getOnStorageClick() {

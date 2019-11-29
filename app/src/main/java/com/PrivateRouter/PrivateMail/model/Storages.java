@@ -1,16 +1,53 @@
 package com.PrivateRouter.PrivateMail.model;
 
-public enum Storages {
-    PERSONAL("personal"),
-    TEAM("team");
+import android.arch.persistence.room.Entity;
+import android.support.annotation.NonNull;
 
-    private final String id;
+import androidx.annotation.Nullable;
 
-    Storages(String id) {
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
+@Entity(tableName = "storages", primaryKeys = {"id"})
+public class Storages implements Serializable {
+    @SerializedName("Id")
+    @NonNull
+    private String id;
+    @SerializedName("Name")
+    private String name;
+    @SerializedName("CTag")
+    private int cTag;
+
+    public Storages(String id, int cTag) {
         this.id = id;
+        this.cTag = cTag;
     }
 
     public String getId() {
         return id;
+    }
+
+    public int getCTag() {
+        return cTag;
+    }
+
+    public void setCTag(int cTag) {
+        this.cTag = cTag;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        if (name == null) {
+            return id;
+        }
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

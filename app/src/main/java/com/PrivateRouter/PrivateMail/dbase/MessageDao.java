@@ -12,10 +12,8 @@ import com.PrivateRouter.PrivateMail.model.ContactBase;
 import com.PrivateRouter.PrivateMail.model.FolderHash;
 import com.PrivateRouter.PrivateMail.model.Message;
 import com.PrivateRouter.PrivateMail.model.MessageBase;
-import com.PrivateRouter.PrivateMail.model.StorageCTag;
 import com.PrivateRouter.PrivateMail.model.TempMessageIds;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
@@ -44,7 +42,7 @@ public interface MessageDao {
             "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
             "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter)))" +
-            " or (uid IN (:additionalMailsUids)) )"+
+            " or (uid IN (:additionalMailsUids)) )" +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
@@ -52,7 +50,7 @@ public interface MessageDao {
             "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen ) and " +
             "((Subject LIKE :filter) or (plain LIKE :filter) or (attachmentsattachments LIKE :filter) " +
             "or (toemails LIKE :filter) or (ccemails LIKE :filter) or (fromemails LIKE :filter) or (bccemails LIKE :filter)))" +
-            " or (uid IN (:additionalMailsUids)) )"+
+            " or (uid IN (:additionalMailsUids)) )" +
             " ORDER BY uid DESC")
     long getAllFilterFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
@@ -60,14 +58,14 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE parentUid = 0 and Folder =:folder and " +
             "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
             "(fromemails  LIKE :filter) ) " +
-            " or (uid IN (:additionalMailsUids)) )"+
+            " or (uid IN (:additionalMailsUids)) )" +
             " ORDER BY uid DESC")
     DataSource.Factory<Integer, Message> getAllFilterEmailFactory(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
     @Query("SELECT COUNT (uid) FROM messages WHERE parentUid = 0 and Folder =:folder and " +
             "(((not :starredOnly or isFlagged )  and (not :unreadOnly or not isSeen )  and " +
             "(fromemails  LIKE :filter) )" +
-            " or (uid IN (:additionalMailsUids)) )"+
+            " or (uid IN (:additionalMailsUids)) )" +
             " ORDER BY uid DESC")
     long getAllFilterEmailFactoryCount(String folder, String filter, boolean starredOnly, boolean unreadOnly, List<Integer> additionalMailsUids);
 
@@ -84,17 +82,17 @@ public interface MessageDao {
     Message getByUid(String folder, Integer uid);
 
     @Query("DELETE FROM messages WHERE (Folder =:folder) and  " +
-            "( uid IN (:uids))" )
-    void deletedFromList(String folder, List<Integer> uids );
+            "( uid IN (:uids))")
+    void deletedFromList(String folder, List<Integer> uids);
 
 
     @Query("SELECT * FROM messages WHERE (uid) and (Folder =:folder) and  (uid >= :minUI) and  (uid <= :maxUI) and " +
-            "( uid NOT IN (:uids))" )
-    List<Message> selectNotInList(String folder, int minUI, int maxUI, List<Integer> uids );
+            "( uid NOT IN (:uids))")
+    List<Message> selectNotInList(String folder, int minUI, int maxUI, List<Integer> uids);
 
-// uid, isFlagged, isAnswered, isSeen, isForwarded, isDeleted, isDraft, isRecent, parentUid, getThreadUidsList
+    // uid, isFlagged, isAnswered, isSeen, isForwarded, isDeleted, isDraft, isRecent, parentUid, getThreadUidsList
     @Query("SELECT * FROM messages " +
-             "WHERE (Folder =:folder) ORDER BY uid")
+            "WHERE (Folder =:folder) ORDER BY uid")
     List<MessageBase> selectMessageBase(String folder);
 
     @Query("UPDATE messages SET isFlagged = :isFlagged, isAnswered = :isAnswered, isSeen = :isSeen, isForwarded = :isForwarded," +
@@ -105,8 +103,7 @@ public interface MessageDao {
                             int parentUid, String threadUidsList);
 
     @Query("UPDATE messages SET folder = :folderTo WHERE (Folder =:folder) and (uid = :uid)")
-    void updateMessageFolder(int uid,  String folder, String folderTo);
-
+    void updateMessageFolder(int uid, String folder, String folderTo);
 
 
     @Insert(onConflict = REPLACE)
@@ -126,8 +123,8 @@ public interface MessageDao {
     FolderHash getFolderHash(String folder);
 
 
-    @Query("DELETE FROM folder_hash" )
-    void deletedFolderHashes( );
+    @Query("DELETE FROM folder_hash")
+    void deletedFolderHashes();
 
 
     @Query("SELECT * FROM contacts WHERE (Storage =:storage)")
@@ -135,10 +132,7 @@ public interface MessageDao {
 
     @Query("SELECT * FROM contacts WHERE Storage =:storage and " +
             "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
-    DataSource.Factory<Integer, Contact> getAllFiltredContactsInStorage(String storage, String filter );
-
-
-
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInStorage(String storage, String filter);
 
 
     @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID)")
@@ -146,33 +140,23 @@ public interface MessageDao {
 
     @Query("SELECT * FROM contacts WHERE (groupUUIDs LIKE :groupID) and " +
             "(FullName LIKE :filter or ViewEmail LIKE :filter )  ")
-    DataSource.Factory<Integer, Contact> getAllFiltredContactsInGroup(String groupID, String filter );
-
+    DataSource.Factory<Integer, Contact> getAllFiltredContactsInGroup(String groupID, String filter);
 
 
     @Query("SELECT * FROM contacts WHERE   UUID = :uuid")
-    Contact getContactByUuid( String uuid);
+    Contact getContactByUuid(String uuid);
 
-    @Query("SELECT UUID, eTag FROM contacts WHERE Storage = :storage")
-    List<ContactBase> getStorageContactsUids(String storage);
+    @Query("SELECT UUID, eTag FROM contacts")
+    List<ContactBase> getStorageContacts();
 
     @Insert(onConflict = REPLACE)
     Long insertContact(Contact contact);
 
     @Query("DELETE FROM contacts Where UUID IN (:UUIDs)")
-    public void clearOldContacts(  List<String> UUIDs);
-
-
-    @Insert(onConflict = REPLACE)
-    Long insertStorageCTag(StorageCTag storageCTag);
-
-
-    @Query("SELECT * FROM storage_c_tag WHERE storage =:storage")
-    StorageCTag getStorageCTag(String storage);
-
+    public void clearOldContacts(List<String> UUIDs);
 
     @Query("SELECT ids FROM temp_message_ids ")
-    Long[] getMessageTempIds( );
+    Long[] getMessageTempIds();
 
 
     @Insert(onConflict = REPLACE)
@@ -181,7 +165,6 @@ public interface MessageDao {
 
     @Query("DELETE FROM temp_message_ids")
     void removeTempMessagesIds();
-
 
 
 }

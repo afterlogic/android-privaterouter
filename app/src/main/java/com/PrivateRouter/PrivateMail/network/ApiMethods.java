@@ -13,13 +13,12 @@ public class ApiMethods {
     public static String SAVE_MESSAGE = "SaveMessage";
     public static String MOVE_MESSAGES = "MoveMessages";
     public static String GET_FOLDERS = "GetFolders";
-    public static String GET_RELEVANT_FOLDERS_INFORMATION= "GetRelevantFoldersInformation";
+    public static String GET_RELEVANT_FOLDERS_INFORMATION = "GetRelevantFoldersInformation";
     public static String SET_EMAIL_SAFETY = "SetEmailSafety";
     public static String SET_MESSAGES_SEEN = "SetMessagesSeen";
     public static String GET_CONTACTS_INFO = "GetContactsInfo";
     public static String GET_CONTACTS_BY_UIDS = "GetContactsByUids";
     public static String UPLOAD_ATTACHMENT = "UploadAttachment";
-    public static String GET_C_TAG = "GetCTag";
     public static String GET_SETTINGS = "GetSettings";
     public static String CREATE_CONTACT = "CreateContact";
     public static String UPDATE_CONTACT = "UpdateContact";
@@ -29,4 +28,5 @@ public class ApiMethods {
     public static String DELETE_GROUP = "DeleteGroup";
     public static String GET_GROUP = "GetGroup";
     public static String GET_IDENTITIES = "GetIdentities";
+    public static String GET_CONTACT_STORAGES = "GetContactStorages";
 }

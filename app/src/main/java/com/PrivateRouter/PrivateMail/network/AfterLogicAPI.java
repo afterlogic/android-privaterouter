@@ -1,13 +1,13 @@
 package com.PrivateRouter.PrivateMail.network;
 
 
+import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.CreateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.DeleteGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.DiscoverUrlResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
-import com.PrivateRouter.PrivateMail.network.responses.GetCTagResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactInfoResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetContactsResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFolderResponse;
@@ -20,10 +20,13 @@ import com.PrivateRouter.PrivateMail.network.responses.GetMessagesBodiesResponse
 import com.PrivateRouter.PrivateMail.network.responses.GetMessagesResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import com.PrivateRouter.PrivateMail.network.responses.GetSettingsResponse;
+import com.PrivateRouter.PrivateMail.network.responses.GetStoragesResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UpdateContactResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UpdateGroupResponse;
 import com.PrivateRouter.PrivateMail.network.responses.UploadAttachmentResponse;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -42,128 +45,126 @@ import retrofit2.http.Url;
 
 public interface AfterLogicAPI {
 
-    @GET("/pm/autodiscover.php")
+    @GET("/autodiscover.php")
     Call<DiscoverUrlResponse> discoverHostname(@Query("email") String email);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<LoginResponse> login(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<LoginResponse> login(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<BaseResponse> logout(@Field("Module")  String module, @Field("Method") String method   );
+    Call<BaseResponse> logout(@Field("Module") String module, @Field("Method") String method);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<BaseResponse> ping(@Field("Module")  String module, @Field("Method") String method );
+    Call<BaseResponse> ping(@Field("Module") String module, @Field("Method") String method);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetAccountResponse> getAccounts(@Field("Module")  String module, @Field("Method") String method );
+    Call<GetAccountResponse> getAccounts(@Field("Module") String module, @Field("Method") String method);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetMessagesResponse> getMessages(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetMessagesResponse> getMessages(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetMessageBaseResponse> getMessagesInfo(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetMessageBaseResponse> getMessagesInfo(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetMessageResponse> getMessage(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetMessageResponse> getMessage(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetMessagesBodiesResponse> getMessagesBodies(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetMessagesBodiesResponse> getMessagesBodies(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<BaseResponse> sendMessage(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<BaseResponse> sendMessage(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<BaseResponse> moveMessages(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<BaseResponse> moveMessages(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetFolderResponse> getFolder(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetFolderResponse> getFolder(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetFoldersMetaResponse> getRelevantFoldersInformation(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetFoldersMetaResponse> getRelevantFoldersInformation(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<BaseResponse> setEmailSafety(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<BaseResponse> setEmailSafety(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetContactInfoResponse> getContactInfo(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetContactInfoResponse> getContactInfo(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetCTagResponse> getCTag(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
+    Call<GetContactsResponse> getContactsByUids(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
-    @FormUrlEncoded
-    Call<GetContactsResponse> getContactsByUids(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter  );
-
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @Multipart
     Call<UploadAttachmentResponse> uploadAttachment(
-            @Part MultipartBody.Part file, @Part("Module")  RequestBody  module, @Part("Method") RequestBody  method ,
-                                                     @Part("Parameters") RequestBody  parameter  );
-                                                     //@Part("jua-uploader\"; filename=\"pp.png\" ") RequestBody jua_uploader  );
-                                                    //"jua-uploader"
-
-
+            @Part MultipartBody.Part file, @Part("Module") RequestBody module, @Part("Method") RequestBody method,
+            @Part("Parameters") RequestBody parameter);
+    //@Part("jua-uploader\"; filename=\"pp.png\" ") RequestBody jua_uploader  );
+    //"jua-uploader"
 
 
     @Streaming
     @GET
     Call<ResponseBody> downloadAttachment(@Url String fileUrl);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetSettingsResponse> getSettings(@Field("Module")  String module, @Field("Method") String method);
+    Call<GetSettingsResponse> getSettings(@Field("Module") String module, @Field("Method") String method);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<CreateContactResponse> createContact(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<CreateContactResponse> createContact(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<UpdateContactResponse> updateContact(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<UpdateContactResponse> updateContact(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<CreateGroupResponse> createGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<CreateGroupResponse> createGroup(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetGroupsResponse> getGroups(@Field("Module")  String module, @Field("Method") String method);
+    Call<GetGroupsResponse> getGroups(@Field("Module") String module, @Field("Method") String method);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<UpdateGroupResponse> updateGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<UpdateGroupResponse> updateGroup(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<DeleteGroupResponse> deleteGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<DeleteGroupResponse> deleteGroup(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetGroupResponse> getGroup(@Field("Module")  String module, @Field("Method") String method , @Field("Parameters") String parameter );
+    Call<GetGroupResponse> getGroup(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
-    @POST("?/Api/" )
+    @POST("?/Api/")
     @FormUrlEncoded
-    Call<GetIdentitiesResponse> getIdentities(@Field("Module")  String module, @Field("Method") String method);
+    Call<GetIdentitiesResponse> getIdentities(@Field("Module") String module, @Field("Method") String method);
+
+    @POST("?/Api/")
+    @FormUrlEncoded
+    Call<GetStoragesResponse> getContactStorages(@Field("Module") String module, @Field("Method") String getCTag);
 }

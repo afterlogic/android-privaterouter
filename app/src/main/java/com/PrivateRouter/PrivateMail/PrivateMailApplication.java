@@ -2,12 +2,14 @@ package com.PrivateRouter.PrivateMail;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
+import com.PrivateRouter.PrivateMail.dbase.migration.Migration1to2;
 import com.PrivateRouter.PrivateMail.logic.SyncLogic;
 import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.IdentitiesRepository;
@@ -35,9 +37,13 @@ public class PrivateMailApplication  extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
- 
-        Fabric.with(this, new Crashlytics());
 
+        try {
+            Fabric.with(this, new Crashlytics());
+        }catch (Throwable e){
+            //todo wtf
+            e.printStackTrace();
+        }
         instance = this;
 
         updateLocale();
@@ -80,6 +86,7 @@ public class PrivateMailApplication  extends Application {
 
     private void initDBase() {
         database = Room.databaseBuilder(this, AppDatabase.class, "database")
+                .addMigrations(new Migration1to2())
                 .build();
 
     }

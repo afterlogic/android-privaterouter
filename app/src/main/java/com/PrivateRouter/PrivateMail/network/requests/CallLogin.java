@@ -41,7 +41,8 @@ public class CallLogin extends CallRequest<LoginResponse> implements Callback<Lo
         if (loginParameter.Host.isEmpty()) {
 
             String email = loginParameter.Login;
-            HostManager.setHost("https://torguard.tv/");
+            //jopa поменять на https://torguard.tv/pm/
+            HostManager.setHost("https://test.afterlogic.com/");
             ApiFactory.getService().discoverHostname(email).enqueue(new Callback<DiscoverUrlResponse>() {
                 @Override
                 public void onResponse(Call<DiscoverUrlResponse> _call, Response<DiscoverUrlResponse> response) {

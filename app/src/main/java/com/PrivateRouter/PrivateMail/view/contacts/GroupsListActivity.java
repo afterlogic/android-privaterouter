@@ -10,12 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
 
+import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
-import com.PrivateRouter.PrivateMail.network.requests.CallGetGroups;
-import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
+import com.PrivateRouter.PrivateMail.network.requests.CallGetStorage;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
@@ -23,6 +23,7 @@ import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 
@@ -30,8 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoadCallback, GroupsAdapter.OnGroupClick, StorageAdapter.OnStorageClick {
-
+public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoadCallback, GroupsAdapter.OnGroupClick, StorageAdapter.OnStorageClick, StoragesCallback {
 
 
     public static final int GROUP = 11;
@@ -44,7 +44,6 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
     private Group currentGroup;
     private String currentStorage;
     private ContactsActivity.VIEW_MODE viewMode;
-
 
     @NonNull
     public static Intent makeIntent(ContactsActivity activity, Group currentGroup, String currentStorage, ContactsActivity.VIEW_MODE viewMode) {
@@ -65,16 +64,14 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
         parseIntent();
 
-
-        initStorageList();
+        initStorageList(new ArrayList<Storages>());
         GroupsRepository.getInstance().load(this, true);
-
-
+        new CallGetStorage(this).execute();
 
     }
 
     private void parseIntent() {
-        if (getIntent()!=null) {
+        if (getIntent() != null) {
             viewMode = (ContactsActivity.VIEW_MODE) getIntent().getSerializableExtra("mode");
             if (viewMode == ContactsActivity.VIEW_MODE.GROUP)
                 currentGroup = (Group) getIntent().getSerializableExtra("group");
@@ -84,10 +81,10 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
         }
     }
 
-    private void initStorageList() {
-        StorageAdapter storageAdapter = new StorageAdapter(Storages.values(), currentStorage);
-        storageAdapter.setOnStorageClick(this);
+    private void initStorageList(List<Storages> storages) {
 
+        StorageAdapter storageAdapter = new StorageAdapter(storages, currentStorage);
+        storageAdapter.setOnStorageClick(this);
 
         rvStorageList.setLayoutManager(new LinearLayoutManager(this));
         rvStorageList.setAdapter(storageAdapter);
@@ -132,8 +129,6 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
     }
 
 
-
-
     @Override
     public void onGroupClick(Group group, int position) {
         selectGroup(group);
@@ -141,7 +136,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
     private void selectStorage(@NonNull String storageId) {
         Intent intent = new Intent();
-        intent.putExtra("SelectedStorage", storageId );
+        intent.putExtra("SelectedStorage", storageId);
         intent.putExtra("viewGroupMode", false);
         setResult(RESULT_OK, intent);
         finish();
@@ -150,7 +145,7 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
 
     private void selectGroup(@NonNull Group group) {
         Intent intent = new Intent();
-        intent.putExtra("SelectedGroup", group );
+        intent.putExtra("SelectedGroup", group);
         intent.putExtra("viewGroupMode", true);
         setResult(RESULT_OK, intent);
         finish();
@@ -166,5 +161,10 @@ public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoa
     @Override
     public void onStorageClick(String storage) {
         selectStorage(storage);
+    }
+
+    @Override
+    public void onStorages(List<Storages> storages) {
+        initStorageList(storages);
     }
 }
