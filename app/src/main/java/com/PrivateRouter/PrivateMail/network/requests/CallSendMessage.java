@@ -125,8 +125,8 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
                     parameters.IdentityID = message.getIdentityID();
 
                     if (message.getAttachments() != null && message.getAttachments().getAttachments() != null) {
-                        this.Attachments = new AttachmentObj();
-                        this.Attachments.data = new JsonObject();
+                        Attachments = new AttachmentObj();
+                        Attachments.data = new JsonObject();
                         for (Attachments attachments : message.getAttachments().getAttachments()) {
                             JsonArray jsonArray = new JsonArray();
                             jsonArray.add(attachments.getFileName());

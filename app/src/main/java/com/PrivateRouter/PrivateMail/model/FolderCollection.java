@@ -28,6 +28,8 @@ public class FolderCollection implements Serializable {
         for (Folder folder : collection) {
             if (folder.getType() == folderType.getId()) {
                 return folder.getFullNameRaw();
+            } else if (folder.getSubFolders() != null) {
+                return folder.getSubFolders().getFolderName(folderType);
             }
         }
         return null;

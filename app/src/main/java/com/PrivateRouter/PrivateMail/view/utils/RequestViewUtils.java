@@ -29,8 +29,8 @@ public class RequestViewUtils {
     }
 
     public static void showError(Context context, ErrorType errorType, String errorString, int serverError) {
-        String str="";
-        if (errorType == ErrorType.ERROR_REQUEST) {
+        String str = "";
+        if (errorType == ErrorType.ERROR_REQUEST && errorString != null) {
             str = errorString;
         } else {
             try {
