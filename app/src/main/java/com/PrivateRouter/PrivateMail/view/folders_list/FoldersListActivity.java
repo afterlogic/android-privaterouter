@@ -68,7 +68,7 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
         overridePendingTransition(R.anim.left_to_right, R.anim.hold);
 
 
-        if (getIntent()!=null) {
+        if (getIntent() != null) {
             currentFolder = getIntent().getStringExtra("folder");
             currentUnreadOnly = getIntent().getBooleanExtra("unreadOnly", false);
         }
@@ -91,7 +91,7 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
         }
 
@@ -120,9 +120,9 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
         if (TextUtils.isEmpty(name))
             name = LoggedUserRepository.getInstance().getLogin();
 
-        tvUserName.setText( name );
+        tvUserName.setText(name);
 
-        folderAdapter = new FolderAdapter(this, account.getFoldersWithSubFolder(), currentFolder );
+        folderAdapter = new FolderAdapter(this, account.getFoldersWithSubFolder(), currentFolder);
         folderAdapter.setOnFolderClick(this);
         rvFoldersList.setAdapter(folderAdapter);
 
@@ -134,11 +134,11 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
         LoadFolderLogic loadFolderLogic = new LoadFolderLogic(folderCollection -> {
 
             Account account = LoggedUserRepository.getInstance().getActiveAccount();
-            account.setFolders( folderCollection );
+            account.setFolders(folderCollection);
 
-            LoggedUserRepository.getInstance().save( FoldersListActivity.this );
+            LoggedUserRepository.getInstance().save(FoldersListActivity.this);
 
-            folderAdapter.setFolderList( account.getFoldersWithSubFolder() );
+            folderAdapter.setFolderList(account.getFoldersWithSubFolder());
             slMain.setRefreshing(false);
 
             bindUI();
@@ -171,13 +171,14 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
         if (!folder.getFullName().equals(currentFolder) || currentUnreadOnly != unreadOnly) {
 
             Intent intent = new Intent();
+            intent.putExtra(MailListActivity.NAME_SPACE, folder.getNamespace());
             intent.putExtra(MailListActivity.FOLDER_PARAM, folder.getFullName());
-            if (folder.getFullName().equals(FolderType.VirtualStarred) ) {
+            if (folder.getFullName().equals(FolderType.VirtualStarred)) {
                 Account account = LoggedUserRepository.getInstance().getActiveAccount();
-                intent.putExtra(MailListActivity.PERFORM_FOLDER_PARAM, account.getFolders().getFolderName(FolderType.Inbox) );
+                intent.putExtra(MailListActivity.PERFORM_FOLDER_PARAM, account.getFolders().getFolderName(FolderType.Inbox));
             }
 
-            intent.putExtra(MailListActivity.UNREAD_ONLY_PARAM, unreadOnly );
+            intent.putExtra(MailListActivity.UNREAD_ONLY_PARAM, unreadOnly);
 
             setResult(RESULT_OK, intent);
         }

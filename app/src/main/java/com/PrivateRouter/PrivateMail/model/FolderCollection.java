@@ -20,11 +20,12 @@ public class FolderCollection implements Serializable {
         this.collection = collection;
     }
 
+
     public String getFolderName(@NonNull FolderType folderType) {
-        if (collection==null)
+        if (collection == null)
             return null;
 
-        for (Folder folder: collection) {
+        for (Folder folder : collection) {
             if (folder.getType() == folderType.getId()) {
                 return folder.getFullNameRaw();
             }
@@ -38,11 +39,11 @@ public class FolderCollection implements Serializable {
     }
 
     public Folder getFolderInCollection(@NonNull String name, ArrayList<Folder> collection) {
-        if (collection==null || collection.isEmpty())
+        if (collection == null || collection.isEmpty())
             return null;
 
-        for (Folder folder: collection) {
-            if (name.equals(folder.getFullName() ) ) {
+        for (Folder folder : collection) {
+            if (name.equals(folder.getFullName())) {
                 return folder;
             }
             if (folder.getSubFolders() != null) {

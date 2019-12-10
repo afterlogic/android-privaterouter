@@ -58,7 +58,22 @@ public class Folder implements Serializable {
     private
     FolderMeta meta;
 
+    @SerializedName("Namespace")
+    private
+    String namespace;
 
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+        if (subFolders != null) {
+            for (Folder folder : subFolders.getCollection()) {
+                folder.setNamespace(namespace);
+            }
+        }
+    }
 
     public int getType() {
         return type;
@@ -157,11 +172,37 @@ public class Folder implements Serializable {
     }
 
     public int getLevel() {
+        if (namespace != null && !namespace.isEmpty() && fullName.startsWith(namespace)) {
+            return level - enterCount(namespace, delimiter);
+        }
         return level;
+    }
+
+    private int enterCount(String str, String sub) {
+        int count = 0;
+        int offset = 0;
+        while (offset < str.length()) {
+            offset = str.indexOf(sub, offset) + 1;
+            if (offset == -1) {
+                break;
+            } else {
+                count++;
+            }
+        }
+        return count;
     }
 
     public void setLevel(int level) {
         this.level = level;
     }
+
+    public static String withNotNamespace(String name, String namespace) {
+        if (namespace != null && !namespace.isEmpty() && name.startsWith(namespace)) {
+            return name.substring(namespace.length());
+        } else {
+            return name;
+        }
+    }
+
 }
 
