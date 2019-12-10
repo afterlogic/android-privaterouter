@@ -30,26 +30,32 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CallSendMessage  extends CallRequest<BaseResponse>  implements Callback<BaseResponse> {
+public class CallSendMessage extends CallRequest<BaseResponse> implements Callback<BaseResponse> {
     SendMessageParameter parameters = new SendMessageParameter();
     protected String method = ApiMethods.SEND_MESSAGE;
+    private boolean send;
 
-    public CallSendMessage(CallRequestResult callback){
+    public CallSendMessage(CallRequestResult callback) {
         super(callback);
     }
 
 
-    public void setMessage(Context context, Message message) {
+    public void setMessage(Context context, Message message, boolean send) {
+        this.send = send;
         parameters.fromMessage(context, message);
     }
 
 
     @Override
     public void start() {
-        Account account =  LoggedUserRepository.getInstance().getActiveAccount();
+        Account account = LoggedUserRepository.getInstance().getActiveAccount();
         parameters.AccountID = account.getAccountID();
-        parameters.SentFolder = account.getFolders().getFolderName(FolderType.Sent);
-        parameters.DraftFolder = account.getFolders().getFolderName(FolderType.Drafts);
+        if (send) {
+            parameters.method = "SendMessage";
+            parameters.SentFolder = account.getFolders().getFolderName(FolderType.Sent);
+        } else {
+            parameters.DraftFolder = account.getFolders().getFolderName(FolderType.Drafts);
+        }
 
 //IdentityID
 
@@ -57,41 +63,41 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
                 .registerTypeAdapter(AttachmentObj.class, new AttachmentsSerializer()).create();
         String json = gson.toJson(parameters);
 
-        Call<BaseResponse> call= ApiFactory.getService().sendMessage(ApiModules.MAIL, method, json );
+        Call<BaseResponse> call = ApiFactory.getService().sendMessage(ApiModules.MAIL, method, json);
         call.enqueue(this);
     }
 
     @Override
     public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
 
-        if (response.isSuccessful() ) {
+        if (response.isSuccessful()) {
             BaseResponse getMessageResponse = response.body();
-            if (getMessageResponse !=null && getMessageResponse.isSuccess() ) {
+            if (getMessageResponse != null && getMessageResponse.isSuccess()) {
 
-                if (callback!=null)
-                    callback.onSuccess( getMessageResponse );
-            }
-            else {
-                if (callback!=null)
-                    callback.onFail(ErrorType.ERROR_REQUEST, getMessageResponse.getErrorMessage(), getMessageResponse.getErrorCode() );
+                if (callback != null)
+                    callback.onSuccess(getMessageResponse);
+            } else {
+                if (callback != null)
+                    callback.onFail(ErrorType.ERROR_REQUEST, getMessageResponse.getErrorMessage(), getMessageResponse.getErrorCode());
             }
 
-        }
-        else {
-            if (callback!=null)
-                callback.onFail(ErrorType.SERVER_ERROR, "", response.code() );
+        } else {
+            if (callback != null)
+                callback.onFail(ErrorType.SERVER_ERROR, "", response.code());
         }
     }
 
     @Override
     public void onFailure(Call<BaseResponse> call, Throwable t) {
-        if (callback!=null)
-            callback.onFail(ErrorType.FAIL_CONNECT, "",0);
+        if (callback != null)
+            callback.onFail(ErrorType.FAIL_CONNECT, "", 0);
     }
 
     class AttachmentObj {
         JsonObject data;
-    };
+    }
+
+    ;
 
     class SendMessageParameter {
         int AccountID;
@@ -103,7 +109,7 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
         String DraftFolder;
         int IdentityID;
         AttachmentObj Attachments;
-
+        String method;
 
 
         public void fromMessage(Context context, Message message) {
@@ -139,8 +145,7 @@ public class CallSendMessage  extends CallRequest<BaseResponse>  implements Call
                         //this.Attachments = attachmentsJson.toString();
                     }
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }

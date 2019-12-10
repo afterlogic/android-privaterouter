@@ -328,7 +328,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                 RequestViewUtils.showError(ComposeActivity.this, errorType, errorString, serverCode);
             }
         });
-        callSaveMessage.setMessage(this, message);
+        callSaveMessage.setMessage(this, message,false);
         callSaveMessage.start();
     }
 
@@ -339,7 +339,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
             updateMessage();
             CallSendMessage callSendMessage = new CallSendMessage(this);
-            callSendMessage.setMessage(this, message);
+            callSendMessage.setMessage(this, message,true);
             callSendMessage.start();
         }
     }
