@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +15,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,7 +72,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ComposeActivity extends ActivityWithRequestPermission implements BottomNavigationView.OnNavigationItemSelectedListener,
-        CallRequestResult,  EncryptCallback, DecryptCallback, AttachmentsAdapter.OnRemoveCallback {
+        CallRequestResult, EncryptCallback, DecryptCallback, AttachmentsAdapter.OnRemoveCallback {
 
     private static final int SELECT_CONTACT = 109;
     public static final String SELECT_EMAIL_PARAM = "emails";
@@ -194,9 +197,9 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void uploadStartAttachment() {
-        if (getIntent()!=null && !TextUtils.isEmpty(getIntent().getStringExtra("uploadFileName")) ) {
-            String uploadFileName  = getIntent().getStringExtra("uploadFileName");
-            String uploadData  = getIntent().getStringExtra("uploadData");
+        if (getIntent() != null && !TextUtils.isEmpty(getIntent().getStringExtra("uploadFileName"))) {
+            String uploadFileName = getIntent().getStringExtra("uploadFileName");
+            String uploadData = getIntent().getStringExtra("uploadData");
 
             CallUploadMessage callUploadMessage = new CallUploadMessage(uploadResult);
             callUploadMessage.setFileData(uploadData);
@@ -220,7 +223,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         etComposeSubject.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE ) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     etComposeText.requestFocus();
                 }
                 return true;
@@ -240,7 +243,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
 
-
     private void createEmailFromText(EditText text, EmailCollection emailCollection, Runnable updateListRunnable) {
         String emailStr = text.getText().toString();
 
@@ -249,13 +251,13 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             Email email = new Email();
             email.setEmail(emailStr);
 
-            if (emailCollection.getEmails()==null)
+            if (emailCollection.getEmails() == null)
                 emailCollection.setEmails(new ArrayList<>());
 
             emailCollection.getEmails().add(0, email);
 
 
-            if (updateListRunnable!=null)
+            if (updateListRunnable != null)
                 updateListRunnable.run();
 
         }
@@ -264,23 +266,22 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void initMessage() {
-        if (getIntent()!=null && getIntent().getSerializableExtra("message")!=null) {
+        if (getIntent() != null && getIntent().getSerializableExtra("message") != null) {
             message = (Message) getIntent().getSerializableExtra("message");
-        }
-        else {
+        } else {
             message = new Message();
         }
     }
 
 
     private void prepareMessage() {
-        if (message.getTo()==null) {
+        if (message.getTo() == null) {
             message.setTo(new EmailCollection());
         }
-        if (message.getCc()==null) {
+        if (message.getCc() == null) {
             message.setCc(new EmailCollection());
         }
-        if (message.getBcc()==null) {
+        if (message.getBcc() == null) {
             message.setBcc(new EmailCollection());
         }
     }
@@ -322,7 +323,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
             }
 
             @Override
-            public void onFail(ErrorType errorType,String errorString,  int serverCode) {
+            public void onFail(ErrorType errorType, String errorString, int serverCode) {
                 RequestViewUtils.hideRequest();
                 RequestViewUtils.showError(ComposeActivity.this, errorType, errorString, serverCode);
             }
@@ -333,7 +334,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
 
     private void sendMessage() {
-        if (checkMessage() ) {
+        if (checkMessage()) {
             RequestViewUtils.showRequest(this);
 
             updateMessage();
@@ -344,7 +345,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private boolean checkMessage() {
-        if ((message.getTo()==null) || (message.getTo().getEmails()==null) || (message.getTo().getEmails().isEmpty()) )  {
+        if ((message.getTo() == null) || (message.getTo().getEmails() == null) || (message.getTo().getEmails().isEmpty())) {
             Toast.makeText(this, getString(R.string.compose_select_recipient), Toast.LENGTH_LONG).show();
             return false;
         }
@@ -355,17 +356,17 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void updateMessage() {
         message.setSubject(etComposeSubject.getText().toString());
-        message.setPlain(etComposeText.getText().toString() );
+        message.setPlain(etComposeText.getText().toString());
         //message.setIdentityID();
     }
 
-    private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection,  Runnable updateRunnable, Runnable onFocusField) {
+    private void addFieldsFocusReaction(LinearLayout ll, ImageButton ib, EditText et, EmailCollection emailCollection, Runnable updateRunnable, Runnable onFocusField) {
         ib.setVisibility(View.INVISIBLE);
         et.setVisibility(View.GONE);
 
         ll.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
-                if (onFocusField!=null)
+                if (onFocusField != null)
                     onFocusField.run();
                 ib.setVisibility(View.VISIBLE);
                 et.setVisibility(View.VISIBLE);
@@ -385,8 +386,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                 ib.setVisibility(View.INVISIBLE);
                 et.setVisibility(View.GONE);
                 createEmailFromText(et, emailCollection, updateRunnable);
-            }
-            else {
+            } else {
                 ib.setVisibility(View.VISIBLE);
             }
         });
@@ -400,12 +400,14 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         });
 
     }
+
     private void addFieldsFocusReaction() {
-        addFieldsFocusReaction ( llRecipients,      ibAddRecipients,    etEmailTo,  message.getTo(),    ComposeActivity.this::updateToList, null);
-        addFieldsFocusReaction ( llCcRecipients,    ibAddCcRecipients,  etEmailCc,  message.getCc(),    ComposeActivity.this::updateCcToList, this::showCCFields);
-        addFieldsFocusReaction ( llBccRecipients,   ibAddBccRecipients, etEmailBcc, message.getBcc(),   ComposeActivity.this::updateBccToList, null);
+        addFieldsFocusReaction(llRecipients, ibAddRecipients, etEmailTo, message.getTo(), ComposeActivity.this::updateToList, null);
+        addFieldsFocusReaction(llCcRecipients, ibAddCcRecipients, etEmailCc, message.getCc(), ComposeActivity.this::updateCcToList, this::showCCFields);
+        addFieldsFocusReaction(llBccRecipients, ibAddBccRecipients, etEmailBcc, message.getBcc(), ComposeActivity.this::updateBccToList, null);
     }
-    private  void clearFieldsFocusReaction() {
+
+    private void clearFieldsFocusReaction() {
 
         etEmailTo.setVisibility(View.GONE);
         etEmailCc.setVisibility(View.GONE);
@@ -420,7 +422,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
 
-    private  void showCCFields() {
+    private void showCCFields() {
         llBccRecipients.setVisibility(View.VISIBLE);
         cvBccDivider.setVisibility(View.VISIBLE);
     }
@@ -474,8 +476,8 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void openInputDialog(final EmailCollection emailCollection, final Runnable runnable) {
         this.emailCollectionToAdd = emailCollection;
         this.runnableAfterAdd = runnable;
-        Intent intent = ContactsActivity.makeIntent(this, true );
-        startActivityForResult(intent, SELECT_CONTACT );
+        Intent intent = ContactsActivity.makeIntent(this, true);
+        startActivityForResult(intent, SELECT_CONTACT);
     }
 
     private void bind() {
@@ -483,7 +485,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         updateToList();
         updateCcToList();
 
-        etComposeSubject.setText( message.getSubject() );
+        etComposeSubject.setText(message.getSubject());
         MessageUtils.setMessageBody(message, etComposeText);
 
         initAttachmentList();
@@ -492,14 +494,13 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void prepareNightTheme() {
         if (SettingsRepository.getInstance().isNightMode(this)) {
-            ibAddRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
-            ibAddBccRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
-            ibAddCcRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_white) );
-        }
-        else  {
-            ibAddRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
-            ibAddBccRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
-            ibAddCcRecipients.setImageDrawable( getResources().getDrawable(R.drawable.ic_plus_transp) );
+            ibAddRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_white));
+            ibAddBccRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_white));
+            ibAddCcRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_white));
+        } else {
+            ibAddRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_transp));
+            ibAddBccRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_transp));
+            ibAddCcRecipients.setImageDrawable(getResources().getDrawable(R.drawable.ic_plus_transp));
         }
     }
 
@@ -508,19 +509,18 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         if (identities.isEmpty()) {
             cvFromDivider.setVisibility(View.GONE);
             llFrom.setVisibility(View.GONE);
-        }
-        else {
-            ArrayList<Identities> fullIdentities = new ArrayList<>(identities.size()+1);
+        } else {
+            ArrayList<Identities> fullIdentities = new ArrayList<>(identities.size() + 1);
             Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
-            fullIdentities.add( new Identities(account.getEmail(), account.getFriendlyName()) );
-            fullIdentities.addAll( identities );
+            fullIdentities.add(new Identities(account.getEmail(), account.getFriendlyName()));
+            fullIdentities.addAll(identities);
             ArrayAdapter<Identities> adapter = new ArrayAdapter(this, R.layout.item_spinner_identities, fullIdentities);
             spFrom.setAdapter(adapter);
             spFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Identities item = (Identities) parent.getItemAtPosition(position);
-                    message.setIdentityID( item.getEntityId() );
+                    message.setIdentityID(item.getEntityId());
 
 
                 }
@@ -529,7 +529,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
                     message.setIdentityID(0);
                 }
             });
-            for (int i = 0; i<fullIdentities.size(); i++) {
+            for (int i = 0; i < fullIdentities.size(); i++) {
                 if (fullIdentities.get(i).isDefault()) {
                     spFrom.setSelection(i);
                     break;
@@ -541,14 +541,14 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void initAttachmentList() {
 
-        if (message.getAttachments()==null)
+        if (message.getAttachments() == null)
             message.setAttachments(new AttachmentCollection());
 
-        if (message.getAttachments().getAttachments()==null)
+        if (message.getAttachments().getAttachments() == null)
             message.getAttachments().setAttachments(new ArrayList<>());
 
-        List<Attachments> attachments =  message.getAttachments().getAttachments();
-        if (attachments.size()>0)
+        List<Attachments> attachments = message.getAttachments().getAttachments();
+        if (attachments.size() > 0)
             cvAttachmentsDivider.setVisibility(View.VISIBLE);
         else
             cvAttachmentsDivider.setVisibility(View.GONE);
@@ -568,21 +568,21 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void updateToList() {
         EmailCollection emailToCollection = message.getTo();
-        if (emailToCollection!=null) {
+        if (emailToCollection != null) {
             updateEmailList(emailToCollection.getEmails(), fwlRecipients, this::updateToList);
         }
     }
 
     private void updateCcToList() {
         EmailCollection emailCcToCollection = message.getCc();
-        if (emailCcToCollection!=null) {
+        if (emailCcToCollection != null) {
             updateEmailList(emailCcToCollection.getEmails(), fwlCc, this::updateCcToList);
         }
     }
 
     private void updateBccToList() {
         EmailCollection emailCcToCollection = message.getBcc();
-        if (emailCcToCollection!=null) {
+        if (emailCcToCollection != null) {
             updateEmailList(emailCcToCollection.getEmails(), fwlBcc, this::updateBccToList);
         }
     }
@@ -590,16 +590,16 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
     private void updateEmailList(ArrayList<Email> emails, ViewGroup layout, Runnable onRemoveRunnable) {
 
-        if (layout.getChildCount()>1)
-            layout.removeViews(0, layout.getChildCount()-1);
+        if (layout.getChildCount() > 1)
+            layout.removeViews(0, layout.getChildCount() - 1);
 
-        if (emails!=null) {
+        if (emails != null) {
 
             for (Email testUserName : emails) {
 
                 View view = createEmailView(testUserName, emails, onRemoveRunnable);
 
-                layout.addView(  view, 0);
+                layout.addView(view, 0);
 
             }
         }
@@ -616,7 +616,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         TextView tvRecipientName = view.findViewById(R.id.tv_recipient_name);
         final ImageButton ibRecipientRemove = view.findViewById(R.id.ib_recipient_remove);
 
-        if (TextUtils.isEmpty(testUserName.getDisplayName() ) )
+        if (TextUtils.isEmpty(testUserName.getDisplayName()))
             tvRecipientName.setText(testUserName.getEmail());
         else
             tvRecipientName.setText(testUserName.getDisplayName());
@@ -638,7 +638,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
 
         ibRecipientRemove.setOnClickListener(v -> {
             removeFromList(emails, testUserName);
-            if (onRemoveRunnable!=null)
+            if (onRemoveRunnable != null)
                 onRemoveRunnable.run();
         });
 
@@ -663,7 +663,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void selectFileFromPhone() {
-        boolean havePermission =  checkAndRequest(Manifest.permission.READ_EXTERNAL_STORAGE, this::selectFileFromPhone);
+        boolean havePermission = checkAndRequest(Manifest.permission.READ_EXTERNAL_STORAGE, this::selectFileFromPhone);
 
         if (havePermission) {
             Intent intent = new Intent()
@@ -677,11 +677,10 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     private void openEncryptPopup() {
         updateMessage();
 
-        if (preEncryptedText !=null && (MessageUtils.isEncrypted(message) || MessageUtils.isSigned(message) ) ) {
+        if (preEncryptedText != null && (MessageUtils.isEncrypted(message) || MessageUtils.isSigned(message))) {
             message.setPlain(preEncryptedText);
             onDecrypt(message);
-        }
-        else {
+        } else {
             this.preEncryptedText = message.getPlain();
 
             EncryptDialogFragment encryptDialogFragment = new EncryptDialogFragment();
@@ -704,7 +703,6 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         RequestViewUtils.hideRequest();
         RequestViewUtils.showError(this, errorType, errorString, serverCode);
     }
-
 
 
     @Override
@@ -732,29 +730,29 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
 
-
-    private void setRecursivelyEnable(View view, boolean status ) {
+    private void setRecursivelyEnable(View view, boolean status) {
         view.setEnabled(status);
-        if (view instanceof  ViewGroup) {
+        if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
-            for (int i = 0; i<viewGroup.getChildCount(); i++) {
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 View childView = viewGroup.getChildAt(i);
-                if (childView instanceof TextView ) {
+                if (childView instanceof TextView) {
                     if (status)
-                        ((TextView)childView).setTextColor(getResources().getColor(R.color.color_black));
+                        ((TextView) childView).setTextColor(getResources().getColor(R.color.color_black));
                     else
-                        ((TextView)childView).setTextColor(getResources().getColor(R.color.color_dark_gray));
+                        ((TextView) childView).setTextColor(getResources().getColor(R.color.color_dark_gray));
                 }
                 setRecursivelyEnable(childView, status);
             }
 
         }
     }
+
     @Override
     public void onFail(String description) {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.app_name))
-                .setMessage(description )
+                .setMessage(description)
                 .setPositiveButton(R.string.all_ok, (dialog, which) -> {
                     dialog.dismiss();
                 })
@@ -773,20 +771,23 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
     }
 
     private void updateBottomMenuTitle() {
-
         MenuItem menuItem = nvBottomCompose.getMenu().findItem(R.id.nav_menu_encrypt);
+        int title;
+        int icon ;
         if (MessageUtils.isEncrypted(message)) {
-            menuItem.setIcon(R.drawable.ic_lock_open);
-            menuItem.setTitle(R.string.all_decrypt);
+            icon = (R.drawable.ic_lock_open);
+            title = R.string.all_decrypt;
+        } else if (MessageUtils.isSigned(message)) {
+            icon = (R.drawable.ic_lock_open);
+            title = R.string.all_unsign;
+        } else {
+            icon = (R.drawable.ic_lock_outline);
+            title = R.string.all_encrypt;
         }
-        else if (MessageUtils.isSigned(message)) {
-            menuItem.setIcon(R.drawable.ic_lock_open);
-            menuItem.setTitle(R.string.all_unsign);
-        }
-        else {
-            menuItem.setIcon(R.drawable.ic_lock_outline);
-            menuItem.setTitle(R.string.all_encrypt);
-        }
+
+        menuItem.setTitle(title);
+
+        menuItem.setIcon(icon);
     }
 
     @Override
@@ -795,8 +796,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_CONTACT) {
                 onSelectContact((ArrayList<Email>) data.getSerializableExtra(SELECT_EMAIL_PARAM));
-            }
-            else if (requestCode == CHOOSE_FILE_CODE) {
+            } else if (requestCode == CHOOSE_FILE_CODE) {
                 Uri selectedFile = data.getData();
                 CallUploadMessage callUploadMessage = new CallUploadMessage(uploadResult);
                 callUploadMessage.setFile(selectedFile);
@@ -807,6 +807,7 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     CallRequestResult<BaseResponse> uploadResult = new CallRequestResult<BaseResponse>() {
         @Override
         public void onSuccess(BaseResponse result) {
@@ -817,26 +818,26 @@ public class ComposeActivity extends ActivityWithRequestPermission implements Bo
         }
 
         @Override
-        public void onFail(ErrorType errorType,String errorString, int serverCode) {
+        public void onFail(ErrorType errorType, String errorString, int serverCode) {
             pbLoadingAttachments.setVisibility(View.GONE);
             Toast.makeText(ComposeActivity.this, getString(R.string.compose_upload_failed), Toast.LENGTH_SHORT).show();
         }
     };
 
     private void onSelectContact(ArrayList<Email> stringArrayListExtra) {
-        if (emailCollectionToAdd.getEmails()==null) {
+        if (emailCollectionToAdd.getEmails() == null) {
             emailCollectionToAdd.setEmails(new ArrayList<Email>());
         }
         emailCollectionToAdd.getEmails().addAll(0, stringArrayListExtra);
 
-        if (runnableAfterAdd!=null)
+        if (runnableAfterAdd != null)
             runnableAfterAdd.run();
     }
 
 
     @Override
     public void onRemove(Attachments attachments) {
-        if (attachmentsAdapter.getItemCount() ==0 )
+        if (attachmentsAdapter.getItemCount() == 0)
             cvAttachmentsDivider.setVisibility(View.GONE);
     }
 }

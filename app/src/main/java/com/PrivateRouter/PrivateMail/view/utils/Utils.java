@@ -32,24 +32,27 @@ public class Utils {
     private static final long GiB = 1024 * 1024 * 1024;
     private static final long MiB = 1024 * 1024;
     private static final long KiB = 1024;
+
     public static String getSizeText(Context context, int length) {
         if (length > GiB) {
-            return format.format(length / GiB) +" " + context.getString(R.string.all_gb);
+            return format.format(length / GiB) + " " + context.getString(R.string.all_gb);
         }
         if (length > MiB) {
-            return format.format(length / MiB) +" " + context.getString(R.string.all_mb);
+            return format.format(length / MiB) + " " + context.getString(R.string.all_mb);
         }
         if (length > KiB) {
-            return format.format(length / KiB) +" " + context.getString(R.string.all_kb);
+            return format.format(length / KiB) + " " + context.getString(R.string.all_kb);
         }
         return format.format(length) + " " + context.getString(R.string.all_b);
     }
+
     public static void updateBottomMenuColors(BottomNavigationView bottomNavigationView) {
 
+
         Context context = bottomNavigationView.getContext();
-        int colorChecked = context.getResources().getColor(R.color.color_white);
-        if (SettingsRepository.getInstance().isNightMode(context))
-            colorChecked = context.getResources().getColor(R.color.color_white);
+        int color = SettingsRepository.getInstance().isNightMode(context) ? R.color.color_white : R.color.color_black;
+
+        int colorChecked = context.getResources().getColor(color);
 
         ColorStateList iconsColorStates = new ColorStateList(
                 new int[][]{
@@ -57,7 +60,7 @@ public class Utils {
                         new int[]{android.R.attr.state_checked}
                 },
                 new int[]{
-                        context.getResources().getColor(R.color.color_white),
+                        colorChecked,
                         colorChecked
                 });
 
@@ -68,7 +71,7 @@ public class Utils {
                         new int[]{android.R.attr.state_checked}
                 },
                 new int[]{
-                        context.getResources().getColor(R.color.color_white),
+                        colorChecked,
                         colorChecked
                 });
 

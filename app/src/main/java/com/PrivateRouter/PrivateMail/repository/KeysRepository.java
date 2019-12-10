@@ -141,7 +141,7 @@ public class KeysRepository {
             if (TextUtils.isEmpty(type) || type.equals(refKey.getType()  )) {
                 String refUserID = EmailUtils.decapsulationEmail(refKey.getUserID());
 
-                if ( refUserID.equalsIgnoreCase(clearUserId))
+                if ( refUserID.contains(clearUserId))
                     return refKey;
             }
         }
