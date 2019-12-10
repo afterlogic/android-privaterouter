@@ -15,7 +15,7 @@ import com.PrivateRouter.PrivateMail.network.responses.GetFoldersMetaResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LoadFolderLogic  extends AsyncTask<Void, Void, Boolean>  {
+public class LoadFolderLogic extends AsyncTask<Void, Void, Boolean> {
 
     LoadFolderCallback onSuccessCallback;
     OnErrorInterface onFailCallback;
@@ -36,24 +36,25 @@ public class LoadFolderLogic  extends AsyncTask<Void, Void, Boolean>  {
     protected Boolean doInBackground(Void... voids) {
         CallGetFolder callGetFolder = new CallGetFolder(null);
         GetFolderResponse folderResponse = callGetFolder.startSync(onFailCallback);
-        boolean success = folderResponse != null && folderResponse.getResult()!= null &&  folderResponse.getResult().getFolders()!=null;
+        boolean success = folderResponse != null && folderResponse.getResult() != null && folderResponse.getResult().getFolders() != null;
 
         if (success) {
-            folderCollection = folderResponse.getResult().getFolders();
-
+            GetFolderResponse.Folder result = folderResponse.getResult();
+            folderCollection = result.getFolders();
             ArrayList<String> folders = new ArrayList<>();
-            for (Folder folder: folderCollection.getCollection()) {
-                folders.add(folder.getFullNameRaw() );
+            for (Folder folder : folderCollection.getCollection()) {
+                folders.add(folder.getFullNameRaw());
             }
             CallGetFoldersMeta callGetFoldersMeta = new CallGetFoldersMeta(null, folders);
             GetFoldersMetaResponse metaResponse = callGetFoldersMeta.startSync(onFailCallback);
-            success = metaResponse!=null && metaResponse.getFolderMeta()!=null;
+            success = metaResponse != null && metaResponse.getFolderMeta() != null;
 
             if (success) {
                 HashMap<String, FolderMeta> metaHashMap = metaResponse.getFolderMeta();
-                for (Folder folder : folderCollection.getCollection() ) {
+                for (Folder folder : folderCollection.getCollection()) {
                     FolderMeta folderMeta = metaHashMap.get(folder.getName());
-                    folder.setMeta( folderMeta );
+                    folder.setMeta(folderMeta);
+                    folder.setNamespace(result.getNamespace());
                 }
             }
         }
@@ -63,10 +64,9 @@ public class LoadFolderLogic  extends AsyncTask<Void, Void, Boolean>  {
     @Override
     protected void onPostExecute(Boolean result) {
         if (result) {
-            if (onSuccessCallback!=null)
+            if (onSuccessCallback != null)
                 onSuccessCallback.onLoad(folderCollection);
-        }
-        else {
+        } else {
             onFailCallback.onError(ErrorType.FAIL_CONNECT, "", 0);
         }
 

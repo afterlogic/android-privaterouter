@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FolderViewHolder  extends RecyclerView.ViewHolder {
+public class FolderViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.ll_background)
     View llBackground;
@@ -43,14 +43,14 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
     @SuppressWarnings("unused")
     @OnClick(R.id.ll_background)
     public void bgViewClick() {
-        if (onFolderClick!=null)
+        if (onFolderClick != null)
             onFolderClick.onFolderClick(folder);
     }
 
     @SuppressWarnings("unused")
     @OnClick(R.id.tv_counter)
     public void tvCounterClick() {
-        if (onFolderClick!=null)
+        if (onFolderClick != null)
             onFolderClick.onFolderUnreadClick(folder);
     }
 
@@ -64,7 +64,7 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
     public void bind(Folder folder, String currentFolder) {
         Context context = tvCounter.getContext();
         this.folder = folder;
-
+//todo
         tvTitle.setText(folder.getName());
         if (!folder.isSelectable())
             llBackground.setOnClickListener(null);
@@ -75,14 +75,13 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
             oldColors = tvTitle.getTextColors();
 
 
-        if (folder.getFullName().toLowerCase().equals( currentFolder.toLowerCase() )) {
-            llBackground.setBackgroundColor( context.getResources().getColor(R.color.colorPrimary));
-            tvTitle.setTextColor( context.getResources().getColor(R.color.color_white));
+        if (folder.getFullName().toLowerCase().equals(currentFolder.toLowerCase())) {
+            llBackground.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+            tvTitle.setTextColor(context.getResources().getColor(R.color.color_white));
             ivIcon.setColorFilter(context.getResources().getColor(R.color.color_white));
-        }
-        else {
-            tvTitle.setTextColor( oldColors );
-            if (SettingsRepository.getInstance().isNightMode(context) )
+        } else {
+            tvTitle.setTextColor(oldColors);
+            if (SettingsRepository.getInstance().isNightMode(context))
                 ivIcon.setColorFilter(context.getResources().getColor(R.color.color_white));
             else
                 ivIcon.setColorFilter(context.getResources().getColor(R.color.color_black));
@@ -93,28 +92,25 @@ public class FolderViewHolder  extends RecyclerView.ViewHolder {
             llBackground.setBackgroundResource(outValue.resourceId);
         }
 
-        if (folder.getMeta()!=null) {
+        if (folder.getMeta() != null) {
             tvCounter.setVisibility(View.VISIBLE);
             if (folder.getType() == FolderType.Drafts.getId())
-                tvCounter.setText(String.valueOf(folder.getMeta().getCount()) );
-            else if (folder.getMeta().getUnreadCount()>0) {
-                tvCounter.setText(String.valueOf(folder.getMeta().getUnreadCount()) );
-            }
-            else {
+                tvCounter.setText(String.valueOf(folder.getMeta().getCount()));
+            else if (folder.getMeta().getUnreadCount() > 0) {
+                tvCounter.setText(String.valueOf(folder.getMeta().getUnreadCount()));
+            } else {
                 tvCounter.setVisibility(View.INVISIBLE);
             }
-        }
-        else {
+        } else {
             tvCounter.setVisibility(View.INVISIBLE);
         }
 
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tvTitle.getLayoutParams();
-        layoutParams.setMargins(Utils.getDP(context, 32* folder.getLevel()),0,0,0);
+        layoutParams.setMargins(Utils.getDP(context, 32 * folder.getLevel()), 0, 0, 0);
 
-        if (folder.getLevel()>0) {
+        if (folder.getLevel() > 0) {
             ivIcon.setVisibility(View.INVISIBLE);
-        }
-        else {
+        } else {
             ivIcon.setVisibility(View.VISIBLE);
             ivIcon.setImageDrawable(FolderDrawable.getFolderIcon(context, FolderType.getByInt(folder.getType())));
         }
