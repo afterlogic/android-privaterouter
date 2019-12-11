@@ -235,9 +235,8 @@ public class MailViewActivity extends RecreatingActivity {
     }
 
     private void moveMessageToInbox() {
-        String spamFolder = FolderType.Inbox.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(message.getFolder(), spamFolder,
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(message.getFolder(), FolderType.Inbox,
                 this::onSuccessMove, this::onFailMove, message.getUid() );
         moveMessageLogic.execute();
 
@@ -246,9 +245,9 @@ public class MailViewActivity extends RecreatingActivity {
     }
 
     private void moveMessageToSpam() {
-        String spamFolder = FolderType.Spam.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic( message.getFolder(), spamFolder,
+
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic( message.getFolder(), FolderType.Spam,
                 this::onSuccessMove, this::onFailMove, message.getUid() );
         moveMessageLogic.execute();
 
@@ -257,9 +256,8 @@ public class MailViewActivity extends RecreatingActivity {
     }
 
     private void deleteMessage() {
-        String trashFolder = FolderType.Trash.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(message.getFolder(), trashFolder,
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(message.getFolder(), FolderType.Spam,
                 this::onSuccessMove, this::onFailMove, message.getUid() );
         moveMessageLogic.execute();
 

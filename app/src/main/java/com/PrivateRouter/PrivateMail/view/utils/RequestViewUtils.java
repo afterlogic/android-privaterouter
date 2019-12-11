@@ -2,6 +2,9 @@ package com.PrivateRouter.PrivateMail.view.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
@@ -44,7 +47,8 @@ public class RequestViewUtils {
                 e.printStackTrace();
             }
         }
-        Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+        String finalStr = str;
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, finalStr, Toast.LENGTH_SHORT).show());
 
     }
 }

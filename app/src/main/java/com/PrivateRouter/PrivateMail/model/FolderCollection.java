@@ -35,6 +35,20 @@ public class FolderCollection implements Serializable {
         return null;
     }
 
+    public Folder getFolder(@NonNull FolderType folderType) {
+        if (collection == null)
+            return null;
+
+        for (Folder folder : collection) {
+            if (folder.getType() == folderType.getId()) {
+                return folder;
+            } else if (folder.getSubFolders() != null) {
+                return folder.getSubFolders().getFolder(folderType);
+            }
+        }
+        return null;
+    }
+
     public Folder getFolder(@NonNull String name) {
 
         return getFolderInCollection(name, collection);

@@ -80,6 +80,8 @@ public class MailListActivity extends RecreatingActivity
     public static final String EMAIL_SEARCH_PREFIX = "email:";
     public static final String UNREAD_ONLY_PARAM = "UnreadOnly";
     public static final String NAME_SPACE = "namespace";
+
+
     @BindView(R.id.rv_mail_list)
     RecyclerView rvMailList;
 
@@ -105,6 +107,7 @@ public class MailListActivity extends RecreatingActivity
     private MailListModeMediator mailListModeMediator;
     private String currentFolder = "Inbox";
     private String namespace = "";
+
     private boolean firstUpdate = true;
     private boolean requestOnResume;
     private Menu menu;
@@ -140,6 +143,7 @@ public class MailListActivity extends RecreatingActivity
         if (getIntent() != null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
             namespace = getIntent().getStringExtra(MailListActivity.NAME_SPACE);
+
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
 
@@ -482,9 +486,8 @@ public class MailListActivity extends RecreatingActivity
 
     private void moveMessageToInbox() {
         Integer[] messagesUids = mailListModeMediator.getSelectionList();
-        String spamFolder = FolderType.Inbox.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, spamFolder,
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, FolderType.Inbox,
                 this::onSuccessMove, this::onFailMove, messagesUids);
         moveMessageLogic.execute();
 
@@ -494,9 +497,9 @@ public class MailListActivity extends RecreatingActivity
 
     private void moveMessageToSpam() {
         Integer[] messagesUids = mailListModeMediator.getSelectionList();
-        String spamFolder = FolderType.Spam.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, spamFolder,
+
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, FolderType.Spam,
                 this::onSuccessMove, this::onFailMove, messagesUids);
         moveMessageLogic.execute();
 
@@ -506,14 +509,13 @@ public class MailListActivity extends RecreatingActivity
 
     private void deleteMessage() {
         Integer[] messagesUids = mailListModeMediator.getSelectionList();
-        String trashFolder = FolderType.Trash.name();
 
-        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, trashFolder,
+        MoveMessageLogic moveMessageLogic = new MoveMessageLogic(currentFolder, FolderType.Trash,
                 this::onSuccessMove, this::onFailMove, messagesUids);
         moveMessageLogic.execute();
 
-
         RequestViewUtils.showRequest(this);
+
     }
 
 
