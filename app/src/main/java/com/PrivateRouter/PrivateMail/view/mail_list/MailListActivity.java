@@ -75,6 +75,7 @@ public class MailListActivity extends RecreatingActivity
     public static final int OPEN_CONTACT = 1001;
     public static final int SELECT_FOLDER = 1000;
     public static final String FOLDER_PARAM = "Folder";
+    public static final String FOLDER_TYPE = "FOLDER_TYPE";
     public static final String PERFORM_FOLDER_PARAM = "PerformFolder";
     public static final String SEARCH_WORD = "SearchWord";
     public static final String EMAIL_SEARCH_PREFIX = "email:";
@@ -106,8 +107,9 @@ public class MailListActivity extends RecreatingActivity
 
     private MailListModeMediator mailListModeMediator;
     private String currentFolder = "Inbox";
+    private int currentType = FolderType.Inbox.getId();
     private String namespace = "";
-
+    private boolean isSent = false;
     private boolean firstUpdate = true;
     private boolean requestOnResume;
     private Menu menu;
@@ -142,10 +144,12 @@ public class MailListActivity extends RecreatingActivity
 
         if (getIntent() != null) {
             currentFolder = getIntent().getStringExtra(MailListActivity.FOLDER_PARAM);
+            currentType = getIntent().getIntExtra(MailListActivity.FOLDER_TYPE, FolderType.Inbox.getId());
             namespace = getIntent().getStringExtra(MailListActivity.NAME_SPACE);
 
             startSearchWord = getIntent().getStringExtra(SEARCH_WORD);
         }
+        isSent = currentType == FolderType.Sent.getId();
 
         initModeSubject();
         openNormalMode();
@@ -255,7 +259,7 @@ public class MailListActivity extends RecreatingActivity
 
         MessagesRepository.getInstance().updateMessageList(this, factory);
 
-        mailListAdapter = new MailListAdapter(new MessageDiffUtilCallback(), mailListModeMediator);
+        mailListAdapter = new MailListAdapter(new MessageDiffUtilCallback(), mailListModeMediator, isSent);
         if (needFlatMode)
             mailListAdapter.useFlatMode();
 
@@ -397,7 +401,7 @@ public class MailListActivity extends RecreatingActivity
     }
 
     private void updateMenu() {
-        if (menu == null)
+        if (menu == null || mailListModeMediator == null)
             return;
 
 
@@ -713,7 +717,9 @@ public class MailListActivity extends RecreatingActivity
                 String folderName = data.getStringExtra(MailListActivity.FOLDER_PARAM);
                 namespace = data.getStringExtra(MailListActivity.NAME_SPACE);
                 unreadOnly = data.getBooleanExtra(MailListActivity.UNREAD_ONLY_PARAM, false);
-
+                currentType = data.getIntExtra(MailListActivity.FOLDER_TYPE, FolderType.Inbox.getId());
+                namespace = data.getStringExtra(MailListActivity.NAME_SPACE);
+                isSent = currentType == FolderType.Sent.getId();
                 onChangeFolder(folderName);
             }
         } else if (resultCode == LOGOUT) {

@@ -33,9 +33,11 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     private boolean loading;
     private boolean showMoreBar = false;
     private boolean showMessage = false;
+    private boolean isSent = false;
 
-    protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator) {
+    protected MailListAdapter(DiffUtil.ItemCallback<Message> diffUtilCallback, MailListModeMediator mailListModeMediator, boolean isSend) {
         super(diffUtilCallback);
+        this.isSent = isSend;
         this.mailListModeMediator = mailListModeMediator;
         mailListModeMediator.setAdapter(this);
     }
@@ -50,11 +52,10 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
             MessageViewHolder holder = new MessageViewHolder(view);
             holder.setOnMessageClick(onMessageClick);
             mailViewHolder = holder;
-        }
-        else if (viewType == TYPE_ADD_MORE_BAR) {
+        } else if (viewType == TYPE_ADD_MORE_BAR) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_show_bar, parent, false);
             mailViewHolder = new MailViewBarHolder(view);
-        }else if (viewType == TYPE_EMPTY) {
+        } else if (viewType == TYPE_EMPTY) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail_list_empty, parent, false);
             mailViewHolder = new MailViewHolder(view);
         }
@@ -62,18 +63,18 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
     public boolean isMessageSelected(Message message) {
-        if (message==null)
+        if (message == null)
             return false;
-        else if (selectedMessageUids.get(message.getUid())==null)
+        else if (selectedMessageUids.get(message.getUid()) == null)
             return false;
         else
             return selectedMessageUids.get(message.getUid());
     }
 
     public boolean isMessageExpanded(Message message) {
-        if (message==null)
+        if (message == null)
             return false;
-        else if (expandedMessageUids.get(message.getUid())==null)
+        else if (expandedMessageUids.get(message.getUid()) == null)
             return false;
         else
             return expandedMessageUids.get(message.getUid());
@@ -100,7 +101,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
     private void bindBarItem(MailViewHolder holder, int position) {
-        ((MailViewBarHolder)holder).bind(mailListModeMediator);
+        ((MailViewBarHolder) holder).bind(mailListModeMediator);
     }
 
     private void bindMessageItem(MailViewHolder holder, int position) {
@@ -110,8 +111,8 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         boolean selected = isMessageSelected(message);
         boolean expand = isMessageExpanded(message);
         messageViewHolder.setFlatMode(flatMode);
-        messageViewHolder.bind(message , position, selected, expand, this);
-        messageViewHolder.setSelectedMode( selectedMode );
+        messageViewHolder.bind(message, position, selected, expand, this,isSent);
+        messageViewHolder.setSelectedMode(selectedMode);
 
     }
 
@@ -138,7 +139,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     public void onSelectChange(boolean value, Message message) {
 
-        if (selectedMessageUids.get(message.getUid())!=null)
+        if (selectedMessageUids.get(message.getUid()) != null)
             selectedMessageUids.remove(message.getUid());
 
         selectedMessageUids.put(message.getUid(), value);
@@ -146,8 +147,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
         if (value) {
             if (!selectedMessages.contains(message))
                 selectedMessages.add(message);
-        }
-        else {
+        } else {
             selectedMessages.remove(message);
         }
 
@@ -156,7 +156,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     public void onExpandChange(boolean value, Message message) {
 
-        if (expandedMessageUids.get(message.getUid())!=null)
+        if (expandedMessageUids.get(message.getUid()) != null)
             expandedMessageUids.remove(message.getUid());
 
         expandedMessageUids.put(message.getUid(), value);
@@ -220,23 +220,22 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
     }
 
 
-    public interface OnMessageClick{
+    public interface OnMessageClick {
         void onMessageClick(Message message, int position);
     }
 
 
     @Nullable
     protected Message getItem(int position) {
-        if (isShowEmptyMessage() && position == 0 )
+        if (isShowEmptyMessage() && position == 0)
             return null;
-        else if (hasShowMoreBar() && position == getItemCount()-1 )
+        else if (hasShowMoreBar() && position == getItemCount() - 1)
             return null;
-        else if (position < super.getItemCount() )
+        else if (position < super.getItemCount())
             return super.getItem(position);
         else
             return null;
     }
-
 
 
     @Override
@@ -253,7 +252,7 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
 
     public void setShowMoreBar(boolean val) {
-        Logger.v("bars", "setShowMoreBar="+val);
+        Logger.v("bars", "setShowMoreBar=" + val);
         showMoreBar = val;
     }
 
@@ -264,9 +263,9 @@ public class MailListAdapter extends PagedListAdapter<Message, MailViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (isShowEmptyMessage() && position == 0 )
+        if (isShowEmptyMessage() && position == 0)
             return TYPE_EMPTY;
-        if (position == getItemCount()-1 && hasShowMoreBar() )
+        if (position == getItemCount() - 1 && hasShowMoreBar())
             return TYPE_ADD_MORE_BAR;
         else
             return TYPE_ITEM;

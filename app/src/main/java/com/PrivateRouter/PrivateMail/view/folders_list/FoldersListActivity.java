@@ -173,6 +173,7 @@ public class FoldersListActivity extends AppCompatActivity implements SwipeRefre
             Intent intent = new Intent();
             intent.putExtra(MailListActivity.NAME_SPACE, folder.getNamespace());
             intent.putExtra(MailListActivity.FOLDER_PARAM, folder.getFullName());
+            intent.putExtra(MailListActivity.FOLDER_TYPE, folder.getType());
             if (folder.getFullName().equals(FolderType.VirtualStarred)) {
                 Account account = LoggedUserRepository.getInstance().getActiveAccount();
                 intent.putExtra(MailListActivity.PERFORM_FOLDER_PARAM, account.getFolders().getFolderName(FolderType.Inbox));

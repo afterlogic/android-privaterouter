@@ -1,8 +1,6 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
-import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +41,7 @@ public class MessageListAdapter extends RecyclerView.Adapter< MessageViewHolder>
         boolean selected = mailListAdapter.isMessageSelected(message);
         boolean expand = mailListAdapter.isMessageExpanded(message);
 
-        holder.bind(message , position, selected, expand, mailListAdapter);
+        holder.bind(message , position, selected, expand, mailListAdapter, false);
 
         holder.setSelectedMode( mailListAdapter.getSelectedMode() );
 

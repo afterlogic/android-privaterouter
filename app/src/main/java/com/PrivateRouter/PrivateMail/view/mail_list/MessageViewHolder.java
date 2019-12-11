@@ -1,27 +1,19 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.widget.ImageViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.Message;
@@ -31,8 +23,6 @@ import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.DateUtils;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
-
-import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,7 +58,7 @@ public class MessageViewHolder extends MailViewHolder {
     @BindView(R.id.iv_mail_forwarded)
     ImageView ivMailForwarded;
 
-    @BindView  (R.id.rv_threads)
+    @BindView(R.id.rv_threads)
     RecyclerView rvThreads;
 
     @BindView(R.id.cb_selected)
@@ -78,7 +68,7 @@ public class MessageViewHolder extends MailViewHolder {
     boolean selectedMode;
     boolean checked;
     boolean expanded;
-
+    boolean isSent;
     Message message;
     private MailListAdapter.OnMessageClick onMessageClick;
     private int position;
@@ -90,9 +80,8 @@ public class MessageViewHolder extends MailViewHolder {
     @OnClick(R.id.cl_background)
     public void bgImageClick() {
         if (selectedMode) {
-            cbSelected.setChecked( !cbSelected.isChecked() );
-        }
-        else {
+            cbSelected.setChecked(!cbSelected.isChecked());
+        } else {
             //Toast.makeText(cbSelected.getContext() , "uids: " + message.getUid() , Toast.LENGTH_SHORT).show();
             if (onMessageClick != null)
                 onMessageClick.onMessageClick(message, position);
@@ -117,26 +106,22 @@ public class MessageViewHolder extends MailViewHolder {
     }
 
 
-
-
-    public void  onCheckedChange(CompoundButton button, boolean value) {
+    public void onCheckedChange(CompoundButton button, boolean value) {
         mailListAdapter.onSelectChange(value, message);
-        if (!expanded && message.getThreadUidsList()!=null  && message.getThreadUidsList().size() > 0 ) {
+        if (!expanded && message.getThreadUidsList() != null && message.getThreadUidsList().size() > 0) {
 
-            if ( message.getThreadList() == null) {
+            if (message.getThreadList() == null) {
                 loadingThread = true;
                 mailListAdapter.getMailListModeMediator().onStartLoadThread();
                 AsyncThreadLoader asyncThreadLoader = new AsyncThreadLoader(message, this::onEndLoadThreadAndCheck);
                 asyncThreadLoader.execute();
-            }
-            else {
+            } else {
                 for (Message threadMessage : message.getThreadList()) {
                     mailListAdapter.onSelectChange(value, threadMessage);
                 }
             }
         }
     }
-
 
 
     public MessageViewHolder(@NonNull View itemView) {
@@ -152,8 +137,9 @@ public class MessageViewHolder extends MailViewHolder {
         this.checked = checked;
     }
 
-    public void bind(Message message, int position, boolean checked, boolean expanded,  MailListAdapter mailListAdapter) {
+    public void bind(Message message, int position, boolean checked, boolean expanded, MailListAdapter mailListAdapter, boolean isSent) {
         this.checked = checked;
+        this.isSent = isSent;
         this.expanded = expanded;
         this.position = position;
         this.message = message;
@@ -161,7 +147,7 @@ public class MessageViewHolder extends MailViewHolder {
 
         this.loadingThread = false;
 
-        if (message!=null) {
+        if (message != null) {
             tvMailMessageSender.setVisibility(View.VISIBLE);
             tvMailMessageSubject.setVisibility(View.VISIBLE);
             tvMailMessageDate.setVisibility(View.VISIBLE);
@@ -169,15 +155,14 @@ public class MessageViewHolder extends MailViewHolder {
             Context context = tvMailMessageDate.getContext();
 
             if (SettingsRepository.getInstance().isNightMode(context)) {
-                ivThreadsIcon.setImageDrawable( context.getResources().getDrawable(R.drawable.ic_filter_none_white_24dp) );
+                ivThreadsIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_filter_none_white_24dp));
 
                 DrawableCompat.setTint(ivMailReplied.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
                 DrawableCompat.setTint(ivMailForwarded.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
                 DrawableCompat.setTint(ivMailAttachments.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_white));
 
-            }
-            else {
-                ivThreadsIcon.setImageDrawable( context.getResources().getDrawable(R.drawable.ic_filter_none_black_24dp) );
+            } else {
+                ivThreadsIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_filter_none_black_24dp));
 
                 DrawableCompat.setTint(ivMailReplied.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
                 DrawableCompat.setTint(ivMailForwarded.getBackground(), ContextCompat.getColor(context.getApplicationContext(), R.color.color_black));
@@ -188,8 +173,10 @@ public class MessageViewHolder extends MailViewHolder {
             cbSelected.setOnCheckedChangeListener(this::onCheckedChange);
 
             String topString;
-            if (message.getFolder().equalsIgnoreCase( FolderType.Sent.name() ) ||
-                    message.getFolder().equalsIgnoreCase(FolderType.Drafts.name() ) )
+            if (this.isSent) {
+                topString = EmailUtils.getString(context, message.getTo());
+            } else if (message.getFolder().equalsIgnoreCase(FolderType.Sent.name()) ||
+                    message.getFolder().equalsIgnoreCase(FolderType.Drafts.name()))
                 topString = EmailUtils.getString(context, message.getTo());
             else
                 topString = EmailUtils.getString(context, message.getFrom());
@@ -203,8 +190,7 @@ public class MessageViewHolder extends MailViewHolder {
             if (TextUtils.isEmpty(subject)) {
                 subject = tvMailMessageSender.getContext().getString(R.string.mail_no_subject);
                 tvMailMessageSubject.setAlpha(0.6f);// setTextColor( context.getResources().getColor(android.R.color.darker_gray ) );
-            }
-            else {
+            } else {
                 tvMailMessageSubject.setAlpha(1f);//
                 //tvMailMessageSubject.setTextColor( context.getResources().getColor(android.R.color.black) );
             }
@@ -241,25 +227,22 @@ public class MessageViewHolder extends MailViewHolder {
                 tvMailMessageSender.setTypeface(null, Typeface.NORMAL);
                 tvMailMessageSubject.setTypeface(null, Typeface.NORMAL);
                 tvMailMessageDate.setTypeface(null, Typeface.NORMAL);
-            }
-            else {
+            } else {
                 tvMailMessageSender.setTypeface(null, Typeface.BOLD);
                 tvMailMessageSubject.setTypeface(null, Typeface.BOLD);
                 tvMailMessageDate.setTypeface(null, Typeface.BOLD);
             }
 
-            if (message.getThreadUidsList()!=null && !message.getThreadUidsList().isEmpty() && !flatMode) {
+            if (message.getThreadUidsList() != null && !message.getThreadUidsList().isEmpty() && !flatMode) {
                 ivThreadsIcon.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 ivThreadsIcon.setVisibility(View.GONE);
             }
 
             if (!flatMode)
                 updateThreads();
 
-        }
-        else {
+        } else {
             tvMailMessageSender.setText("");
             tvMailMessageSubject.setText("");
             tvMailMessageDate.setText("");
@@ -286,28 +269,26 @@ public class MessageViewHolder extends MailViewHolder {
         if (expanded) {
             rvThreads.setVisibility(View.VISIBLE);
 
-            if (message.getThreadList()!=null) {
+            if (message.getThreadList() != null) {
 
                 MessageListAdapter messageListAdapter = new MessageListAdapter(message.getThreadList(), mailListAdapter);
-                LinearLayoutManager mLayoutManager =  new LinearLayoutManager(context);
-                rvThreads.setLayoutManager( mLayoutManager );
-                rvThreads.setAdapter(messageListAdapter );
+                LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+                rvThreads.setLayoutManager(mLayoutManager);
+                rvThreads.setAdapter(messageListAdapter);
 
                 CustomLinearLayoutManager customLayoutManager = new CustomLinearLayoutManager(context,
-                        LinearLayoutManager.VERTICAL,false);
+                        LinearLayoutManager.VERTICAL, false);
 
                 rvThreads.setLayoutManager(customLayoutManager);
 
-            }
-            else {
+            } else {
                 loadingThread = true;
                 mailListAdapter.getMailListModeMediator().onStartLoadThread();
                 AsyncThreadLoader asyncThreadLoader = new AsyncThreadLoader(message, this::onEndLoadThread);
                 asyncThreadLoader.execute();
             }
 
-        }
-        else {
+        } else {
             rvThreads.setVisibility(View.GONE);
         }
 
