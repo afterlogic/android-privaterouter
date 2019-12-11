@@ -18,10 +18,21 @@ public class Storages implements Serializable {
     private String name;
     @SerializedName("CTag")
     private int cTag;
+    @SerializedName("Display")
+    private boolean display=true;
 
-    public Storages(String id, int cTag) {
+    public Storages(String id, int cTag, boolean display) {
         this.id = id;
         this.cTag = cTag;
+        this.display = display;
+    }
+
+    public boolean getDisplay() {
+        return display;
+    }
+
+    public void setDisplay(boolean display) {
+        this.display = display;
     }
 
     public String getId() {

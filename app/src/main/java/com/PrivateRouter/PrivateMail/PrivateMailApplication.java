@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.dbase.migration.Migration1to2;
+import com.PrivateRouter.PrivateMail.dbase.migration.Migration2to3;
 import com.PrivateRouter.PrivateMail.logic.SyncLogic;
 import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.IdentitiesRepository;
@@ -87,6 +88,7 @@ public class PrivateMailApplication  extends Application {
     private void initDBase() {
         database = Room.databaseBuilder(this, AppDatabase.class, "database")
                 .addMigrations(new Migration1to2())
+                .addMigrations(new Migration2to3())
                 .build();
 
     }

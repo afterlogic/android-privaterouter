@@ -10,7 +10,7 @@ import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.model.TempMessageIds;
 
 @Database(entities = {Message.class, FolderHash.class, Contact.class, TempMessageIds.class, Storages.class},
-        version = 2, exportSchema = false)
+        version = 3, exportSchema = false)
 
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MessageDao messageDao();

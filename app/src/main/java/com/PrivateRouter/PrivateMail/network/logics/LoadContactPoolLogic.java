@@ -19,6 +19,7 @@ import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 
 import androidx.annotation.NonNull;
 
@@ -131,10 +132,21 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private boolean getNewCTag() {
         CallGetCTag callGetCTag = new CallGetCTag();
 
-        newCTag = callGetCTag.syncStart(this);
+        newCTag = removeNotDisplay(callGetCTag.syncStart(this));
         return newCTag != null;
     }
 
+    private List<Storages> removeNotDisplay(List<Storages> storages) {
+        if (storages == null)
+            return null;
+        List<Storages> displayStorages = new ArrayList<Storages>();
+        for (Storages storage : storages) {
+            if (storage.getDisplay() != false) {
+                displayStorages.add(storage);
+            }
+        }
+        return displayStorages;
+    }
 
     private boolean loadCurrentCTag() {
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
@@ -240,6 +252,18 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
     private boolean cacheCTag() {
         AppDatabase database = PrivateMailApplication.getInstance().getDatabase();
 
+        for (Storages storages : oldCTag) {
+            boolean has = false;
+            for (Storages newStorages : newCTag) {
+                if (newStorages.getId().equals(storages.getId())) {
+                    has = true;
+                    break;
+                }
+            }
+            if(!has){
+                database.storagesDao().delete(storages);
+            }
+        }
         for (Storages storages : newCTag) {
             database.storagesDao().update(storages);
         }
