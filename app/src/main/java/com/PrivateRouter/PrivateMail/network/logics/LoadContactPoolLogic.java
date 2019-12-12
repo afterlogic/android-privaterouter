@@ -85,12 +85,8 @@ public class LoadContactPoolLogic extends AsyncTask<Void, Integer, Boolean> impl
         if (equalsStorages(oldCTag, newCTag))
             return true;
 
-        success = cacheCTag();
-        if (!success || isCancelled()) return false;
-
         success = getServerContactsUids();
         if (!success || isCancelled()) return false;
-
 
         success = loadCurrentContactTags();
         if (!success || isCancelled()) return false;
