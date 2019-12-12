@@ -13,7 +13,17 @@ import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -48,16 +58,16 @@ public final class ApiFactory {
         return service;
     }
 
-    public static void restartService(){
+    public static void restartService() {
         sService = null;
         getService();
     }
 
     private static Gson getGson() {
-        return new GsonBuilder().registerTypeAdapter(MessageBase.class, new MessageBaseDeserializer() ).
-                registerTypeAdapter(GetFoldersMetaResponse.class, new GetFolderMetaDeserializer() ).
-                registerTypeAdapter(Attachments.class, new AttachmentsDeserializer() ).
-                registerTypeAdapter(ContactSettings.class, new ContactSettingsDeserializer() ).
+        return new GsonBuilder().registerTypeAdapter(MessageBase.class, new MessageBaseDeserializer()).
+                registerTypeAdapter(GetFoldersMetaResponse.class, new GetFolderMetaDeserializer()).
+                registerTypeAdapter(Attachments.class, new AttachmentsDeserializer()).
+                registerTypeAdapter(ContactSettings.class, new ContactSettingsDeserializer()).
                 create();
     }
 
@@ -66,7 +76,7 @@ public final class ApiFactory {
         String url = getUrl();
 
         return new Retrofit.Builder()
-                .baseUrl(url )
+                .baseUrl(url)
                 .client(getClient())
                 .addConverterFactory(GsonConverterFactory.create(getGson()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -76,7 +86,7 @@ public final class ApiFactory {
     }
 
     public static String getUrl() {
-            return getHost();
+        return getHost();
     }
 
     @NonNull
@@ -86,7 +96,11 @@ public final class ApiFactory {
             synchronized (ApiFactory.class) {
                 client = sClient;
                 if (client == null) {
-                    client = sClient = buildClient();
+                    try {
+                        client = sClient = buildClient();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -94,11 +108,45 @@ public final class ApiFactory {
     }
 
 
-
     @NonNull
-    private static OkHttpClient buildClient() {
+    private static OkHttpClient buildClient() throws KeyManagementException, NoSuchAlgorithmException {
+        boolean ignoreSsl = false;
+        SSLSocketFactory sslSocketFactory = null;
+        TrustManager[] trustAllCerts = null;
+        if (ignoreSsl) {
+            trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
 
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
+            sslSocketFactory = sslContext.getSocketFactory();
+        }
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+        if (ignoreSsl) {
+            clientBuilder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            clientBuilder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        }
         clientBuilder.readTimeout(60, TimeUnit.SECONDS);
         clientBuilder.connectTimeout(60, TimeUnit.SECONDS);
 
@@ -107,11 +155,11 @@ public final class ApiFactory {
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 okhttp3.Request request = chain.request();
 
-                Headers.Builder headersBuilder =  request.headers().newBuilder();
-                if (token!=null) {
-                    headersBuilder.add("Authorization", "Bearer "+token);
+                Headers.Builder headersBuilder = request.headers().newBuilder();
+                if (token != null) {
+                    headersBuilder.add("Authorization", "Bearer " + token);
                 }
-               // headersBuilder.add("Content-Type", "application/x-www-form-urlencoded");
+                // headersBuilder.add("Content-Type", "application/x-www-form-urlencoded");
                 Headers headers = headersBuilder.build();
 
                 request = request.newBuilder().headers(headers).build();
@@ -137,11 +185,11 @@ public final class ApiFactory {
         ApiFactory.token = token;
     }
 
-    public static String getHost(){
+    public static String getHost() {
         return host;
     }
 
-    public static void setHost(String host){
+    public static void setHost(String host) {
         ApiFactory.host = host;
     }
 
