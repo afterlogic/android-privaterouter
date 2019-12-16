@@ -231,7 +231,7 @@ public class EncryptionBuilder implements EncryptionBuilderInterface {
         public SignWith usingSecureAlgorithms() {
             EncryptionBuilder.this.symmetricKeyAlgorithm = SymmetricKeyAlgorithm.AES_256;
             EncryptionBuilder.this.hashAlgorithm = HashAlgorithm.SHA512;
-            EncryptionBuilder.this.compressionAlgorithm = CompressionAlgorithm.UNCOMPRESSED;
+            EncryptionBuilder.this.compressionAlgorithm = CompressionAlgorithm.ZIP;
 
             return new SignWithImpl();
         }
