@@ -40,6 +40,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class DecryptTask extends AsyncTask<Void, Void, Message> {
@@ -58,23 +60,28 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
 
     @Override
     protected Message doInBackground(Void... voids) {
-        if (message!=null && !TextUtils.isEmpty( message.getPlain() ) ) { //TODO html handle
+        if (message != null && !TextUtils.isEmpty(message.getPlain())) { //TODO html handle
 
             try {
                 KeysRepository keysRepository = PrivateMailApplication.getInstance().getKeysRepository();
                 Account account = PrivateMailApplication.getInstance().getLoggedUserRepository().getActiveAccount();
                 String privateKey = "";
                 PGPKey pgpkey = keysRepository.getKey(account.getEmail(), PGPKey.PRIVATE);
-                if (pgpkey!=null) {
+                if (pgpkey != null) {
                     privateKey = pgpkey.getKeyObject().toString();
                 }
 
 
-                String encryptedText = message.getPlain().trim();
+                Pattern r = Pattern.compile("-----(\\D|\\d)*-----");
+
+                // Now create matcher object.
+                Matcher m = r.matcher(message.getPlainRaw());
+                m.find();
+                String encryptedText = m.group(0);
 
                 PGPSecretKeyRing secretKeys = PGPainless.readKeyRing().secretKeyRing(privateKey);
 
-                KeyRingProtectionSettings settings = new KeyRingProtectionSettings(SymmetricKeyAlgorithm.AES_256, HashAlgorithm.MD5, 0 );
+                KeyRingProtectionSettings settings = new KeyRingProtectionSettings(SymmetricKeyAlgorithm.AES_256, HashAlgorithm.MD5, 0);
                 SecretKeyRingProtector secretKeyDecryptor = new PasswordBasedSecretKeyRingProtector(settings, new SecretKeyPassphraseProvider() {
                     @Nullable
                     @Override
@@ -85,7 +92,7 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
                 });
 
 
-                InputStream sourceInputStream = new ByteArrayInputStream(encryptedText.getBytes(StandardCharsets.UTF_8));
+                InputStream sourceInputStream = new ByteArrayInputStream(encryptedText.getBytes());
 
 
                 PGPPublicKeyRingCollection publicKeyRings = getPublicKeyRings(message);
@@ -95,14 +102,14 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
                 DecryptionStream decryptor;
                 decryptor = createDecryptorWithVerify(sourceInputStream, secretKeyDecryptor, secretKeys, publicKeyRings);
                 if (decryptor == null)
-                    decryptor = createDecryptorWithOutVerify(sourceInputStream, secretKeyDecryptor, secretKeys, publicKeyRings);
+                    decryptor = createDecryptorWithOutVerify(sourceInputStream, secretKeyDecryptor, secretKeys);
 
                 ByteArrayOutputStream targetOutputStream = new ByteArrayOutputStream();
 
                 Streams.pipeAll(decryptor, targetOutputStream);
                 decryptor.close();
 
-                message.setPlain( new String( targetOutputStream.toByteArray(), StandardCharsets.UTF_8)  );
+                message.setPlain(new String(targetOutputStream.toByteArray(), StandardCharsets.UTF_8));
                 return message;
 
             } catch (Exception e) {
@@ -114,13 +121,14 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
 
     }
 
-    private DecryptionStream createDecryptorWithOutVerify(InputStream sourceInputStream, SecretKeyRingProtector secretKeyDecryptor, PGPSecretKeyRing secretKeys, PGPPublicKeyRingCollection publicKeyRings) {
+    private DecryptionStream createDecryptorWithOutVerify(InputStream sourceInputStream, SecretKeyRingProtector secretKeyDecryptor, PGPSecretKeyRing secretKeys) {
         DecryptionStream pgPainless = null;
         try {
             pgPainless = PGPainless.createDecryptor()
                     .onInputStream(sourceInputStream)
                     .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
-                    .doNotVerify().build();
+                    .doNotVerify()
+                    .build();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (PGPException e) {
@@ -135,13 +143,15 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
             pgPainless = PGPainless.createDecryptor()
                     .onInputStream(sourceInputStream)
                     .decryptWith(secretKeyDecryptor, BCUtil.keyRingsToKeyRingCollection(secretKeys))
-                    .verifyWith(publicKeyRings).handleMissingPublicKeysWith(new MissingPublicKeyCallback() {
+                    .verifyWith(publicKeyRings)
+                    .handleMissingPublicKeysWith(new MissingPublicKeyCallback() {
                         @Override
                         public PGPPublicKey onMissingPublicKeyEncountered(@NonNull Long keyId) {
                             Logger.d("2", "mis key");
                             return null;
                         }
-                    })  .build();
+                    })
+                    .build();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (PGPException e) {
@@ -180,11 +190,10 @@ public class DecryptTask extends AsyncTask<Void, Void, Message> {
     }
 
 
-
     @Override
-    protected void onPostExecute( Message result) {
-        if (callback!=null) {
-            if (result!=null)
+    protected void onPostExecute(Message result) {
+        if (callback != null) {
+            if (result != null)
                 callback.onDecrypt(result);
             else
                 callback.onFail(errorDescription);
