@@ -9,41 +9,40 @@ import com.PrivateRouter.PrivateMail.model.User;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetAccounts;
-import com.PrivateRouter.PrivateMail.network.requests.CallLogin;
+import com.PrivateRouter.PrivateMail.network.requests.CallPinVerify;
 import com.PrivateRouter.PrivateMail.network.requests.CallRequestResult;
 import com.PrivateRouter.PrivateMail.network.responses.GetAccountResponse;
 import com.PrivateRouter.PrivateMail.network.responses.LoginResponse;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 
-public class LoginLogic implements CallRequestResult<LoginResponse> {
+public class PinVerifyLogic implements CallRequestResult<LoginResponse> {
 
-    public interface OnLoginCallback {
+    public interface OnVerifyCallback {
         void onLogin();
 
         void onFail(ErrorType failConnect, String errorString, int errorCode);
-
-        void requestHost();
-
-        void onTwoFactorAuth(String login, String pass, int user);
     }
 
-    OnLoginCallback onLogin;
+    OnVerifyCallback onVerify;
     String login;
     String pass;
+    int user;
     Context context;
 
-    public LoginLogic(Context context) {
+    public PinVerifyLogic(Context context, String login, String pass, int user) {
         this.context = context;
-    }
-
-    public void login(String login, String pass, String host, OnLoginCallback onLoginCallback) {
-        this.onLogin = onLoginCallback;
         this.login = login;
         this.pass = pass;
-        CallLogin callLogin = new CallLogin(this);
+        this.user = user;
+    }
+
+    public void verify(String pin, OnVerifyCallback onVerifyCallback) {
+        this.onVerify = onVerifyCallback;
+        CallPinVerify callLogin = new CallPinVerify(this);
         callLogin.setLogin(login);
         callLogin.setPassword(pass);
-        callLogin.setHost(host);
+        callLogin.setPin(pin);
+        callLogin.setUser(user);
         callLogin.start();
     }
 
@@ -55,12 +54,8 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
             String errorString = context.getString(R.string.login_error);
             if (result != null)
                 errorString = result.getErrorMessage();
-            if (onLogin != null)
-                onLogin.onFail(ErrorType.SERVER_ERROR, errorString, result.getErrorCode());
-            return;
-        }
-        if (result.getResult().getTwoFactorAuth() != null) {
-            onLogin.onTwoFactorAuth(login, pass, result.getResult().getTwoFactorAuth().getUserId());
+            if (onVerify != null)
+                onVerify.onFail(ErrorType.SERVER_ERROR, errorString, result.getErrorCode());
             return;
         }
         String token = result.getResult().getAuthToken();
@@ -72,12 +67,8 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
     @Override
     public void onFail(ErrorType errorType, String errorString, int serverCode) {
-        if (onLogin != null) {
-            if (errorType == ErrorType.REQUEST_HOST) {
-                onLogin.requestHost();
-                return;
-            }
-            onLogin.onFail(errorType, errorString, serverCode);
+        if (onVerify != null) {
+            onVerify.onFail(errorType, errorString, serverCode);
         }
     }
 
@@ -97,12 +88,11 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
             @Override
             public void onFail(ErrorType errorCode, String errorString, int serverCode) {
-                if (onLogin != null)
-                    onLogin.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
+                if (onVerify != null)
+                    onVerify.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
             }
         });
         callGetAccounts.start();
-
     }
 
 
@@ -114,11 +104,11 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
             LoggedUserRepository.getInstance().save(context);
 
-            if (onLogin != null)
-                onLogin.onLogin();
+            if (onVerify != null)
+                onVerify.onLogin();
         }, (errorType, errorString, errorCode) -> {
-            if (onLogin != null)
-                onLogin.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
+            if (onVerify != null)
+                onVerify.onFail(ErrorType.FAIL_CONNECT, errorString, 0);
         });
         loadFolderLogic.execute();
 

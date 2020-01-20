@@ -48,6 +48,9 @@ public interface AfterLogicAPI {
     @GET("/autodiscover.php")
     Call<DiscoverUrlResponse> discoverHostname(@Query("email") String email);
 
+    @POST("?/Api/")
+    @FormUrlEncoded
+    Call<LoginResponse> verifyPin(@Field("Module") String module, @Field("Method") String method, @Field("Parameters") String parameter);
 
     @POST("?/Api/")
     @FormUrlEncoded

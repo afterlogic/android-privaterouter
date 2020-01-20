@@ -83,6 +83,7 @@ public class CallLogin extends CallRequest<LoginResponse> implements Callback<Lo
     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
         if (response.isSuccessful()) {
+
             loginResponse = response.body();
             if (loginResponse != null && loginResponse.isSuccess()) {
 

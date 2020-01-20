@@ -1,6 +1,7 @@
 package com.PrivateRouter.PrivateMail.network;
 
 public class ApiMethods {
+    public static String VERIFY_PIN = "VerifyPin";
     public static String LOGIN = "Login";
     public static String LOGOUT = "Logout";
     public static String PING = "Ping";

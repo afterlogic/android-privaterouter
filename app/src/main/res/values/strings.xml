@@ -38,7 +38,7 @@
     <string name="all_ok">Ok</string>
     <string name="all_sign">Sign</string>
     <string name="all_contacts">Contacts</string>
-
+    <string name="all_is_empty">Is empty</string>
     <string name="all_email_is_empty">Email is empty</string>
     <string name="all_email_is_incorrect">Email is incorrect</string>
     <string name="all_host_is_empty">Host is empty</string>
@@ -240,5 +240,8 @@
     <string name="upgrade_plan_upgrade_button">Upgrade Now</string>
     <string name="upgrade_plan_back_button">Back to login</string>
     <string name="host_required">host required</string>
+    <string name="pin_description">Your account is protected with\nTwo Factor Authentication.\nPlease provide the PIN code.</string>
+    <string name="pin">PIN</string>
+    <string name="invalid_pin">Invalid PIN</string>
 
 </resources>

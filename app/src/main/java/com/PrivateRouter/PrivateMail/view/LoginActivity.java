@@ -11,18 +11,14 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.URLUtil;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.FolderType;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.logics.LoginLogic;
-import com.PrivateRouter.PrivateMail.repository.HostManager;
 import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
-import com.PrivateRouter.PrivateMail.view.components.HostEditText;
 import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
-import com.PrivateRouter.PrivateMail.view.mail_view.MailViewActivity;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
 import butterknife.BindView;
@@ -115,6 +111,15 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
         RequestViewUtils.hideRequest();
         tilHost.setVisibility(View.VISIBLE);
         tilHost.setError(getText(R.string.host_required));
+    }
+
+    @Override
+    public void onTwoFactorAuth(String login, String pass, int user) {
+        Intent intent = new Intent(this, TwoFactorAuthActivity.class);
+        intent.putExtra("login", login);
+        intent.putExtra("pass", pass);
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     @Override
