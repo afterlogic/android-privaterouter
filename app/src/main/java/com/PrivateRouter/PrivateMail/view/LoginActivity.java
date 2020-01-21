@@ -114,11 +114,10 @@ public class LoginActivity extends AppCompatActivity implements LoginLogic.OnLog
     }
 
     @Override
-    public void onTwoFactorAuth(String login, String pass, int user) {
+    public void onTwoFactorAuth(String login, String pass) {
         Intent intent = new Intent(this, TwoFactorAuthActivity.class);
         intent.putExtra("login", login);
         intent.putExtra("pass", pass);
-        intent.putExtra("user", user);
         startActivity(intent);
     }
 

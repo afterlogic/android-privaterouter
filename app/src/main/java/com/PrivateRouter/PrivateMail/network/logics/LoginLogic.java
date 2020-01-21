@@ -24,7 +24,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
 
         void requestHost();
 
-        void onTwoFactorAuth(String login, String pass, int user);
+        void onTwoFactorAuth(String login, String pass);
     }
 
     OnLoginCallback onLogin;
@@ -60,7 +60,7 @@ public class LoginLogic implements CallRequestResult<LoginResponse> {
             return;
         }
         if (result.getResult().getTwoFactorAuth() != null) {
-            onLogin.onTwoFactorAuth(login, pass, result.getResult().getTwoFactorAuth().getUserId());
+            onLogin.onTwoFactorAuth(login, pass);
             return;
         }
         String token = result.getResult().getAuthToken();

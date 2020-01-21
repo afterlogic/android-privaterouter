@@ -28,10 +28,6 @@ public class CallPinVerify extends CallRequest<LoginResponse> implements Callbac
         loginParameter.Password = password;
     }
 
-    public void setUser(int user) {
-        loginParameter.UserId = user;
-    }
-
     public void setPin(String pin) {
         loginParameter.Pin = pin;
     }
@@ -81,6 +77,5 @@ public class CallPinVerify extends CallRequest<LoginResponse> implements Callbac
         String Login;
         String Password;
         String Pin;
-        int UserId;
     }
 }

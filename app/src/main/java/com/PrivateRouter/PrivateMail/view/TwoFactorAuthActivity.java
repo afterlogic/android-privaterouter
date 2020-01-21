@@ -25,7 +25,6 @@ import butterknife.OnClick;
 
 public class TwoFactorAuthActivity extends AppCompatActivity implements PinVerifyLogic.OnVerifyCallback {
 
-    int user;
     String login;
     String pass;
 
@@ -43,7 +42,6 @@ public class TwoFactorAuthActivity extends AppCompatActivity implements PinVerif
         ButterKnife.bind(this);
         login = getIntent().getStringExtra("login");
         pass = getIntent().getStringExtra("pass");
-        user = getIntent().getIntExtra("user", 0);
 
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
@@ -55,7 +53,7 @@ public class TwoFactorAuthActivity extends AppCompatActivity implements PinVerif
             String pin = etPin.getText().toString();
             RequestViewUtils.showRequest(this);
 
-            PinVerifyLogic pinVerifyLogic = new PinVerifyLogic(this, login, pass, user);
+            PinVerifyLogic pinVerifyLogic = new PinVerifyLogic(this, login, pass);
             pinVerifyLogic.verify(pin, this);
         }
     }

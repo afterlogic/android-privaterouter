@@ -1,6 +1,5 @@
 package com.PrivateRouter.PrivateMail.network.responses;
 
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse extends BaseResponse {
@@ -22,7 +21,7 @@ public class LoginResponse extends BaseResponse {
         String authToken;
 
         @SerializedName("TwoFactorAuth")
-        TwoFactorAuth twoFactorAuth;
+        Object twoFactorAuth;
 
         public String getAuthToken() {
             return authToken;
@@ -32,17 +31,8 @@ public class LoginResponse extends BaseResponse {
             this.authToken = authToken;
         }
 
-        public TwoFactorAuth getTwoFactorAuth() {
+        public Object getTwoFactorAuth() {
             return twoFactorAuth;
-        }
-
-        public class TwoFactorAuth {
-            @SerializedName("UserId")
-            int userId;
-
-            public int getUserId() {
-                return userId;
-            }
         }
     }
 }

@@ -26,14 +26,12 @@ public class PinVerifyLogic implements CallRequestResult<LoginResponse> {
     OnVerifyCallback onVerify;
     String login;
     String pass;
-    int user;
     Context context;
 
-    public PinVerifyLogic(Context context, String login, String pass, int user) {
+    public PinVerifyLogic(Context context, String login, String pass) {
         this.context = context;
         this.login = login;
         this.pass = pass;
-        this.user = user;
     }
 
     public void verify(String pin, OnVerifyCallback onVerifyCallback) {
@@ -42,7 +40,6 @@ public class PinVerifyLogic implements CallRequestResult<LoginResponse> {
         callLogin.setLogin(login);
         callLogin.setPassword(pass);
         callLogin.setPin(pin);
-        callLogin.setUser(user);
         callLogin.start();
     }
 
