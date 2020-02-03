@@ -44,7 +44,7 @@ public class LoggedUserRepository {
     public Account getActiveAccount() {
         if (user != null) {
             for (Account account : user.getAccounts()) {
-                if (account.getEmail().equals(login))
+                if (account.getEmail().toLowerCase().equals(login.toLowerCase()))
                     return account;
             }
         }
