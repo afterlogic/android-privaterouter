@@ -2,7 +2,7 @@ package com.PrivateRouter.PrivateMail.view.utils;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.support.design.widget.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;

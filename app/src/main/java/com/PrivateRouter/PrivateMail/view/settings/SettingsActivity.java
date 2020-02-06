@@ -2,41 +2,19 @@ package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.RadioButton;
 
 import com.PrivateRouter.PrivateMail.R;
 
-import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
-import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.common.StringAdapter;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
-import com.PrivateRouter.PrivateMail.view.mail_view.AttachmentsAdapter;
 
-
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PublicKey;
-import java.security.Security;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public class SettingsActivity extends RecreatingActivity {
 

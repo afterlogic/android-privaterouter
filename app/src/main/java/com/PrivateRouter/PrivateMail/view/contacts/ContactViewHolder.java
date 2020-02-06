@@ -1,22 +1,14 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
-import android.content.Context;
-import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Contact;
-import com.PrivateRouter.PrivateMail.model.FolderType;
-import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
-import com.PrivateRouter.PrivateMail.view.utils.DateUtils;
-import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

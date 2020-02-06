@@ -2,11 +2,10 @@ package com.PrivateRouter.PrivateMail.view.settings;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +18,6 @@ import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.ComposeActivity;
 import com.PrivateRouter.PrivateMail.view.common.ActivityWithRequestPermission;
-import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
 
 import java.util.ArrayList;
 

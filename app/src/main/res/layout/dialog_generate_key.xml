@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/margin_all_element_large"
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cv_encrypt_divider">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/sp_mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,10 +44,10 @@
             android:hint="@string/all_email"
             android:text=""
             android:textColorHint="@color/colorAccent" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/margin_all_element_large"
@@ -61,7 +61,7 @@
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorAccent">
 
-        <android.support.design.widget.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_encrypt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
             android:inputType="textPassword"
             android:text=""
             android:textColorHint="@color/colorAccent" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
     <Spinner

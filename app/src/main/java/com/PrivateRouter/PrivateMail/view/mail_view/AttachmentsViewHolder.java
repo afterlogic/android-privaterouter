@@ -1,15 +1,14 @@
 package com.PrivateRouter.PrivateMail.view.mail_view;
 
 import android.Manifest;
-import android.arch.persistence.room.util.StringUtil;
+import androidx.room.util.StringUtil;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -18,18 +17,13 @@ import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.encryption.ImportTask;
 import com.PrivateRouter.PrivateMail.model.Attachments;
-import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
 import com.PrivateRouter.PrivateMail.network.logics.DownloadLogic;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.common.FragmentWithRequestPermission;
-import com.PrivateRouter.PrivateMail.view.settings.PGPKeyActivity;
 import com.PrivateRouter.PrivateMail.view.settings.PGPSettingsActivity;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

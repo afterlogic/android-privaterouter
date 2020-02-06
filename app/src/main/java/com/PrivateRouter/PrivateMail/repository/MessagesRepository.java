@@ -1,30 +1,17 @@
 package com.PrivateRouter.PrivateMail.repository;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.paging.DataSource;
-import android.arch.paging.LivePagedListBuilder;
-import android.arch.paging.PagedList;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.paging.DataSource;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
-import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.model.Message;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
-import com.PrivateRouter.PrivateMail.view.mail_list.MessageDiffUtilCallback;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class MessagesRepository {
 

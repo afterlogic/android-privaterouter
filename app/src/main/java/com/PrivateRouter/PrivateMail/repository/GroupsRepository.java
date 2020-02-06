@@ -1,6 +1,6 @@
 package com.PrivateRouter.PrivateMail.repository;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;

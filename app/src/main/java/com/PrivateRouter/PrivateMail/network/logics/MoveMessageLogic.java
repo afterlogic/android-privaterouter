@@ -1,7 +1,7 @@
 package com.PrivateRouter.PrivateMail.network.logics;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;

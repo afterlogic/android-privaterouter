@@ -1,13 +1,10 @@
 package com.PrivateRouter.PrivateMail.network.requests;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.PrivateRouter.PrivateMail.model.errors.ErrorCodes;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.model.errors.OnErrorInterface;
-import com.PrivateRouter.PrivateMail.network.ApiFactory;
-import com.PrivateRouter.PrivateMail.network.ApiMethods;
-import com.PrivateRouter.PrivateMail.network.ApiModules;
 import com.PrivateRouter.PrivateMail.network.responses.BaseResponse;
 
 import java.io.IOException;

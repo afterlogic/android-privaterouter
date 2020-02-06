@@ -1,10 +1,8 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
-import android.widget.Toast;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 
 import butterknife.ButterKnife;

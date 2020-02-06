@@ -1,8 +1,7 @@
 package com.PrivateRouter.PrivateMail.network;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import com.PrivateRouter.PrivateMail.BuildConfig;
 import com.PrivateRouter.PrivateMail.model.Attachments;
 import com.PrivateRouter.PrivateMail.model.ContactSettings;
 import com.PrivateRouter.PrivateMail.model.MessageBase;

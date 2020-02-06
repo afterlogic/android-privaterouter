@@ -1,11 +1,10 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.Entity;
+import androidx.room.Entity;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 @Entity(tableName = "groups", primaryKeys = {"UUID"}  )
 public class Group implements Serializable {

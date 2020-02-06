@@ -1,30 +1,17 @@
 package com.PrivateRouter.PrivateMail.view.settings;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
+import android.view.MenuItem;
+
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.RecreatingActivity;
 import com.PrivateRouter.PrivateMail.view.components.SettingSwitch;
 import com.PrivateRouter.PrivateMail.view.components.SettingTextView;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

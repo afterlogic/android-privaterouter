@@ -2,11 +2,9 @@ package com.PrivateRouter.PrivateMail.view.mail_view;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
-import com.PrivateRouter.PrivateMail.encryption.SignHelper;
 import com.PrivateRouter.PrivateMail.encryption.VerifyTask;
 import com.PrivateRouter.PrivateMail.model.Account;
 import com.PrivateRouter.PrivateMail.model.Attachments;
@@ -42,8 +39,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 public  class MailViewFragment extends FragmentWithRequestPermission implements  AttachmentsAdapter.OnAttachmentClick,
         EncryptCallback, DecryptCallback {

@@ -1,27 +1,23 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Window;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.model.Group;
 import com.PrivateRouter.PrivateMail.model.Storages;
 import com.PrivateRouter.PrivateMail.model.errors.ErrorType;
 import com.PrivateRouter.PrivateMail.network.requests.CallGetStorage;
 import com.PrivateRouter.PrivateMail.repository.GroupsRepository;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
 import com.PrivateRouter.PrivateMail.view.utils.CustomLinearLayoutManager;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +25,6 @@ import androidx.annotation.NonNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class GroupsListActivity extends AppCompatActivity implements OnGroupsLoadCallback, GroupsAdapter.OnGroupClick, StorageAdapter.OnStorageClick, StoragesCallback {
 

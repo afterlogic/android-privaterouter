@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "991642830049",
+    "firebase_url": "https://privatemail-aa417.firebaseio.com",
+    "project_id": "privatemail-aa417",
+    "storage_bucket": "privatemail-aa417.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991642830049:android:647965d71070a8316ee3a0",
+        "android_client_info": {
+          "package_name": "com.PrivateRouter.PrivateMailApplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "991642830049-2k77bq1gfgjp837veq3eqseu113jmp4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlWFHtiXM5zdVnrYESL3ASiVE-zTaMq80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991642830049-2k77bq1gfgjp837veq3eqseu113jmp4u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

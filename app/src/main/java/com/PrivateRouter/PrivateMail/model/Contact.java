@@ -1,8 +1,8 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.TypeConverters;
 
 import com.PrivateRouter.PrivateMail.dbase.ArrayStringConverter;
 import com.google.gson.annotations.SerializedName;

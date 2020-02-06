@@ -4,17 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.encryption.ExportTask;
 import com.PrivateRouter.PrivateMail.encryption.ImportFileTask;
 import com.PrivateRouter.PrivateMail.encryption.ImportTask;
 import com.PrivateRouter.PrivateMail.model.PGPKey;
@@ -26,8 +23,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.PrivateRouter.PrivateMail.PrivateMailApplication.getContext;
 
 
 public class PGPSettingsActivity extends ActivityWithRequestPermission {

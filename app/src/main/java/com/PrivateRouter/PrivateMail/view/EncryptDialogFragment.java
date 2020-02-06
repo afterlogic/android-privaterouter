@@ -2,11 +2,9 @@ package com.PrivateRouter.PrivateMail.view;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.text.TextUtils;
+import androidx.fragment.app.DialogFragment;
+
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +15,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.DecryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.DecryptTask;
 import com.PrivateRouter.PrivateMail.encryption.EncryptCallback;
 import com.PrivateRouter.PrivateMail.encryption.EncryptTask;
 import com.PrivateRouter.PrivateMail.model.Message;
-import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.utils.MessageUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

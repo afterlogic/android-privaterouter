@@ -3,13 +3,12 @@ package com.PrivateRouter.PrivateMail.view.settings;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,15 +17,11 @@ import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.encryption.GenerateTask;
 import com.PrivateRouter.PrivateMail.model.Account;
-import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.repository.KeysRepository;
-import com.PrivateRouter.PrivateMail.view.EmailValidator;
 import com.PrivateRouter.PrivateMail.view.utils.EmailUtils;
 import com.PrivateRouter.PrivateMail.view.utils.RequestViewUtils;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

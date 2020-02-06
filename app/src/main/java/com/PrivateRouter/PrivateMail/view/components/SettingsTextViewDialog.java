@@ -1,28 +1,21 @@
 package com.PrivateRouter.PrivateMail.view.components;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.PrivateRouter.PrivateMail.R;
-import com.PrivateRouter.PrivateMail.encryption.ImportTask;
-import com.PrivateRouter.PrivateMail.model.PGPKey;
 import com.PrivateRouter.PrivateMail.view.common.StringAdapter;
 import com.PrivateRouter.PrivateMail.view.utils.Utils;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class SettingsTextViewDialog  extends DialogFragment   {
 

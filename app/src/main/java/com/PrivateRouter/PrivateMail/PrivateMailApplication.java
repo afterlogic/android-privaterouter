@@ -1,12 +1,15 @@
 package com.PrivateRouter.PrivateMail;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.migration.Migration;
+
+import androidx.room.Room;
+import androidx.room.migration.Migration;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatDelegate;
+
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
 import com.PrivateRouter.PrivateMail.dbase.migration.Migration1to2;
@@ -25,9 +28,9 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
-public class PrivateMailApplication  extends Application {
+public class PrivateMailApplication extends Application {
     private AppDatabase database;
-    static  PrivateMailApplication instance;
+    static PrivateMailApplication instance;
 
 
     private LoggedUserRepository loggedUserRepository;
@@ -41,7 +44,7 @@ public class PrivateMailApplication  extends Application {
 
         try {
             Fabric.with(this, new Crashlytics());
-        }catch (Throwable e){
+        } catch (Throwable e) {
             //todo wtf
             e.printStackTrace();
         }
@@ -102,13 +105,9 @@ public class PrivateMailApplication  extends Application {
                 getBaseContext().getResources().getDisplayMetrics());
 
 
-
         Configuration configuration = new Configuration(Resources.getSystem().getConfiguration());
         configuration.setLocale(Locale.ENGLISH);
         Resources.getSystem().updateConfiguration(configuration, null);
-
-
-
 
 
     }
@@ -123,19 +122,18 @@ public class PrivateMailApplication  extends Application {
     }
 
     public static PrivateMailApplication getInstance() {
-        if (instance==null) {
+        if (instance == null) {
             instance = getCurrentApplication();
         }
-        return instance ;
+        return instance;
     }
 
     public static Context getContext() {
-        if (instance!=null) {
+        if (instance != null) {
             return instance.getApplicationContext();
-        }
-        else {
+        } else {
             instance = getCurrentApplication();
-            if (instance!=null)
+            if (instance != null)
                 return instance.getApplicationContext();
         }
         return null;
@@ -161,7 +159,7 @@ public class PrivateMailApplication  extends Application {
             // handle exception
         } catch (final InvocationTargetException e) {
             // handle exception
-        }  catch (final  Exception e) {
+        } catch (final Exception e) {
             // handle exception
         }
         return null;
@@ -184,7 +182,9 @@ public class PrivateMailApplication  extends Application {
         return keysRepository;
     }
 
-    public IdentitiesRepository getIdentitiesRepository() {return  identitiesRepository;}
+    public IdentitiesRepository getIdentitiesRepository() {
+        return identitiesRepository;
+    }
 
     public SyncLogic getSyncLogic() {
         return syncLogic;

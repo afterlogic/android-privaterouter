@@ -1,7 +1,7 @@
 package com.PrivateRouter.PrivateMail.view.utils;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class CustomLinearLayoutManager  extends LinearLayoutManager {
     public CustomLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {

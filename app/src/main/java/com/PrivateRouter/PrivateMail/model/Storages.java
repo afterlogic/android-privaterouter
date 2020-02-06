@@ -1,9 +1,7 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.Entity;
-import android.support.annotation.NonNull;
-
-import androidx.annotation.Nullable;
+import androidx.room.Entity;
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 

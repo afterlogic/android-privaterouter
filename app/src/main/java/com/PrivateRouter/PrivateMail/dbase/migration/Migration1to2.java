@@ -1,8 +1,8 @@
 package com.PrivateRouter.PrivateMail.dbase.migration;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.migration.Migration;
-import android.support.annotation.NonNull;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.room.migration.Migration;
+import androidx.annotation.NonNull;
 
 public class Migration1to2 extends Migration {
 

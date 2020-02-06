@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -309,7 +309,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/et_compose_subject" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_attachments_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -357,11 +357,11 @@
                 app:layout_constraintTop_toBottomOf="@id/cv_attachments_divider" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nv_bottom_compose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

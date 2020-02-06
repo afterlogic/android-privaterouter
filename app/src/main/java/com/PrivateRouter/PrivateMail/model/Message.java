@@ -1,11 +1,11 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.Embedded;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-import android.support.annotation.NonNull;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+import androidx.annotation.NonNull;
 
 import com.PrivateRouter.PrivateMail.dbase.ArrayStringConverter;
 import com.google.gson.annotations.SerializedName;

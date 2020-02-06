@@ -1,10 +1,9 @@
 package com.PrivateRouter.PrivateMail.view.contacts;
 
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.PrivateRouter.PrivateMail.model.Contact;
-import com.PrivateRouter.PrivateMail.model.Message;
 
 public class ContactDiffUtilCallback extends DiffUtil.ItemCallback<Contact> {
 

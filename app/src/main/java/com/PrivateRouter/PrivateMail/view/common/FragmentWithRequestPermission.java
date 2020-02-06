@@ -1,9 +1,9 @@
 package com.PrivateRouter.PrivateMail.view.common;
 
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 
 public class FragmentWithRequestPermission extends Fragment {
 

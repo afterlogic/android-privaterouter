@@ -1,10 +1,8 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.TypeConverters;
 
-import com.PrivateRouter.PrivateMail.dbase.ArrayAttachmentConverter;
 import com.PrivateRouter.PrivateMail.dbase.ArrayEmailConverter;
-import com.PrivateRouter.PrivateMail.dbase.ArrayStringConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;

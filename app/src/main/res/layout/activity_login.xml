@@ -7,7 +7,7 @@
     android:background="@drawable/all_background">
 
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/logo" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_host"
             style="@style/WhiteEditText"
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_login_logo">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_host"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,9 +48,9 @@
             <!--android:text="mobilepgp@afterlogic.com"-->
             <!--android:text="test1@afterlogic.com"-->
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_email"
             style="@style/WhiteEditText"
             android:layout_width="match_parent"
@@ -61,7 +61,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/til_host">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,9 +73,9 @@
             <!--android:text="mobilepgp@afterlogic.com"-->
             <!--android:text="test1@afterlogic.com"-->
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_password"
             style="@style/WhiteEditText"
             android:layout_width="match_parent"
@@ -88,7 +88,7 @@
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@android:color/white">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                 android:textColor="@android:color/white" />
             <!-- pgp12345q -->
             <!-- p12345q -->
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/bt_login"
@@ -116,5 +116,5 @@
             app:layout_constraintTop_toBottomOf="@id/til_password" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

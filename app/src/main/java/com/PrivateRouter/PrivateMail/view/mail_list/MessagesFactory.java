@@ -1,9 +1,8 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
-import android.arch.paging.DataSource;
+import androidx.paging.DataSource;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
@@ -15,7 +14,6 @@ import com.PrivateRouter.PrivateMail.repository.LoggedUserRepository;
 import com.PrivateRouter.PrivateMail.view.utils.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity.EMAIL_SEARCH_PREFIX;
 

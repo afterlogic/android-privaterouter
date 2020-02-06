@@ -1,10 +1,10 @@
 package com.PrivateRouter.PrivateMail.view.mail_list;
 
-import android.arch.paging.PagedListAdapter;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.util.Log;
+import androidx.paging.PagedListAdapter;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

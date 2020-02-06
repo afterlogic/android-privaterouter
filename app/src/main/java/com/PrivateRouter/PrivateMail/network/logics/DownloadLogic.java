@@ -2,17 +2,13 @@ package com.PrivateRouter.PrivateMail.network.logics;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.PrivateRouter.PrivateMail.network.AfterLogicAPI;
+import androidx.annotation.NonNull;
+
 import com.PrivateRouter.PrivateMail.network.ApiFactory;
-import com.PrivateRouter.PrivateMail.network.responses.GetMessageBaseResponse;
 import com.PrivateRouter.PrivateMail.view.utils.Logger;
 import com.PrivateRouter.PrivateMail.view.utils.PathUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;

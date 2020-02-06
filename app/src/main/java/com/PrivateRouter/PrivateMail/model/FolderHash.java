@@ -1,7 +1,7 @@
 package com.PrivateRouter.PrivateMail.model;
 
-import android.arch.persistence.room.Entity;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.annotation.NonNull;
 
 @Entity(tableName = "folder_hash", primaryKeys = {"folderName" }  )
 public class FolderHash {

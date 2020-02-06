@@ -1,13 +1,9 @@
 package com.PrivateRouter.PrivateMail.view.common;
 
 import android.content.Context;
-import android.graphics.PointF;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Log;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SpeedyLinearLayoutManager extends LinearLayoutManager {
 

@@ -1,6 +1,6 @@
 package com.PrivateRouter.PrivateMail.dbase;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import com.PrivateRouter.PrivateMail.model.Email;
 import com.google.gson.Gson;

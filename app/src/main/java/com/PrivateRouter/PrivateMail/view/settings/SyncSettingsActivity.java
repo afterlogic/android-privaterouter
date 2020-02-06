@@ -3,21 +3,14 @@ package com.PrivateRouter.PrivateMail.view.settings;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.PrivateRouter.PrivateMail.PrivateMailApplication;
 import com.PrivateRouter.PrivateMail.R;
 import com.PrivateRouter.PrivateMail.dbase.AppDatabase;
-import com.PrivateRouter.PrivateMail.model.FolderHash;
 import com.PrivateRouter.PrivateMail.repository.SettingsRepository;
 import com.PrivateRouter.PrivateMail.view.components.SettingTextView;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListActivity;
-import com.PrivateRouter.PrivateMail.view.mail_list.MailListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
